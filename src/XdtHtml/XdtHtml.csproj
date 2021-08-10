@@ -1,10 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <IsPackable>true</IsPackable>
     <IsShipping>false</IsShipping>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>POFerro</Authors>
+    <PackageProjectUrl>https://github.com/POFerro/XdtHtml</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/POFerro/XdtHtml</RepositoryUrl>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
   
   <ItemGroup>
@@ -25,6 +30,13 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
