@@ -1,7 +1,7 @@
 # XdtHtml
 
 This package enables an equivalent to dotnet-xdt transformations for html files.
-Please review documentation on syntax at: https://github.com/nil4/dotnet-transform-xdt and https://docs.microsoft.com/en-us/previous-versions/dd465326(v=vs.100)
+Please review documentation on syntax at: https://github.com/dotnet/xdt and https://msdn.microsoft.com/en-us/library/dd465326.aspx
 
 Sample code:
 ```csharp
