@@ -1,0 +1,41 @@
+<form xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+    <page>
+
+        <page-header>
+
+            <page-header-actions xdt:Transform="Replace">
+                <list-counter formErrorsCounter></list-counter>
+
+                <ng-container *ngIf="details.stateId == stateCodes.registado">
+                    <button mat-button
+                            *hasEveryPermission="permissionConstants.LeaProdutos.edit"
+                            enterEditButton>
+                    </button>
+
+                    <button mat-button
+                            *hasEveryPermission="permissionConstants.LeaProdutos.edit"
+                            cancelEditButton>
+                    </button>
+
+                    <button mat-button style="margin:5px" displayOnReadOnly
+                            (click)="CriarPropostaQuestion()"
+                            *hasEveryPermission="permissionConstants.LeaProdutos.add"
+                            [btnLabel]="'Lea.Produtos.ProporProduto' | translate"
+                            btnIconPosition="left"
+                            btnIconClass="mdi mdi-clipboard-arrow-right">
+                    </button>
+
+                    <button mat-button
+                            *hasEveryPermission="permissionConstants.LeaProdutos.edit"
+                            type="submit"
+                            confirmEditButton>
+                    </button>
+                </ng-container>
+
+                <refresh-button></refresh-button>
+            </page-header-actions>
+
+        </page-header>
+
+    </page>
+</form>

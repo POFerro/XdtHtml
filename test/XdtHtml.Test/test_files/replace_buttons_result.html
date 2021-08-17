@@ -1,0 +1,46 @@
+<form #editForm="ngForm" (ngSubmit)="OnSaveData()" name="globalForm" [dataSourceContext]="detailDataSourceContext">
+    <page editable (beginEdit)="OnBeginEdit()" (cancelEdit)="OnCancelEdit($event)">
+
+        <page-header pageHeaderIcon="_Lea_ mdi mdi-code-json">
+
+            <page-header-title title="{{ details.produtoId }}" tooltip="{{ 'Lea.Produtos.ProdutoId' | translate }}"></page-header-title>
+            <page-header-title title="{{ details.negocioId }}" tooltip="{{ 'Lea.Produtos.Negocio' | translate }}"></page-header-title>
+            <page-header-title title="{{ details.tipoProdutoId }}" tooltip="{{ 'Lea.Produtos.TipoProduto' | translate }}"></page-header-title>
+
+            <page-header-additional-info>
+                <time><span>{{'Global.System.LastUpdated' | translate}} {{(details.updDate || details.insDate) | date:'dd-MM-yyyy HH:mm:ss'}}</span></time>
+                <state-chip [stateId]="details.stateId"></state-chip>
+            </page-header-additional-info>
+
+            <page-header-actions>
+                <list-counter formErrorsCounter></list-counter>
+
+                <ng-container *ngIf="details.stateId == stateCodes.registado">
+                    <button mat-button *hasEveryPermission="permissionConstants.LeaProdutos.edit" enterEditButton>
+                    </button>
+
+                    <button mat-button *hasEveryPermission="permissionConstants.LeaProdutos.edit" cancelEditButton>
+                    </button>
+
+                    <button mat-button style="margin:5px" displayOnReadOnly (click)="CriarPropostaQuestion()" *hasEveryPermission="permissionConstants.LeaProdutos.add" [btnLabel]="'Lea.Produtos.ProporProduto' | translate" btnIconPosition="left" btnIconClass="mdi mdi-clipboard-arrow-right">
+                    </button>
+
+                    <button mat-button *hasEveryPermission="permissionConstants.LeaProdutos.edit" type="submit" confirmEditButton>
+                    </button>
+                </ng-container>
+
+                <refresh-button></refresh-button>
+            </page-header-actions>
+
+            <page-header-aditional-options>
+                <ng-container *ngIf="details.stateId != stateCodes.anulado">
+                    <button mat-menu-item *hasEveryPermission="permissionConstants.LeaProdutos.remove" (click)="Delete()">
+                        <i class="mdi mdi-delete-outline" aria-hidden="true"></i>
+                        <span>{{'Global.Actions.Annul' | translate}}</span>
+                    </button>
+                </ng-container>
+            </page-header-aditional-options>
+        </page-header>
+
+    </page>
+</form>

@@ -155,6 +155,85 @@ namespace XdtHtml
         }
     }
 
+
+    internal abstract class MoveToBase : Transform
+    {
+        internal MoveToBase()
+            : base(TransformFlags.None, MissingTargetMessage.Error)
+        {
+        }
+
+        private HtmlNode siblingElement = null;
+
+        protected HtmlNode SiblingElement
+        {
+            get
+            {
+                if (siblingElement == null)
+                {
+                    if (Arguments == null || Arguments.Count == 0)
+                    {
+                        throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertMissingArgument, GetType().Name));
+                    }
+                    else if (Arguments.Count > 1)
+                    {
+                        throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertTooManyArguments, GetType().Name));
+                    }
+                    else
+                    {
+                        string xpath = Arguments[0];
+                        HtmlNodeCollection siblings = TargetNode.ParentNode.SelectNodes(xpath);
+                        if (siblings.Count == 0)
+                        {
+                            throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertBadXPath, xpath));
+                        }
+                        else
+                        {
+                            siblingElement = siblings[0] as HtmlNode;
+                            if (siblingElement == null)
+                            {
+                                throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertBadXPathResult, xpath));
+                            }
+                        }
+                    }
+                }
+
+                return siblingElement;
+            }
+        }
+    }
+    internal class MoveToAfter : MoveToBase
+    {
+        public MoveToAfter()
+        {
+            this.UseParentAsTargetNode = false;
+        }
+
+        protected override void Apply()
+        {
+            SiblingElement.ParentNode.InsertAfter(TargetNode.CloneNode(true), SiblingElement);
+            TargetNode.Remove();
+
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+        }
+    }
+
+    internal class MoveToBefore : MoveToBase
+    {
+        public MoveToBefore()
+        {
+            this.UseParentAsTargetNode = false;
+        }
+
+        protected override void Apply()
+        {
+            SiblingElement.ParentNode.InsertBefore(TargetNode.CloneNode(true), SiblingElement);
+            TargetNode.Remove();
+
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+        }
+    }
+
     public class SetAttributes : AttributeTransform
     {
         protected override void Apply() {
