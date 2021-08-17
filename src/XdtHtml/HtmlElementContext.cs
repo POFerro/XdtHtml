@@ -319,7 +319,7 @@ namespace XdtHtml
             objectAttribute = Element.Attributes[this.xdtPrefix + ":" + typeof(ObjectType).Name];
             try {
                 if (objectAttribute != null) {
-                    string typeName = ParseNameAndArguments(objectAttribute.Value, out argumentString);
+                    string typeName = ParseNameAndArguments(objectAttribute.DeEntitizeValue, out argumentString);
                     if (!String.IsNullOrEmpty(typeName)) {
                         NamedTypeFactory factory = GetService<NamedTypeFactory>();
                         return factory.Construct<ObjectType>(typeName);

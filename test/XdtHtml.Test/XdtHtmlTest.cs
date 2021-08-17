@@ -44,6 +44,12 @@ namespace XdtHtml.Test
             ApplyTransform("sample_page", "move_elements2");
         }
 
+        [TestMethod]
+        public void TestMoveCards()
+        {
+            ApplyTransform("sample_page_cards", "move_cards");
+        }
+
         protected void ApplyTransform(string contentFileName, string transformFileName, string resultFileName = null)
         {
             var x = new HtmlTransformableDocument();
