@@ -74,6 +74,19 @@ namespace XdtHtml
             PreprocessTransformDocument();
         }
 
+        public HtmlTransformation(TextReader transformReader, IHtmlTransformationLogger logger)
+        {
+            this.logger = new HtmlTransformationLogger(logger);
+            this.transformFile = String.Empty;
+
+            htmlTransformation = new HtmlDocument().WithDefaultOptions();
+            htmlTransformation.Load(transformReader);
+
+            InitializeTransformationServices();
+
+            PreprocessTransformDocument();
+        }
+
         public bool HasTransformNamespace
         {
             get
