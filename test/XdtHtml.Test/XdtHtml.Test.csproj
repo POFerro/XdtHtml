@@ -20,7 +20,6 @@
     <None Remove="test_files\replace_buttons2_result.html" />
     <None Remove="test_files\replace_buttons_result.html" />
     <None Remove="test_files\sample_page.html" />
-    <None Remove="test_files\sample_page2.html" />
     <None Remove="test_files\sample_page_cards.html" />
   </ItemGroup>
 
@@ -59,9 +58,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="test_files\replace_buttons.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\sample_page2.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="test_files\sample_page_cards.html">

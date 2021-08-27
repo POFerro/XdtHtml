@@ -48,7 +48,7 @@ namespace XdtHtml.Test
         [TestMethod]
         public void TestMoveElementsInto()
         {
-            ApplyTransform("sample_page2", "move_into_element");
+            ApplyTransform("sample_page", "move_into_element");
         }
 
         [TestMethod]
