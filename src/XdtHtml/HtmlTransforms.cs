@@ -234,6 +234,19 @@ namespace XdtHtml
         }
     }
 
+    internal class MoveInto : MoveToBase
+    {
+        public MoveInto()
+        {
+            this.UseParentAsTargetNode = false;
+        }
+        protected override void Apply()
+        {
+            SiblingElement.PrependChild(TargetNode.CloneNode(true));
+            TargetNode.Remove();
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+        }
+    }
     public class SetAttributes : AttributeTransform
     {
         protected override void Apply() {

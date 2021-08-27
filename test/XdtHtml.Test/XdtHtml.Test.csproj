@@ -11,6 +11,8 @@
     <None Remove="test_files\move_elements2.html" />
     <None Remove="test_files\move_elements2_result.html" />
     <None Remove="test_files\move_elements_result.html" />
+    <None Remove="test_files\move_into_element.html" />
+    <None Remove="test_files\move_into_element_result.html" />
     <None Remove="test_files\replace_buttons.html" />
     <None Remove="test_files\replace_buttons2.html" />
     <None Remove="test_files\replace_buttons2_result.html" />
@@ -30,6 +32,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="test_files\move_elements.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="test_files\move_into_element.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="test_files\move_into_element_result.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="test_files\replace_buttons2_result.html">
