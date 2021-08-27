@@ -13,7 +13,7 @@
             </page-header-additional-info>
 
             <page-header-actions>
-
+                <list-counter formErrorsCounter></list-counter>
                 <button mat-button *hasEveryPermission="permissionConstants.LeaProdutos.edit" enterEditButton>
                 </button>
                 <button mat-button *hasEveryPermission="permissionConstants.LeaProdutos.edit" cancelEditButton>
@@ -23,7 +23,7 @@
                 <refresh-button></refresh-button>
             </page-header-actions>
 
-            <page-header-aditional-options><list-counter formErrorsCounter=''></list-counter>
+            <page-header-aditional-options>
                 <ng-container *ngIf="details.stateId != stateCodes.anulado">
                     <button mat-menu-item *hasEveryPermission="permissionConstants.LeaProdutos.remove" (click)="Delete()">
                         <i class="mdi mdi-delete-outline" aria-hidden="true"></i>

@@ -155,6 +155,15 @@ namespace XdtHtml
         }
     }
 
+    internal class InsertInto: InsertBase
+    {
+        protected override void Apply()
+        {
+            SiblingElement.PrependChild(TransformNode);
+
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+        }
+    }
 
     internal abstract class MoveToBase : Transform
     {

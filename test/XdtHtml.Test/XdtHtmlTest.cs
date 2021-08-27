@@ -46,9 +46,15 @@ namespace XdtHtml.Test
 
 
         [TestMethod]
-        public void TestMoveIntoParent()
+        public void TestMoveElementsInto()
         {
-            ApplyTransform("sample_page", "move_into_element");
+            ApplyTransform("sample_page2", "move_into_element");
+        }
+
+        [TestMethod]
+        public void TestInsertElementsInto()
+        {
+            ApplyTransform("sample_page", "insert_into_element");
         }
 
         protected void ApplyTransform(string contentFileName, string transformFileName, string resultFileName = null)
