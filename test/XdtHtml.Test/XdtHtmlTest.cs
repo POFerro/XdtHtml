@@ -44,6 +44,19 @@ namespace XdtHtml.Test
             ApplyTransform("sample_page", "move_elements2");
         }
 
+
+        [TestMethod]
+        public void TestMoveElementsInto()
+        {
+            ApplyTransform("sample_page", "move_into_element");
+        }
+
+        [TestMethod]
+        public void TestInsertElementsInto()
+        {
+            ApplyTransform("sample_page", "insert_into_element");
+        }
+
         protected void ApplyTransform(string contentFileName, string transformFileName, string resultFileName = null)
         {
             var x = new HtmlTransformableDocument();
