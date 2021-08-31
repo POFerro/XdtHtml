@@ -646,10 +646,11 @@ namespace XdtHtml
                         if (attrnames != null && attrnames.Count > 0)
                         {
                             RegularExpressions.CaptureCollection attrvalues = match.Groups["attrval"].Captures;
-                            Dictionary<string, string> paramDictionary = new Dictionary<string, string>(4, StringComparer.OrdinalIgnoreCase);
-
-                            paramDictionary[XPathWithIndex] = xpath;
-                            paramDictionary[TokenNumber] = index.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                            Dictionary<string, string> paramDictionary = new Dictionary<string, string>(4, StringComparer.OrdinalIgnoreCase)
+                            {
+                                [XPathWithIndex] = xpath,
+                                [TokenNumber] = index.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                            };
 
                             // Get the key-value pare of the in the tranform form
                             for (int i = 0; i < attrnames.Count; i++)
@@ -664,8 +665,7 @@ namespace XdtHtml
                             }
 
                             //Identify the Token format
-                            string strTokenFormat = null;
-                            if (!paramDictionary.TryGetValue(Token, out strTokenFormat))
+                            if (!paramDictionary.TryGetValue(Token, out string strTokenFormat))
                             {
                                 strTokenFormat = storageDictionary.TokenFormat;
                             }
@@ -698,11 +698,10 @@ namespace XdtHtml
                                 // Replace with token
                                 strbuilder.Append(strTokenFormat);
                             }
-                            string attributeLocator;
-                            if (paramDictionary.TryGetValue(XpathLocator, out attributeLocator) && !string.IsNullOrEmpty(attributeLocator))
+                            if (paramDictionary.TryGetValue(XpathLocator, out string attributeLocator) && !string.IsNullOrEmpty(attributeLocator))
                             {
-                                IList<string> locators =  HtmlArgumentUtility.SplitArguments(attributeLocator);
-                                string xpathwithlocator = GetXPathToAttribute(targetAttribute,locators);
+                                IList<string> locators = HtmlArgumentUtility.SplitArguments(attributeLocator);
+                                string xpathwithlocator = GetXPathToAttribute(targetAttribute, locators);
                                 if (!string.IsNullOrEmpty(xpathwithlocator))
                                 {
                                     paramDictionary[XPathWithLocator] = xpathwithlocator;

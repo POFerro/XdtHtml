@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace XdtHtml.Test
 {
@@ -67,13 +68,35 @@ namespace XdtHtml.Test
             {
                 if (transform.Apply(x))
                 {
+                    var expected = File.ReadAllText($"./test_files/{resultFileName ?? transformFileName + "_result"}.html");
+                    var actual = x.DocumentNode.OuterHtml;
                     Assert.AreEqual(
-                        File.ReadAllText($"./test_files/{resultFileName ?? transformFileName + "_result"}.html"),
-                        x.DocumentNode.OuterHtml
+                        expected,
+                        actual,
+                        $"Difference:<{Difference(expected, actual)}>"
                         );
                     ;
                 }
             }
+        }
+
+        public static string Difference(string str1, string str2)
+        {
+            if (str1 == null)
+            {
+                return str2;
+            }
+            if (str2 == null)
+            {
+                return str1;
+            }
+
+            var set1 = str1.Split(' ').Distinct().ToList();
+            var set2 = str2.Split(' ').Distinct().ToList();
+
+            var diff = set2.Count() > set1.Count() ? set2.Except(set1).ToList() : set1.Except(set2).ToList();
+
+            return string.Join("", diff);
         }
     }
 }
