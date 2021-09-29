@@ -292,8 +292,8 @@ namespace XdtHtml
         }
 
         private bool HasRequiredTarget() {
-            bool hasRequiredTarget = false;
-            bool existedInOriginal = false;
+            bool hasRequiredTarget;
+            bool existedInOriginal;
             HtmlElementContext matchFailureContext;
 
             if (UseParentAsTargetNode) {
