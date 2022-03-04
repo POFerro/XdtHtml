@@ -58,6 +58,12 @@ namespace XdtHtml.Test
             ApplyTransform("sample_page", "insert_into_element");
         }
 
+        [TestMethod]
+        public void TestReplaceElement()
+        {
+            ApplyTransform("sample_page_cards", "replace_element");
+        }
+
         protected void ApplyTransform(string contentFileName, string transformFileName, string resultFileName = null)
         {
             var x = new HtmlTransformableDocument();
@@ -77,6 +83,8 @@ namespace XdtHtml.Test
                         );
                     ;
                 }
+                else
+                    Assert.Fail("Transform failed to apply");
             }
         }
 

@@ -40,6 +40,63 @@ namespace XdtHtml
         }
     }
 
+    internal class ReplaceElement : Transform
+    {
+        public ReplaceElement()
+            : base(TransformFlags.UseParentAsTargetNode, MissingTargetMessage.Error)
+        {
+        }
+
+        private HtmlNode elementToReplace = null;
+
+        protected HtmlNode ElementToReplace
+        {
+            get
+            {
+                if (elementToReplace == null)
+                {
+                    if (Arguments == null || Arguments.Count == 0)
+                    {
+                        throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertMissingArgument, GetType().Name));
+                    }
+                    else if (Arguments.Count > 1)
+                    {
+                        throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertTooManyArguments, GetType().Name));
+                    }
+                    else
+                    {
+                        string xpath = Arguments[0];
+                        HtmlNodeCollection siblings = TargetNode.SelectNodes(xpath);
+                        if (siblings.Count == 0)
+                        {
+                            throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertBadXPath, xpath));
+                        }
+                        else if (siblings.Count > 1)
+                        {
+                            throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformOnlyAppliesOnce, GetType().Name));
+                        }
+                        else
+                        {
+                            elementToReplace = siblings[0];
+                        }
+                    }
+                }
+
+                return elementToReplace;
+            }
+        }
+
+        protected override void Apply()
+        {
+            CommonErrors.WarnIfMultipleTargets(Log, TransformNameShort, TargetNodes, ApplyTransformToAllTargetNodes);
+
+            TargetNode.ReplaceChild(
+                TransformNode,
+                ElementToReplace);
+
+            Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageReplace, ElementToReplace.Name);
+        }
+    }
 
     internal class Remove : Transform
     {
