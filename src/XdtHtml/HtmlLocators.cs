@@ -101,17 +101,17 @@ namespace XdtHtml
         protected override string ConstructPath() {
             EnsureArguments(1, 1);
 
-            string xpath;// = Arguments[0];
-            //if (!xpath.StartsWith("/", StringComparison.Ordinal)) {
-                // Relative XPath
-                // In XPath locator we expect the XPath to contain everything including currentElement,
-                // so we are not appending current element axis
-                // This allows the use of XPath to replace the current element with one with diferent name
-                // See test case of replace_element
-                //xpath = AppendStep(base.ParentPath, NextStepNodeTest);
-                xpath = AppendStep(base.ParentPath, Arguments[0]);
-                xpath = xpath.Replace("/./", "/");
-            //}
+            string xpath = Arguments[0];
+            if (xpath.StartsWith("/", StringComparison.Ordinal) && !xpath.StartsWith("//", StringComparison.Ordinal))
+                return xpath;
+
+            // Relative XPath
+            // In XPath locator we expect the XPath to contain everything including currentElement,
+            // so we are not appending current element axis
+            // This allows the use of XPath to replace the current element with one with diferent name
+            // See test case of replace_element
+            xpath = AppendStep(base.ParentPath, Arguments[0]);
+            xpath = xpath.Replace("/./", "/");
 
             return xpath;
         }

@@ -245,10 +245,7 @@ namespace XdtHtml
             }
             else {
                 if (!predicate.StartsWith("[", StringComparison.Ordinal)) {
-                    predicate = String.Concat("[", predicate);
-                }
-                if (!predicate.EndsWith("]", StringComparison.Ordinal)) {
-                    predicate = String.Concat(predicate, "]");
+                    predicate = String.Concat(String.Concat("[", predicate), ']');
                 }
 
                 return predicate;
