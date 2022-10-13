@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -16,9 +16,12 @@
     <None Remove="test_files\move_into_element.html" />
     <None Remove="test_files\move_into_element_result.html" />
     <None Remove="test_files\replace_buttons.html" />
-    <None Remove="test_files\replace_buttons2.html" />
-    <None Remove="test_files\replace_buttons2_result.html" />
     <None Remove="test_files\replace_buttons_result.html" />
+    <None Remove="test_files\replace_buttons_xpath.html" />
+    <None Remove="test_files\replace_buttons_xpath_full.html" />
+    <None Remove="test_files\replace_buttons_xpath_result.html" />
+    <None Remove="test_files\replace_element_xpath.html" />
+    <None Remove="test_files\replace_element_xpath_result.html" />
     <None Remove="test_files\replace_element.html" />
     <None Remove="test_files\replace_element_result.html" />
     <None Remove="test_files\sample_page.html" />
@@ -50,16 +53,25 @@
     <Content Include="test_files\move_into_element_result.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="test_files\replace_buttons2_result.html">
+    <Content Include="test_files\replace_buttons_xpath.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="test_files\replace_buttons_xpath_result.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="test_files\replace_buttons_result.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="test_files\replace_buttons2.html">
+    <Content Include="test_files\replace_buttons_xpath_full.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="test_files\replace_buttons.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="test_files\replace_element_xpath.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="test_files\replace_element_xpath_result.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="test_files\replace_element.html">

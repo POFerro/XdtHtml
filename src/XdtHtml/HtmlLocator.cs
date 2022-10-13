@@ -78,7 +78,7 @@ namespace XdtHtml
 
         protected string AppendStep(string basePath, XPathAxis stepAxis, string stepNodeTest, string predicate) {
             return String.Concat(
-                EnsureTrailingSlash(basePath), 
+                stepAxis == XPathAxis.Child && stepNodeTest.StartsWith("/") ? basePath : EnsureTrailingSlash(basePath), 
                 GetAxisString(stepAxis), 
                 stepNodeTest, 
                 EnsureBracketedPredicate(predicate));

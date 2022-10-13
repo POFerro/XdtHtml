@@ -59,6 +59,37 @@ namespace XdtHtml
         }
     }
 
+    /// <summary>
+    /// This type of locator preserves previous behavior of assuming to be complete if rooted
+    /// Also preserves the behavior of adding current node to context if relative
+    /// </summary>
+    public sealed class FullXPath : Locator
+    {
+        protected override string ParentPath
+        {
+            get
+            {
+                return ConstructPath();
+            }
+        }
+
+        protected override string ConstructPath()
+        {
+            EnsureArguments(1, 1);
+
+            string xpath = Arguments[0];
+            if (!xpath.StartsWith("/", StringComparison.Ordinal))
+            {
+                // Relative XPath
+                xpath = AppendStep(base.ParentPath, NextStepNodeTest);
+                xpath = AppendStep(xpath, Arguments[0]);
+                xpath = xpath.Replace("/./", "/");
+            }
+
+            return xpath;
+        }
+    }
+
     public sealed class XPath : Locator
     {
         protected override string ParentPath {
@@ -70,13 +101,17 @@ namespace XdtHtml
         protected override string ConstructPath() {
             EnsureArguments(1, 1);
 
-            string xpath = Arguments[0];
-            if (!xpath.StartsWith("/", StringComparison.Ordinal)) {
+            string xpath;// = Arguments[0];
+            //if (!xpath.StartsWith("/", StringComparison.Ordinal)) {
                 // Relative XPath
-                xpath = AppendStep(base.ParentPath, NextStepNodeTest);
-                xpath = AppendStep(xpath, Arguments[0]);
+                // In XPath locator we expect the XPath to contain everything including currentElement,
+                // so we are not appending current element axis
+                // This allows the use of XPath to replace the current element with one with diferent name
+                // See test case of replace_element
+                //xpath = AppendStep(base.ParentPath, NextStepNodeTest);
+                xpath = AppendStep(base.ParentPath, Arguments[0]);
                 xpath = xpath.Replace("/./", "/");
-            }
+            //}
 
             return xpath;
         }

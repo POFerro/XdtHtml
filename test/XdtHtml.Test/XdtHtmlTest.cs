@@ -30,7 +30,19 @@ namespace XdtHtml.Test
         [TestMethod]
         public void TestReplaceDiferentTarget()
         {
-            ApplyTransform("sample_page", "replace_buttons2");
+            ApplyTransform("sample_page", "replace_buttons_xpath", "replace_buttons_xpath_result");
+        }
+
+        [TestMethod]
+        public void TestReplaceDiferentTargetFullXpath()
+        {
+            ApplyTransform("sample_page", "replace_buttons_xpath_full", "replace_buttons_xpath_result");
+        }
+
+        [TestMethod]
+        public void TestReplaceElementXPath()
+        {
+            ApplyTransform("sample_page", "replace_element_xpath");
         }
 
         [TestMethod]
@@ -66,6 +78,10 @@ namespace XdtHtml.Test
 
         protected void ApplyTransform(string contentFileName, string transformFileName, string resultFileName = null)
         {
+            resultFileName ??= transformFileName + "_result";
+
+            this.Log.LogInformation($"Running test case transformation file {transformFileName}, expecting result {resultFileName}");
+
             var x = new HtmlTransformableDocument();
             x.Load($"./test_files/{contentFileName}.html");
 
@@ -74,7 +90,7 @@ namespace XdtHtml.Test
             {
                 if (transform.Apply(x))
                 {
-                    var expected = File.ReadAllText($"./test_files/{resultFileName ?? transformFileName + "_result"}.html");
+                    var expected = File.ReadAllText($"./test_files/{resultFileName}.html");
                     var actual = x.DocumentNode.OuterHtml;
                     Assert.AreEqual(
                         expected,
