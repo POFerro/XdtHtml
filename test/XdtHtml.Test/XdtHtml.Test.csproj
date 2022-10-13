@@ -20,10 +20,10 @@
     <None Remove="test_files\replace_buttons_xpath.html" />
     <None Remove="test_files\replace_buttons_xpath_full.html" />
     <None Remove="test_files\replace_buttons_xpath_result.html" />
+    <None Remove="test_files\replace_element_transform.html" />
+    <None Remove="test_files\replace_element_transform_result.html" />
     <None Remove="test_files\replace_element_xpath.html" />
     <None Remove="test_files\replace_element_xpath_result.html" />
-    <None Remove="test_files\replace_element.html" />
-    <None Remove="test_files\replace_element_result.html" />
     <None Remove="test_files\sample_page.html" />
     <None Remove="test_files\sample_page_cards.html" />
   </ItemGroup>
@@ -74,10 +74,10 @@
     <Content Include="test_files\replace_element_xpath_result.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="test_files\replace_element.html">
+    <Content Include="test_files\replace_element_transform.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="test_files\replace_element_result.html">
+    <Content Include="test_files\replace_element_transform_result.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="test_files\sample_page_cards.html">

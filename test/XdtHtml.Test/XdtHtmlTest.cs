@@ -71,9 +71,9 @@ namespace XdtHtml.Test
         }
 
         [TestMethod]
-        public void TestReplaceElement()
+        public void TestReplaceElementTransform()
         {
-            ApplyTransform("sample_page_cards", "replace_element");
+            ApplyTransform("sample_page_cards", "replace_element_transform");
         }
 
         protected void ApplyTransform(string contentFileName, string transformFileName, string resultFileName = null)
