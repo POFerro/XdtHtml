@@ -102,7 +102,7 @@ namespace XdtHtml
             EnsureArguments(1, 1);
 
             string xpath = Arguments[0];
-            if (xpath.StartsWith("/", StringComparison.Ordinal) && !xpath.StartsWith("//", StringComparison.Ordinal))
+            if (xpath.StartsWith("/", StringComparison.Ordinal))
                 return xpath;
 
             // Relative XPath
