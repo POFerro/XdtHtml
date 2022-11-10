@@ -65,6 +65,18 @@ namespace XdtHtml.Test
         }
 
         [TestMethod]
+        public void TestMoveElementsIntoBegining()
+        {
+            ApplyTransform("sample_page", "move_into_begining_element");
+        }
+
+        [TestMethod]
+        public void TestMoveElementsIntoEnd()
+        {
+            ApplyTransform("sample_page", "move_into_end_element");
+        }
+
+        [TestMethod]
         public void TestInsertElementsInto()
         {
             ApplyTransform("sample_page", "insert_into_element");

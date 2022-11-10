@@ -305,6 +305,7 @@ namespace XdtHtml
         public MoveInto()
         {
             this.UseParentAsTargetNode = false;
+            this.ApplyTransformToAllTargetNodes = true;
         }
         protected override void Apply()
         {
@@ -313,6 +314,37 @@ namespace XdtHtml
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
         }
     }
+
+    internal class MoveIntoBegining : MoveToBase
+    {
+        public MoveIntoBegining()
+        {
+            this.UseParentAsTargetNode = false;
+            this.ApplyTransformToAllTargetNodes = true;
+        }
+        protected override void Apply()
+        {
+            SiblingElement.PrependChild(TargetNode.CloneNode(true));
+            TargetNode.Remove();
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+        }
+    }
+
+    internal class MoveIntoEnd : MoveToBase
+    {
+        public MoveIntoEnd()
+        {
+            this.UseParentAsTargetNode = false;
+            this.ApplyTransformToAllTargetNodes = true;
+        }
+        protected override void Apply()
+        {
+            SiblingElement.AppendChild(TargetNode.CloneNode(true));
+            TargetNode.Remove();
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+        }
+    }
+
     public class SetAttributes : AttributeTransform
     {
         protected override void Apply() {
