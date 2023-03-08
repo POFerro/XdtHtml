@@ -7,99 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="test_files\insert_into_element.html" />
-    <None Remove="test_files\insert_into_element_result.html" />
-    <None Remove="test_files\move_elements.html" />
-    <None Remove="test_files\move_elements2.html" />
-    <None Remove="test_files\move_elements2_result.html" />
-    <None Remove="test_files\move_elements_result.html" />
-    <None Remove="test_files\move_into_begining_element.html" />
-    <None Remove="test_files\move_into_begining_element_result.html" />
-    <None Remove="test_files\move_into_element.html" />
-    <None Remove="test_files\move_into_element_result.html" />
-    <None Remove="test_files\move_into_end_element.html" />
-    <None Remove="test_files\move_into_end_element_result.html" />
-    <None Remove="test_files\replace_buttons.html" />
-    <None Remove="test_files\replace_buttons_result.html" />
-    <None Remove="test_files\replace_buttons_xpath.html" />
-    <None Remove="test_files\replace_buttons_xpath_full.html" />
-    <None Remove="test_files\replace_buttons_xpath_result.html" />
-    <None Remove="test_files\replace_element_transform.html" />
-    <None Remove="test_files\replace_element_transform_result.html" />
-    <None Remove="test_files\replace_element_xpath.html" />
-    <None Remove="test_files\replace_element_xpath_result.html" />
-    <None Remove="test_files\sample_page.html" />
-    <None Remove="test_files\sample_page_cards.html" />
+    <None Remove="test_files\*" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="test_files\insert_into_element.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\insert_into_element_result.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\move_elements2.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\move_elements2_result.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\move_elements_result.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\move_elements.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\move_into_begining_element.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\move_into_begining_element_result.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\move_into_element.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\move_into_element_result.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\move_into_end_element.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\move_into_end_element_result.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\replace_buttons_xpath.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\replace_buttons_xpath_result.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\replace_buttons_result.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\replace_buttons_xpath_full.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\replace_buttons.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\replace_element_xpath.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\replace_element_xpath_result.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\replace_element_transform.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\replace_element_transform_result.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\sample_page_cards.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test_files\sample_page.html">
+    <Content Include="test_files\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

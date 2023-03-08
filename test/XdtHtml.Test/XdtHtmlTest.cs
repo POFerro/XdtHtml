@@ -77,6 +77,12 @@ namespace XdtHtml.Test
         }
 
         [TestMethod]
+        public void TestMoveElementsIntoNewElement()
+        {
+            ApplyTransform("moveinto_new_element_input", "moveinto_new_element");
+        }
+
+        [TestMethod]
         public void TestInsertElementsInto()
         {
             ApplyTransform("sample_page", "insert_into_element");

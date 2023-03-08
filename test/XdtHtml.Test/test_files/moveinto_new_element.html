@@ -1,0 +1,99 @@
+<form xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+
+  <page-header-actions xdt:Locator="XPath(//page-header-actions)">
+    
+    <ng-container xdt:Transform="RemoveAttributes"></ng-container>
+
+  </page-header-actions>
+
+  <card-header-actions xdt:Locator="XPath(//card-header-actions)" xdt:Transform="Remove"></card-header-actions>
+
+  <data-group xdt:Locator="XPath(//data-group)">
+
+    <data-field xdt:Locator="Condition(contains(., 'details.userName'))" xdt:Transform="Replace" fxFlex="100%" [dataFieldLabel]="'Configurations._Tables.Users._Fields.UserName' | translate">{{ details.userDetails.userName }}</data-field>
+
+    <mat-form-field xdt:Locator="Condition(input/@name = 'displayName')">
+
+      <input xdt:Transform="SetAttributes" [(ngModel)]="details.userDetails.displayName" />
+
+      <span xdt:Locator="Condition(@readOnlyValue)" xdt:Transform="Replace" readOnlyValue>{{ details.userDetails.displayName }}</span>
+
+    </mat-form-field>
+
+    <mat-form-field xdt:Locator="Condition(input/@name = 'email')">
+
+      <input xdt:Transform="SetAttributes" [(ngModel)]="details.userDetails.email" />
+
+      <span xdt:Locator="Condition(@readOnlyValue)" xdt:Transform="Replace" readOnlyValue>{{ details.userDetails.email }}</span>
+
+    </mat-form-field>
+
+    <ng-container *hasEveryPermission="PermissionConstants.Configurations.AccessControl.UserProfile.profileRolesEdit; else readOnlyRoles"
+                  xdt:Transform="Insert">
+
+      <ng-template #readOnlyRoles>
+
+        <data-field fxFlex="100%" [fieldLabel]="'Configurations.AccessControl.UserProfile.UserProfileDetailsCard.UserProfileRolesList._Description' |translate">
+          <mat-chip-set>
+            <mat-chip *ngFor="let role of details.userProfileRolesList">
+              <span>{{role.userRolesRoleName}}</span>
+            </mat-chip>
+          </mat-chip-set>
+        </data-field>
+
+      </ng-template>
+
+    </ng-container>
+
+    <mat-form-field xdt:Locator="Condition(mat-chip-grid)" xdt:Transform="MoveIntoBegining(ng-container)"></mat-form-field>
+
+
+      <!--<mat-form-field fxFlex="100%" xdt:Transform="Insert">
+      <mat-label>
+        <span>{{'Configurations.AccessControl.UserProfile.UserProfileDetailsCard.UserProfileRolesList._Description' |translate}}</span>
+      </mat-label>
+
+      <ng-container *hasEveryPermission="PermissionConstants.Configurations.AccessControl.UserProfile.profileRolesEdit; else readOnlyRoles">
+
+        <mat-chip-grid #chipList>
+          <mat-chip-row *ngFor="let role of getNotDeletedRoles()"
+                    (removed)="DeleteUserProfileRolesList(role.roleCode)">
+            <span>{{role.userRolesRoleName}}</span>
+            <button matChipRemove
+                    mat-button>
+            </button>
+          </mat-chip-row>
+          <input [placeholder]="'Configurations.AccessControl.UserDetails.AddRole' | translate"
+                 [matAutocomplete]="rolesAuto"
+                 [matChipInputFor]="chipList"
+                 name="roles">
+        </mat-chip-grid>
+        <mat-autocomplete #rolesAuto="matAutocomplete"
+                          (optionSelected)="InsertNewUserProfileRolesList($event.option.value, $event.option.dataContext.name)">
+          <mat-option *ngFor="let role of allRoles"
+                      [value]="role.roleCode"
+                      [data-context]="role"
+                      [disabled]="!isSelectableRole(role.roleCode)">
+
+            <option-content [primaryText]="role.name" [secondaryText]="role.roleCode"></option-content>
+          </mat-option>
+        </mat-autocomplete>
+
+      </ng-container>
+      <ng-template #readOnlyRoles>
+
+        <mat-chip-set>
+          <mat-chip *ngFor="let role of details.userProfileRolesList">
+            <span>{{role.userRolesRoleName}}</span>
+          </mat-chip>
+        </mat-chip-set>
+
+      </ng-template>
+
+    </mat-form-field>-->
+
+  </data-group>
+
+  <!--<results-container xdt:Locator="XPath(//results-container)" xdt:Transform="Remove" />-->
+
+</form>
