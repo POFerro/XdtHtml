@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Globalization;
 using XdtHtml.Properties;
-using HtmlAgilityPack;
+using AngleSharp.Dom;
 
 namespace XdtHtml
 {
@@ -30,15 +28,15 @@ namespace XdtHtml
             string keyPredicate = null;
 
             foreach (string key in Arguments) {
-                HtmlAttribute keyAttribute = CurrentElement.Attributes[key];
+                var keyAttribute = ((IElement)CurrentElement).Attributes[key];
 
                 if (keyAttribute != null) {
-                    string keySegment = String.Format(CultureInfo.InvariantCulture, "@{0}='{1}'", keyAttribute.Name, keyAttribute.Value);
+                    string keySegment = string.Format(CultureInfo.InvariantCulture, "@{0}='{1}'", keyAttribute.Name, keyAttribute.Value);
                     if (keyPredicate == null) {
                         keyPredicate = keySegment;
                     }
                     else {
-                        keyPredicate = String.Concat(keyPredicate, " and ", keySegment);
+                        keyPredicate = string.Concat(keyPredicate, " and ", keySegment);
                     }
                 }
                 else {

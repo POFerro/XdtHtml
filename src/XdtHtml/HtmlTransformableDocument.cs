@@ -1,37 +1,63 @@
+using AngleSharp;
+using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
+using AngleSharp.XPath;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using HtmlAgilityPack;
+using System.IO;
 
 namespace XdtHtml
 {
-    public class HtmlTransformableDocument : HtmlDocument, IHtmlOriginalDocumentService
+    public class HtmlTransformableDocument : IHtmlOriginalDocumentService
     {
         #region private data members
-        private HtmlDocument htmlOriginal = null;
+        private IDocument originalDoc = null;
+        private IDocument innerDocument = null;
         #endregion
+
+        [Obsolete("This property is obsolete, please use " + nameof(DocumentElement))]
+        public IElement DocumentNode => this.DocumentElement;
+
+        public IElement DocumentElement => this.innerDocument?.DocumentElement;
+        public IDocument Document => this.innerDocument;
 
         #region public interface
         public HtmlTransformableDocument() {
-            this.WithDefaultOptions();
+        }
+
+        public void LoadHtml(string html)
+        {
+            var parser = new HtmlParser(HtmlDocumentExtensions.ParserDefaultOptions());
+            innerDocument = parser.ParseDocument(html);
+        }
+        public void Load(string path)
+        {
+            var parser = new HtmlParser(HtmlDocumentExtensions.ParserDefaultOptions());
+            innerDocument = BrowsingContext.NewFrom(parser).OpenAsync(r => r.Address(path)).Result;
+        }
+        public void Load(Stream file)
+        {
+            var parser = new HtmlParser(HtmlDocumentExtensions.ParserDefaultOptions());
+            innerDocument = BrowsingContext.NewFrom(parser).OpenAsync(r => r.Content(file)).Result;
+            //innerDocument = parser.ParseDocument(file);
         }
 
         public bool IsChanged {
             get {
-                if (htmlOriginal == null) {
+                if (originalDoc == null) {
                     // No transformation has occurred
                     return false;
                 }
 
-                return !IsHtmlEqual(htmlOriginal, this);
+                return !IsHtmlEqual(originalDoc, this.innerDocument);
             }
         }
         #endregion
 
         #region Change support
         internal void OnBeforeChange() {
-            if (htmlOriginal == null) {
+            if (originalDoc == null) {
                 CloneOriginalDocument();
             }
         }
@@ -42,11 +68,10 @@ namespace XdtHtml
 
         #region Helper methods
         private void CloneOriginalDocument() {
-            htmlOriginal = new HtmlDocument().WithDefaultOptions();
-            htmlOriginal.LoadHtml(this.DocumentNode.OuterHtml);
+            originalDoc = (IDocument)this.innerDocument.Clone(true);
         }
 
-        private bool IsHtmlEqual(HtmlDocument htmlOriginal, HtmlDocument htmlTransformed) {
+        private bool IsHtmlEqual(IDocument htmlOriginal, IDocument htmlTransformed) {
             // FUTURE: Write a comparison algorithm to see if htmlLeft and
             // htmlRight are different in any significant way. Until then,
             // assume there's a difference.
@@ -55,13 +80,18 @@ namespace XdtHtml
         #endregion
 
         #region IXmlOriginalDocumentService Members
-        HtmlNodeCollection IHtmlOriginalDocumentService.SelectNodes(string xpath) {
-            if (htmlOriginal != null) {
-                return htmlOriginal.DocumentNode.SelectNodes(xpath);
+        List<INode> IHtmlOriginalDocumentService.SelectNodes(string xpath) {
+            if (originalDoc != null) {
+                return originalDoc.DocumentElement.SelectNodes(xpath);
             }
             else {
                 return null;
             }
+        }
+
+        public string ToHtml()
+        {
+            return this.DocumentElement.Prettify();
         }
         #endregion
     }

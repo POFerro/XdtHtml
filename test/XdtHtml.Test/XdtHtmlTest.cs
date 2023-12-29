@@ -1,3 +1,5 @@
+using AngleSharp;
+using AngleSharp.Html;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -109,7 +111,7 @@ namespace XdtHtml.Test
                 if (transform.Apply(x))
                 {
                     var expected = File.ReadAllText($"./test_files/{resultFileName}.html");
-                    var actual = x.DocumentNode.OuterHtml;
+                    var actual = x.DocumentElement.ToHtml(new PrettyMarkupFormatter());
                     Assert.AreEqual(
                         expected,
                         actual,

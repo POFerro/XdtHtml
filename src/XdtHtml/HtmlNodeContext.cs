@@ -1,22 +1,21 @@
+using AngleSharp.Dom;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using HtmlAgilityPack;
 
 namespace XdtHtml
 {
     internal class HtmlNodeContext
     {
         #region private data members
-        private HtmlNode node;
+        private INode node;
         #endregion
 
-        public HtmlNodeContext(HtmlNode node) {
+        public HtmlNodeContext(INode node) {
             this.node = node;
         }
 
         #region data accessors
-        public HtmlNode Node {
+        public INode Node {
             get {
                 return node;
             }
@@ -24,31 +23,19 @@ namespace XdtHtml
 
         public bool HasLineInfo {
             get {
-                return true; // node is IXmlLineInfo;
+                return (node as IElement)?.SourceReference != null;
             }
         }
 
         public int LineNumber {
             get {
-                //IXmlLineInfo lineInfo = node as IXmlLineInfo;
-                //if (lineInfo != null) {
-                    return node.Line;
-                //}
-                //else {
-                //    return 0;
-                //}
+                return (node as IElement)?.SourceReference?.Position.Line ?? 0;
             }
         }
 
         public int LinePosition {
             get {
-                //IXmlLineInfo lineInfo = node as IXmlLineInfo;
-                //if (lineInfo != null) {
-                    return node.LinePosition;
-                //}
-                //else {
-                //    return 0;
-                //}
+                return (node as IElement)?.SourceReference?.Position.Column ?? 0;
             }
         }
         #endregion

@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 using System.Diagnostics;
 using XdtHtml.Properties;
-using HtmlAgilityPack;
+using AngleSharp.Dom;
 
 namespace XdtHtml
 {
@@ -34,8 +32,8 @@ namespace XdtHtml
 
         private HtmlTransformationLogger logger = null;
         private HtmlElementContext context = null;
-        private HtmlNode currentTransformNode = null;
-        private HtmlNode currentTargetNode = null;
+        private IElement currentTransformNode = null;
+        private INode currentTargetNode = null;
 
         private string argumentString = null;
         private IList<string> arguments = null;
@@ -87,7 +85,7 @@ namespace XdtHtml
 
         protected abstract void Apply();
 
-        protected HtmlNode TransformNode {
+        protected IElement TransformNode {
             get {
                 if (currentTransformNode == null) {
                     return context.TransformNode;
@@ -98,10 +96,10 @@ namespace XdtHtml
             }
         }
 
-        protected HtmlNode TargetNode {
+        protected INode TargetNode {
             get {
                 if (currentTargetNode == null) {
-                    foreach (HtmlNode targetNode in TargetNodes) {
+                    foreach (var targetNode in TargetNodes) {
                         return targetNode;
                     }
                 }
@@ -109,7 +107,7 @@ namespace XdtHtml
             }
         }
 
-        protected HtmlNodeCollection TargetNodes {
+        protected List<INode> TargetNodes {
             get {
                 if (UseParentAsTargetNode) {
                     return context.TargetParents;
@@ -121,7 +119,7 @@ namespace XdtHtml
         }
 
 
-        protected HtmlNodeCollection TargetChildNodes
+        protected List<INode> TargetChildNodes
         {
             get
             {
@@ -253,12 +251,12 @@ namespace XdtHtml
 
         private bool ApplyOnAllTargetNodes() {
             bool error = false;
-            HtmlNode originalTransformNode = TransformNode;
+            IElement originalTransformNode = TransformNode;
 
-            foreach (HtmlNode node in TargetNodes) {
+            foreach (INode node in TargetNodes) {
                 try {
                     currentTargetNode = node;
-                    currentTransformNode = originalTransformNode.Clone();
+                    currentTransformNode = (IElement)originalTransformNode.Clone();
 
                     ApplyOnce();
                 }
@@ -278,13 +276,16 @@ namespace XdtHtml
             Apply();
         }
 
-        private void WriteApplyMessage(HtmlNode targetNode) {
-            //if (lineInfo != null) {
-                Log.LogMessage(TransformMessageType, Resources.XMLTRANSFORMATION_TransformStatusApplyTarget, targetNode.Name, targetNode.Line, targetNode.LinePosition);
-            //}
-            //else {
-            //    Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformStatusApplyTargetNoLineInfo, targetNode.Name);
-            //}
+        private void WriteApplyMessage(INode targetNode) {
+            var sourceReference = targetNode is IElement elem ? elem.SourceReference : targetNode.ParentElement?.SourceReference;
+            if (sourceReference != null)
+            {
+                Log.LogMessage(TransformMessageType, Resources.XMLTRANSFORMATION_TransformStatusApplyTarget, targetNode.NodeName, sourceReference.Position.Line, sourceReference.Position.Column);
+            }
+            else
+            {
+                Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformStatusApplyTargetNoLineInfo, targetNode.NodeName);
+            }
         }
 
         private bool ShouldExecuteTransform() {
@@ -325,10 +326,10 @@ namespace XdtHtml
                     Log.LogMessage(MessageType.Normal, message);
                     break;
                 case MissingTargetMessage.Warning:
-                    Log.LogWarning(matchFailureContext.Node, message);
+                    Log.LogWarning(matchFailureContext.Element, message);
                     break;
                 case MissingTargetMessage.Error:
-                    throw new HtmlNodeException(message, matchFailureContext.Node);
+                    throw new HtmlNodeException(message, matchFailureContext.Element);
             }
         }
     }

@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 using System.Diagnostics;
 using XdtHtml.Properties;
-using HtmlAgilityPack;
+using AngleSharp.Dom;
 
 namespace XdtHtml
 {
@@ -38,7 +36,7 @@ namespace XdtHtml
             }
         }
 
-        protected HtmlNode CurrentElement {
+        protected INode CurrentElement {
             get {
                 return context.Element;
             }
@@ -50,7 +48,7 @@ namespace XdtHtml
                 //    return String.Concat("_defaultNamespace:", CurrentElement.LocalName);
                 //}
                 //else {
-                    return CurrentElement.Name;
+                    return CurrentElement.NodeName;
                 //}
             }
         }

@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Diagnostics;
 using System.Globalization;
-using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 
 namespace XdtHtml

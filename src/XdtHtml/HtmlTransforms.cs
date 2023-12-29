@@ -4,7 +4,8 @@ using System.Text;
 using System.Diagnostics;
 using RegularExpressions = System.Text.RegularExpressions;
 using XdtHtml.Properties;
-using HtmlAgilityPack;
+using AngleSharp.Dom;
+using AngleSharp.XPath;
 
 namespace XdtHtml
 {
@@ -16,7 +17,7 @@ namespace XdtHtml
             }
         }
 
-        internal static void WarnIfMultipleTargets(HtmlTransformationLogger log, string transformName, HtmlNodeCollection targetNodes, bool applyTransformToAllTargets) {
+        internal static void WarnIfMultipleTargets(HtmlTransformationLogger log, string transformName, List<INode> targetNodes, bool applyTransformToAllTargets) {
             Debug.Assert(applyTransformToAllTargets == false);
 
             if (targetNodes.Count > 1) {
@@ -31,12 +32,12 @@ namespace XdtHtml
             CommonErrors.ExpectNoArguments(Log, TransformNameShort, ArgumentString);
             CommonErrors.WarnIfMultipleTargets(Log, TransformNameShort, TargetNodes, ApplyTransformToAllTargetNodes);
 
-            HtmlNode parentNode = TargetNode.ParentNode;
+            var parentNode = TargetNode.Parent;
             parentNode.ReplaceChild(
                 TransformNode,
                 TargetNode);
 
-            Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageReplace, TargetNode.Name);
+            Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageReplace, TargetNode.NodeName);
         }
     }
 
@@ -47,9 +48,9 @@ namespace XdtHtml
         {
         }
 
-        private HtmlNode elementToReplace = null;
+        private INode elementToReplace = null;
 
-        protected HtmlNode ElementToReplace
+        protected INode ElementToReplace
         {
             get
             {
@@ -66,7 +67,7 @@ namespace XdtHtml
                     else
                     {
                         string xpath = Arguments[0];
-                        HtmlNodeCollection siblings = TargetNode.SelectNodes(xpath);
+                        List<INode> siblings = ((IElement)TargetNode).SelectNodes(xpath);
                         if (siblings.Count == 0)
                         {
                             throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertBadXPath, xpath));
@@ -94,7 +95,7 @@ namespace XdtHtml
                 TransformNode,
                 ElementToReplace);
 
-            Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageReplace, ElementToReplace.Name);
+            Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageReplace, ElementToReplace.NodeName);
         }
     }
 
@@ -109,10 +110,10 @@ namespace XdtHtml
         protected void RemoveNode() {
             CommonErrors.ExpectNoArguments(Log, TransformNameShort, ArgumentString);
 
-            HtmlNode parentNode = TargetNode.ParentNode;
+            var parentNode = TargetNode.Parent;
             parentNode.RemoveChild(TargetNode);
 
-            Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageRemove, TargetNode.Name);
+            Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageRemove, TargetNode.NodeName);
         }
     }
 
@@ -138,7 +139,7 @@ namespace XdtHtml
 
             TargetNode.AppendChild(TransformNode);
 
-            Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name);
+            Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.NodeName);
         }
     }
 
@@ -150,7 +151,7 @@ namespace XdtHtml
             if (this.TargetChildNodes == null || this.TargetChildNodes.Count == 0)
             {
                 TargetNode.AppendChild(TransformNode);
-                Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name);
+                Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.NodeName);
             }
         }
     }
@@ -163,9 +164,9 @@ namespace XdtHtml
             : base(TransformFlags.UseParentAsTargetNode, MissingTargetMessage.Error) {
         }
 
-        private HtmlNode siblingElement = null;
+        private IElement siblingElement = null;
 
-        protected HtmlNode SiblingElement {
+        protected IElement SiblingElement {
             get {
                 if (siblingElement == null) {
                     if (Arguments == null || Arguments.Count == 0) {
@@ -176,12 +177,12 @@ namespace XdtHtml
                     }
                     else {
                         string xpath = Arguments[0];
-                        HtmlNodeCollection siblings = TargetNode.SelectNodes(xpath);
+                        List<INode> siblings = ((IElement)TargetNode).SelectNodes(xpath);
                         if (siblings.Count == 0) {
                             throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_InsertBadXPath, xpath));
                         }
                         else {
-                            siblingElement = siblings[0] as HtmlNode;
+                            siblingElement = siblings[0] as IElement;
                             if (siblingElement == null) {
                                 throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_InsertBadXPathResult, xpath));
                             }
@@ -197,18 +198,18 @@ namespace XdtHtml
     internal class InsertAfter : InsertBase
     {
         protected override void Apply() {
-            SiblingElement.ParentNode.InsertAfter(TransformNode, SiblingElement);
+            SiblingElement.Parent.InsertAfter(TransformNode, SiblingElement);
 
-            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.NodeName));
         }
     }
 
     internal class InsertBefore : InsertBase
     {
         protected override void Apply() {
-            SiblingElement.ParentNode.InsertBefore(TransformNode, SiblingElement);
+            SiblingElement.Parent.InsertBefore(TransformNode, SiblingElement);
 
-            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.NodeName));
         }
     }
 
@@ -216,9 +217,9 @@ namespace XdtHtml
     {
         protected override void Apply()
         {
-            SiblingElement.PrependChild(TransformNode);
+            SiblingElement.Prepend(TransformNode);
 
-            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.NodeName));
         }
     }
 
@@ -229,9 +230,9 @@ namespace XdtHtml
         {
         }
 
-        private HtmlNode siblingElement = null;
+        private IElement siblingElement = null;
 
-        protected HtmlNode SiblingElement
+        protected IElement SiblingElement
         {
             get
             {
@@ -248,14 +249,14 @@ namespace XdtHtml
                     else
                     {
                         string xpath = Arguments[0];
-                        HtmlNodeCollection siblings = TargetNode.ParentNode.SelectNodes(xpath);
+                        List<INode> siblings = TargetNode.ParentElement.SelectNodes(xpath);
                         if (siblings.Count == 0)
                         {
                             throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertBadXPath, xpath));
                         }
                         else
                         {
-                            siblingElement = siblings[0] as HtmlNode;
+                            siblingElement = siblings[0] as IElement;
                             if (siblingElement == null)
                             {
                                 throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertBadXPathResult, xpath));
@@ -277,10 +278,10 @@ namespace XdtHtml
 
         protected override void Apply()
         {
-            SiblingElement.ParentNode.InsertAfter(TargetNode.CloneNode(true), SiblingElement);
-            TargetNode.Remove();
+            SiblingElement.Parent.InsertAfter(TargetNode.Clone(true), SiblingElement);
+            TargetNode.RemoveFromParent();
 
-            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.NodeName));
         }
     }
 
@@ -293,10 +294,10 @@ namespace XdtHtml
 
         protected override void Apply()
         {
-            SiblingElement.ParentNode.InsertBefore(TargetNode.CloneNode(true), SiblingElement);
-            TargetNode.Remove();
+            SiblingElement.Parent.InsertBefore(TargetNode.Clone(true), SiblingElement);
+            TargetNode.RemoveFromParent();
 
-            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.NodeName));
         }
     }
 
@@ -309,9 +310,9 @@ namespace XdtHtml
         }
         protected override void Apply()
         {
-            SiblingElement.PrependChild(TargetNode.CloneNode(true));
-            TargetNode.Remove();
-            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+            SiblingElement.Prepend(TargetNode.Clone(true));
+            TargetNode.RemoveFromParent();
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.NodeName));
         }
     }
 
@@ -324,9 +325,9 @@ namespace XdtHtml
         }
         protected override void Apply()
         {
-            SiblingElement.PrependChild(TargetNode.CloneNode(true));
-            TargetNode.Remove();
-            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+            SiblingElement.Prepend(TargetNode.Clone(true));
+            TargetNode.RemoveFromParent();
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.NodeName));
         }
     }
 
@@ -339,22 +340,22 @@ namespace XdtHtml
         }
         protected override void Apply()
         {
-            SiblingElement.AppendChild(TargetNode.CloneNode(true));
-            TargetNode.Remove();
-            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+            SiblingElement.AppendChild(TargetNode.Clone(true));
+            TargetNode.RemoveFromParent();
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.NodeName));
         }
     }
 
     public class SetAttributes : AttributeTransform
     {
         protected override void Apply() {
-            foreach (HtmlAttribute transformAttribute in TransformAttributes) {
-                HtmlAttribute targetAttribute = TargetNode.Attributes[transformAttribute.Name];
+            foreach (var transformAttribute in TransformAttributes) {
+                var targetAttribute = TargetNode.Attributes[transformAttribute.Name];
                 if (targetAttribute != null) {
                     targetAttribute.Value = transformAttribute.Value;
                 }
                 else {
-                    TargetNode.Attributes.Append(transformAttribute.Clone());
+                    TargetNode.SetAttribute(transformAttribute.NamespaceUri, transformAttribute.LocalName, transformAttribute.Value);
                 }
 
                 Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageSetAttribute, transformAttribute.Name);
@@ -373,19 +374,19 @@ namespace XdtHtml
     {
         protected override void Apply()
         {
-            HtmlNode parentNode = TargetNode.ParentNode;
-            HtmlDocument document = TargetNode.OwnerDocument;
+            INode parentNode = TargetNode.Parent;
+            IDocument document = TargetNode.Owner;
             if (parentNode == null || document == null)
             {
                 throw new HtmlTransformationException(Resources.XMLTRANSFORMATION_InvalidCommentOutTarget);
             }
 
-            string outerHtml = $" {TargetNode.OuterHtml} ";
-            HtmlCommentNode comment = document.CreateComment(outerHtml);
+            string outerHtml = $" {TargetNode.ToString()} ";
+            IComment comment = document.CreateComment(outerHtml);
             parentNode.InsertAfter(comment, TargetNode);
             parentNode.RemoveChild(TargetNode);
 
-            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_TransformMessageCommentOut, TargetNode.Name));
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_TransformMessageCommentOut, TargetNode.NodeName));
         }
     }
     
@@ -416,14 +417,14 @@ namespace XdtHtml
 
         private SetTokenizedAttributeStorage storageDictionary = null;
         private bool fInitStorageDictionary = false;
-        public static readonly string Token = "Token";
-        public static readonly string TokenNumber = "TokenNumber";
-        public static readonly string XPathWithIndex = "XPathWithIndex";
-        public static readonly string ParameterAttribute = "Parameter";
-        public static readonly string XpathLocator = "XpathLocator";
-        public static readonly string XPathWithLocator = "XPathWithLocator";
+        public const string Token = "Token";
+        public const string TokenNumber = "TokenNumber";
+        public const string XPathWithIndex = "XPathWithIndex";
+        public const string ParameterAttribute = "Parameter";
+        public const string XpathLocator = "XpathLocator";
+        public const string XPathWithLocator = "XPathWithLocator";
 
-        private HtmlAttribute tokenizeValueCurrentXmlAttribute = null;
+        private IAttr tokenizeValueCurrentXmlAttribute = null;
 
     
         protected SetTokenizedAttributeStorage TransformStorage
@@ -454,9 +455,9 @@ namespace XdtHtml
                 }
             }
 
-            foreach (HtmlAttribute transformAttribute in TransformAttributes)
+            foreach (var transformAttribute in TransformAttributes)
             {
-                HtmlAttribute targetAttribute = TargetNode.Attributes[transformAttribute.Name];
+                var targetAttribute = TargetNode.Attributes[transformAttribute.Name];
 
                 string newValue = TokenizeValue(targetAttribute, transformAttribute, fTokenizeParameter, parameters);
 
@@ -466,9 +467,7 @@ namespace XdtHtml
                 }
                 else
                 {
-                    HtmlAttribute newAttribute = transformAttribute.Clone();
-                    newAttribute.Value = newValue;
-                    TargetNode.Attributes.Append(newAttribute);
+                    TargetNode.SetAttribute(transformAttribute.NamespaceUri, transformAttribute.LocalName, newValue);
                 }
 
                 Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageSetAttribute, transformAttribute.Name);
@@ -531,7 +530,7 @@ namespace XdtHtml
         protected string GetAttributeValue(string attributeName)
         {
             string dataValue = null;
-            HtmlAttribute sourceAttribute = TargetNode.Attributes[attributeName];
+            var sourceAttribute = TargetNode.Attributes[attributeName];
             if (sourceAttribute == null)
             {
                 if (string.Compare(attributeName, tokenizeValueCurrentXmlAttribute.Name, StringComparison.OrdinalIgnoreCase) != 0)
@@ -618,17 +617,17 @@ namespace XdtHtml
             return transformValue;
         }
 
-        private string GetXPathToAttribute(HtmlAttribute htmlAttribute)
+        private string GetXPathToAttribute(IAttr htmlAttribute)
         {
             return GetXPathToAttribute(htmlAttribute, null);
         }
 
-        private string GetXPathToAttribute(HtmlAttribute htmlAttribute, IList<string> locators)
+        private string GetXPathToAttribute(IAttr htmlAttribute, IList<string> locators)
         {
             string path = string.Empty;
             if (htmlAttribute != null)
             {
-                string pathToNode = GetXPathToNode(htmlAttribute.OwnerNode);
+                string pathToNode = GetXPathToNode(htmlAttribute.OwnerElement);
                 if (!string.IsNullOrEmpty(pathToNode))
                 {
                     System.Text.StringBuilder identifier = new StringBuilder(256);
@@ -656,7 +655,7 @@ namespace XdtHtml
                     {
                         for (int i = 0; i < TargetNodes.Count; i++)
                         {
-                            if (TargetNodes[i] == htmlAttribute.OwnerNode)
+                            if (TargetNodes[i] == htmlAttribute.OwnerElement)
                             {
                                 // Xpath is 1 based
                                 identifier.Append((i + 1).ToString(System.Globalization.CultureInfo.InvariantCulture));
@@ -671,18 +670,18 @@ namespace XdtHtml
             return path;
         }
 
-        private string GetXPathToNode(HtmlNode htmlNode)
+        private string GetXPathToNode(IElement htmlNode)
         {
-            if (htmlNode == null || htmlNode.NodeType == HtmlNodeType.Document)
+            if (htmlNode == null || htmlNode.NodeType == NodeType.Document)
             {
                 return null;
             }
-            string parentPath = GetXPathToNode(htmlNode.ParentNode);
-            return string.Concat(parentPath, "/", htmlNode.Name);
+            string parentPath = GetXPathToNode(htmlNode.ParentElement);
+            return string.Concat(parentPath, "/", htmlNode.NodeName);
         }
 
-        private string TokenizeValue(HtmlAttribute targetAttribute, 
-                                     HtmlAttribute transformAttribute, 
+        private string TokenizeValue(IAttr targetAttribute, 
+                                     IAttr transformAttribute, 
                                      bool fTokenizeParameter, 
                                      List<Dictionary<string, string>> parameters)
         {
@@ -814,8 +813,8 @@ namespace XdtHtml
     public class RemoveAttributes : AttributeTransform
     {
         protected override void Apply() {
-            foreach (HtmlAttribute attribute in TargetAttributes) {
-                TargetNode.Attributes.Remove(attribute);
+            foreach (var attribute in TargetAttributes) {
+                attribute.RemoveFromParent();
 
                 Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageRemoveAttribute, attribute.Name);
             }

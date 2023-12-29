@@ -2,18 +2,25 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
-using System.Text;
-using HtmlAgilityPack;
+using AngleSharp.Dom;
 
 namespace XdtHtml
 {
     [Serializable]
     public sealed class HtmlNodeException : HtmlTransformationException
     {
-        private readonly int lineNumber;
-        private readonly int linePosition;
+        private readonly int? lineNumber;
+        private readonly int? linePosition;
 
-        public static Exception Wrap(Exception ex, HtmlNode node) {
+        public static Exception Wrap(Exception ex, INode node)
+        {
+            return node is IElement elem ?
+                Wrap(ex, elem) : 
+                node is IAttr attr ? Wrap(ex, attr) : 
+                throw new NotSupportedException(node.GetType().Name + " não é suportado");
+        }
+
+        public static Exception Wrap(Exception ex, IElement node) {
             if (ex is HtmlNodeException) {
                 // If this is already an XmlNodeException, then it probably
                 // got its node closer to the error, making it more accurate
@@ -24,7 +31,7 @@ namespace XdtHtml
             }
         }
 
-        public static Exception Wrap(Exception ex, HtmlAttribute attribute)
+        public static Exception Wrap(Exception ex, IAttr attribute)
         {
             if (ex is HtmlNodeException)
             {
@@ -38,51 +45,52 @@ namespace XdtHtml
             }
         }
 
-        public HtmlNodeException(Exception innerException, HtmlNode node)
-            : this(innerException, node.Line, node.LinePosition) {
+        public HtmlNodeException(Exception innerException, IElement node)
+            : this(innerException, node.SourceReference?.Position.Line, node.SourceReference?.Position.Column) {
         }
 
-        public HtmlNodeException(Exception innerException, HtmlAttribute attribute)
-            : this(innerException, attribute.Line, attribute.LinePosition)
+        public HtmlNodeException(Exception innerException, IAttr attribute)
+            : this(innerException, attribute.OwnerElement.SourceReference?.Position.Line, attribute.OwnerElement.SourceReference?.Position.Column)
         {
         }
 
-        public HtmlNodeException(Exception innerException, int lineNumber, int linePosition)
+        public HtmlNodeException(Exception innerException, int? lineNumber, int? linePosition)
             : base(innerException.Message, innerException)
         {
             this.lineNumber = lineNumber;
             this.linePosition = linePosition;
         }
 
-        public HtmlNodeException(string message, HtmlNode node)
-            : this(message, node.Line, node.LinePosition) {
-        }
-
-        public HtmlNodeException(string message, HtmlAttribute attribute)
-            : this(message, attribute.Line, attribute.LinePosition)
+        public HtmlNodeException(string message, IElement node)
+            : this(message, node.SourceReference?.Position.Line, node.SourceReference?.Position.Column)
         {
         }
 
-        public HtmlNodeException(string message, int lineNumber, int linePosition)
+        public HtmlNodeException(string message, IAttr attribute)
+            : this(message, attribute.OwnerElement.SourceReference?.Position.Line, attribute.OwnerElement.SourceReference?.Position.Column)
+        {
+        }
+
+        public HtmlNodeException(string message, int? lineNumber, int? linePosition)
             : base(message)
         {
             this.lineNumber = lineNumber;
             this.linePosition = linePosition;
         }
 
-        public bool HasErrorInfo {
+        public bool HasLineInfo {
             get {
-                return lineNumber > 0;
+                return lineNumber != null && linePosition != null;
             }
         }
 
-        public int LineNumber {
+        public int? LineNumber {
             get {
                 return lineNumber;
             }
         }
 
-        public int LinePosition {
+        public int? LinePosition {
             get {
                 return linePosition;
             }

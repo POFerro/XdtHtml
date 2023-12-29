@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 using System.Diagnostics;
 using System.Globalization;
-using HtmlAgilityPack;
+using AngleSharp.Dom;
 
 namespace XdtHtml
 {
@@ -14,7 +12,7 @@ namespace XdtHtml
         private bool hasLoggedErrors = false;
 
         private IHtmlTransformationLogger externalLogger;
-        private HtmlAttribute currentReferenceAttribute = null;
+        private IAttr currentReferenceAttribute = null;
 
         private bool fSupressWarnings = false;
         #endregion
@@ -28,12 +26,12 @@ namespace XdtHtml
 
             if (externalLogger != null) {
                 HtmlNodeException nodeException = ex as HtmlNodeException;
-                if (nodeException != null && nodeException.HasErrorInfo) {
+                if (nodeException != null && nodeException.HasLineInfo) {
                     externalLogger.LogErrorFromException(
                         nodeException,
                         //ConvertUriToFileName(nodeException.FileName),
-                        nodeException.LineNumber,
-                        nodeException.LinePosition);
+                        nodeException.LineNumber.Value,
+                        nodeException.LinePosition.Value);
                 }
                 else {
                     externalLogger.LogErrorFromException(ex);
@@ -53,7 +51,7 @@ namespace XdtHtml
             }
         }
 
-        internal HtmlAttribute CurrentReferenceAttribute {
+        internal IAttr CurrentReferenceAttribute {
             get {
                 return currentReferenceAttribute;
             }
@@ -106,7 +104,7 @@ namespace XdtHtml
             }
         }
 
-        public void LogWarning(HtmlAttribute referenceAttr, string message, params object[] messageArgs) {
+        public void LogWarning(IAttr referenceAttr, string message, params object[] messageArgs) {
             if (SupressWarnings)
             {
                 // SupressWarnings downgrade the Warning to LogMessage
@@ -119,27 +117,27 @@ namespace XdtHtml
                     //string fileName = ConvertUriToFileName(referenceNode.OwnerDocument);
                     //IXmlLineInfo lineInfo = referenceNode as IXmlLineInfo;
 
-                    //if (lineInfo != null)
-                    //{
+                    if (referenceAttr.OwnerElement.SourceReference != null)
+                    {
                         externalLogger.LogWarning(
                             //fileName,
-                            referenceAttr.Line,
-                            referenceAttr.LinePosition,
+                            referenceAttr.OwnerElement.SourceReference.Position.Line,
+                            referenceAttr.OwnerElement.SourceReference.Position.Column,
                             message,
                             messageArgs);
-                    //}
-                    //else
-                    //{
-                    //    externalLogger.LogWarning(
-                    //        fileName,
-                    //        message,
-                    //        messageArgs);
-                    //}
+                    }
+                    else
+                    {
+                        externalLogger.LogWarning(
+                            //fileName,
+                            message,
+                            messageArgs);
+                    }
                 }
             }
         }
 
-        public void LogWarning(HtmlNode referenceNode, string message, params object[] messageArgs)
+        public void LogWarning(IElement referenceNode, string message, params object[] messageArgs)
         {
             if (SupressWarnings)
             {
@@ -153,22 +151,22 @@ namespace XdtHtml
                     //string fileName = ConvertUriToFileName(referenceNode.OwnerDocument);
                     //IXmlLineInfo lineInfo = referenceNode as IXmlLineInfo;
 
-                    //if (lineInfo != null)
-                    //{
-                    externalLogger.LogWarning(
-                        //fileName,
-                        referenceNode.Line,
-                        referenceNode.LinePosition,
-                        message,
-                        messageArgs);
-                    //}
-                    //else
-                    //{
-                    //    externalLogger.LogWarning(
-                    //        fileName,
-                    //        message,
-                    //        messageArgs);
-                    //}
+                    if (referenceNode.SourceReference != null)
+                    {
+                        externalLogger.LogWarning(
+                            //fileName,
+                            referenceNode.SourceReference.Position.Line,
+                            referenceNode.SourceReference.Position.Column,
+                            message,
+                            messageArgs);
+                    }
+                    else
+                    {
+                        externalLogger.LogWarning(
+                            //fileName,
+                            message,
+                            messageArgs);
+                    }
                 }
             }
         }
@@ -187,34 +185,37 @@ namespace XdtHtml
             }
         }
 
-        public void LogError(HtmlAttribute referenceAttr, string message, params object[] messageArgs) {
+        public void LogError(IAttr referenceAttr, string message, params object[] messageArgs) {
             hasLoggedErrors = true;
 
             if (externalLogger != null) {
                 //string fileName = ConvertUriToFileName(referenceNode.OwnerDocument);
                 //IXmlLineInfo lineInfo = referenceNode as IXmlLineInfo;
 
-                //if (lineInfo != null) {
+                if (referenceAttr.OwnerElement.SourceReference != null)
+                {
+                    //if (lineInfo != null) {
+                    externalLogger.LogError(
+                            //fileName,
+                            referenceAttr.OwnerElement.SourceReference.Position.Line,
+                            referenceAttr.OwnerElement.SourceReference.Position.Column,
+                            message,
+                            messageArgs);
+                }
+                else
+                {
                     externalLogger.LogError(
                         //fileName,
-                        referenceAttr.Line,
-                        referenceAttr.LinePosition,
                         message,
                         messageArgs);
-                //}
-                //else {
-                //    externalLogger.LogError(
-                //        fileName,
-                //        message,
-                //        messageArgs);
-                //}
+                }
             }
             else {
                 throw new HtmlNodeException(String.Format(CultureInfo.CurrentCulture, message, messageArgs), referenceAttr);
             }
         }
 
-        public void LogError(HtmlNode referenceNode, string message, params object[] messageArgs)
+        public void LogError(IElement referenceNode, string message, params object[] messageArgs)
         {
             hasLoggedErrors = true;
 
@@ -223,20 +224,22 @@ namespace XdtHtml
                 //string fileName = ConvertUriToFileName(referenceNode.OwnerDocument);
                 //IXmlLineInfo lineInfo = referenceNode as IXmlLineInfo;
 
-                //if (lineInfo != null) {
-                externalLogger.LogError(
-                    //fileName,
-                    referenceNode.Line,
-                    referenceNode.LinePosition,
-                    message,
-                    messageArgs);
-                //}
-                //else {
-                //    externalLogger.LogError(
-                //        fileName,
-                //        message,
-                //        messageArgs);
-                //}
+                if (referenceNode.SourceReference != null)
+                {
+                    externalLogger.LogError(
+                        //fileName,
+                        referenceNode.SourceReference.Position.Line,
+                        referenceNode.SourceReference.Position.Column,
+                        message,
+                        messageArgs);
+                }
+                else
+                {
+                    externalLogger.LogError(
+                        //fileName,
+                        message,
+                        messageArgs);
+                }
             }
             else
             {

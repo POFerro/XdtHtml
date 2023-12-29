@@ -4,7 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using XdtHtml.Properties;
-using HtmlAgilityPack;
+using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
+using AngleSharp.Dom;
+using AngleSharp;
 
 namespace XdtHtml
 {
@@ -16,8 +19,8 @@ namespace XdtHtml
         #region private data members
         private readonly string transformFile;
 
-        private readonly HtmlDocument htmlTransformation;
-        private HtmlDocument htmlTarget;
+        private readonly IElement htmlTransformation;
+        private IDocument htmlTarget;
         private HtmlTransformableDocument htmlTransformable;
 
         private readonly HtmlTransformationLogger logger = null;
@@ -27,7 +30,6 @@ namespace XdtHtml
         private ServiceContainer documentServiceContainer = null;
 
         private bool hasTransformNamespace = false;
-        private string xdtPrefix = null;
         #endregion
 
         public HtmlTransformation(string transformFile)
@@ -35,8 +37,8 @@ namespace XdtHtml
         {
         }
 
-        public HtmlTransformation(string transform, IHtmlTransformationLogger logger)
-            : this(transform, true, logger)
+        public HtmlTransformation(string transformFile, IHtmlTransformationLogger logger)
+            : this(transformFile, true, logger)
         {
         }
 
@@ -45,16 +47,8 @@ namespace XdtHtml
             this.transformFile = transform;
             this.logger = new HtmlTransformationLogger(logger);
 
-            htmlTransformation = new HtmlDocument().WithDefaultOptions();
-
-            if (isTransformAFile)
-            {
-                htmlTransformation.Load(transform);
-            }
-            else
-            {
-                htmlTransformation.LoadHtml(transform);
-            }
+            var parser = new HtmlParser(HtmlDocumentExtensions.ParserDefaultOptions());
+            htmlTransformation = parser.ParseFragment(isTransformAFile ? File.ReadAllText(transform) : transform, null).OfType<IElement>().First();
 
             InitializeTransformationServices();
 
@@ -66,8 +60,8 @@ namespace XdtHtml
             this.logger = new HtmlTransformationLogger(logger);
             this.transformFile = String.Empty;
 
-            htmlTransformation = new HtmlDocument().WithDefaultOptions();
-            htmlTransformation.Load(transformStream);
+            var parser = new HtmlParser(HtmlDocumentExtensions.ParserDefaultOptions());
+            htmlTransformation = parser.ParseFragment(transformStream, null).OfType<IElement>().First();
 
             InitializeTransformationServices();
 
@@ -79,8 +73,8 @@ namespace XdtHtml
             this.logger = new HtmlTransformationLogger(logger);
             this.transformFile = String.Empty;
 
-            htmlTransformation = new HtmlDocument().WithDefaultOptions();
-            htmlTransformation.Load(transformReader);
+            var parser = new HtmlParser(HtmlDocumentExtensions.ParserDefaultOptions());
+            htmlTransformation = parser.ParseFragment(transformReader.ReadToEnd(), null).OfType<IElement>().First();
 
             InitializeTransformationServices();
 
@@ -105,7 +99,7 @@ namespace XdtHtml
             transformationServiceContainer.AddService(logger.GetType(), logger);
         }
 
-        private void InitializeDocumentServices(HtmlDocument document)
+        private void InitializeDocumentServices(IDocument document)
         {
             Debug.Assert(documentServiceContainer == null);
             documentServiceContainer = new ServiceContainer();
@@ -128,18 +122,7 @@ namespace XdtHtml
         private void PreprocessTransformDocument()
         {
             hasTransformNamespace = false;
-            foreach (HtmlAttribute attribute in htmlTransformation.DocumentNode
-                                                                  .DescendantsAndSelf()
-                                                                  .SelectMany(n => n.Attributes)
-                                                                  .Where(n => n.Name.StartsWith("xmlns:")))
-            {
-                if (attribute.Value.Equals(TransformNamespace, StringComparison.Ordinal))
-                {
-                    hasTransformNamespace = true;
-                    xdtPrefix = attribute.Name.Remove(0, "xmlns:".Length);
-                    break;
-                }
-            }
+            hasTransformNamespace = htmlTransformation.LookupPrefix(TransformNamespace) != null;
 
             if (hasTransformNamespace)
             {
@@ -147,24 +130,24 @@ namespace XdtHtml
                 // and do any initialization work
                 //XmlNamespaceManager namespaceManager = new XmlNamespaceManager(new NameTable());
                 //namespaceManager.AddNamespace("xdt", TransformNamespace);
-                var namespaceNodes = htmlTransformation.DocumentNode
-                .Descendants()
-                .Where(n => n.Name.StartsWith(xdtPrefix + ":"));
+                var namespaceNodes = htmlTransformation
+                .Descendants<HtmlElement>()
+                .Where(n => n.NamespaceUri == TransformNamespace);
 
-                foreach (HtmlNode element in namespaceNodes)
+                foreach (var element in namespaceNodes)
                 {
 
                     HtmlElementContext context = null;
                     try
                     {
-                        switch (element.Name)
+                        switch (element.LocalName)
                         {
                             case "Import":
                                 context = CreateElementContext(null, element);
                                 PreprocessImportElement(context);
                                 break;
                             default:
-                                logger.LogWarning(element, Resources.XMLTRANSFORMATION_UnknownXdtTag, element.Name);
+                                logger.LogWarning(element, Resources.XMLTRANSFORMATION_UnknownXdtTag, element.TagName);
                                 break;
                         }
                     }
@@ -196,7 +179,12 @@ namespace XdtHtml
             transformationServiceContainer.RemoveService(serviceType);
         }
 
-        public bool Apply(HtmlDocument htmlTarget)
+        public bool Apply(HtmlTransformableDocument document)
+        {
+            return Apply(document.Document);
+        }
+
+        public bool Apply(IDocument htmlTarget)
         {
             Debug.Assert(this.htmlTarget == null, "This method should not be called recursively");
 
@@ -240,20 +228,15 @@ namespace XdtHtml
             }
         }
 
-        private void TransformLoop(HtmlDocument htmlSource)
+        private void TransformLoop(IElement htmlSource)
         {
-            TransformLoop(new HtmlNodeContext(htmlSource.DocumentNode));
+            TransformLoop(new HtmlNodeContext(htmlSource));
         }
 
         private void TransformLoop(HtmlNodeContext parentContext)
         {
-            foreach (HtmlNode element in parentContext.Node.ChildNodes)
+            foreach (IElement element in parentContext.Node.ChildNodes.OfType<IElement>())
             {
-                if (element.NodeType == HtmlNodeType.Comment)
-                {
-                    continue;
-                }
-
                 HtmlElementContext context = CreateElementContext(parentContext as HtmlElementContext, element);
                 try
                 {
@@ -266,9 +249,9 @@ namespace XdtHtml
             }
         }
 
-        private HtmlElementContext CreateElementContext(HtmlElementContext parentContext, HtmlNode element)
+        private HtmlElementContext CreateElementContext(HtmlElementContext parentContext, IElement element)
         {
-            return new HtmlElementContext(parentContext, element, htmlTarget, this, this.xdtPrefix);
+            return new HtmlElementContext(parentContext, element, htmlTarget, this);
         }
 
         private void HandleException(Exception ex)
@@ -295,7 +278,7 @@ namespace XdtHtml
 
                 bool fOriginalSupressWarning = logger.SupressWarnings;
 
-                HtmlAttribute SupressWarningsAttribute = context.Element.Attributes[HtmlTransformation.SupressWarnings];
+                IAttr SupressWarningsAttribute = context.Element.Attributes[HtmlTransformation.SupressWarnings];
                 if (SupressWarningsAttribute != null)
                 {
                     bool fSupressWarning = System.Convert.ToBoolean(SupressWarningsAttribute.Value, System.Globalization.CultureInfo.InvariantCulture);
@@ -347,7 +330,7 @@ namespace XdtHtml
             string nameSpace = null;
             string path = null;
 
-            foreach (HtmlAttribute attribute in context.Element.Attributes)
+            foreach (IAttr attribute in context.Element.Attributes)
             {
                 switch (attribute.Name)
                 {

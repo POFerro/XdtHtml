@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
-using System.IO;
-using System.Globalization;
 using XdtHtml.Properties;
-using HtmlAgilityPack;
+using AngleSharp.Dom;
+using AngleSharp.XPath;
+using System.Linq;
 
 namespace XdtHtml
 {
@@ -17,28 +15,25 @@ namespace XdtHtml
         private readonly HtmlElementContext parentContext;
         private string xpath = null;
         private string parentXPath = null;
-        private readonly HtmlDocument htmlTargetDoc;
+        private readonly IDocument htmlTargetDoc;
 
         private readonly IServiceProvider serviceProvider;
 
-        private HtmlNode transformNodes = null;
-        private HtmlNodeCollection targetNodes = null;
-        private HtmlNodeCollection targetParents = null;
+        private IElement transformNodes = null;
+        private List<INode> targetNodes = null;
+        private List<INode> targetParents = null;
 
-        private HtmlAttribute transformAttribute = null;
-        private HtmlAttribute locatorAttribute = null;
-
-        private readonly string xdtPrefix;
+        private IAttr transformAttribute = null;
+        private IAttr locatorAttribute = null;
 
         //private HtmlNamespaceManager namespaceManager = null;
         #endregion
 
-        public HtmlElementContext(HtmlElementContext parent, HtmlNode element, HtmlDocument htmlTargetDoc, IServiceProvider serviceProvider, string xdtPrefix)
+        public HtmlElementContext(HtmlElementContext parent, IElement element, IDocument htmlTargetDoc, IServiceProvider serviceProvider)
             : base(element) {
             this.parentContext = parent;
             this.htmlTargetDoc = htmlTargetDoc;
             this.serviceProvider = serviceProvider;
-            this.xdtPrefix = xdtPrefix;
         }
 
         public T GetService<T>() where T : class {
@@ -55,9 +50,9 @@ namespace XdtHtml
         }
 
         #region data accessors
-        public HtmlNode Element {
+        public IElement Element {
             get {
-                return Node;
+                return (IElement)Node;
             }
         }
 
@@ -90,35 +85,37 @@ namespace XdtHtml
 
         public int TransformLineNumber {
             get {
-                //IXmlLineInfo lineInfo = transformAttribute as IXmlLineInfo;
-                //if (lineInfo != null) {
-                    return transformAttribute.Line;
-                //}
-                //else {
-                //    return LineNumber;
-                //}
+                if (transformAttribute.OwnerElement?.SourceReference != null)
+                {
+                    return transformAttribute.OwnerElement.SourceReference.Position.Line;
+                }
+                else
+                {
+                    return LineNumber;
+                }
             }
         }
 
         public int TransformLinePosition {
             get {
-                //IXmlLineInfo lineInfo = transformAttribute as IXmlLineInfo;
-                //if (lineInfo != null) {
-                    return transformAttribute.LinePosition;
-                //}
-                //else {
-                //    return LinePosition;
-                //}
+                if (transformAttribute.OwnerElement?.SourceReference != null)
+                {
+                    return transformAttribute.OwnerElement.SourceReference.Position.Column;
+                }
+                else
+                {
+                    return LinePosition;
+                }
             }
         }
 
-        public HtmlAttribute TransformAttribute {
+        public IAttr TransformAttribute {
             get {
                 return transformAttribute;
             }
         }
 
-        public HtmlAttribute LocatorAttribute {
+        public IAttr LocatorAttribute {
             get {
                 return locatorAttribute;
             }
@@ -166,7 +163,7 @@ namespace XdtHtml
         #endregion
 
         #region Context information
-        internal HtmlNode TransformNode {
+        internal IElement TransformNode {
             get {
                 if (transformNodes == null) {
                     transformNodes = CreateCloneInTargetDocument(Element);
@@ -175,7 +172,7 @@ namespace XdtHtml
             }
         }
 
-        internal HtmlNodeCollection TargetNodes {
+        internal List<INode> TargetNodes {
             get {
                 if (targetNodes == null) {
                     targetNodes = GetTargetNodes(XPath);
@@ -184,7 +181,7 @@ namespace XdtHtml
             }
         }
 
-        internal HtmlNodeCollection TargetParents {
+        internal List<INode> TargetParents {
             get {
                 if (targetParents == null && parentContext != null) {
                     targetParents = GetTargetNodes(ParentXPath);
@@ -195,55 +192,47 @@ namespace XdtHtml
         #endregion
 
         #region Node helpers
-        private HtmlDocument TargetDocument {
+        private IDocument TargetDocument {
             get {
                 return htmlTargetDoc;
             }
         }
 
-        private HtmlNode CreateCloneInTargetDocument(HtmlNode sourceNode) {
+        private IElement CreateCloneInTargetDocument(IElement sourceNode) {
             
-            HtmlNode clonedNode = HtmlNode.CreateNode(sourceNode.OuterHtml, (doc) => {
-                doc.WithDefaultOptions();
-            });
+            IElement clonedNode = (IElement)htmlTargetDoc.Import(sourceNode);
 
             ScrubTransformAttributesAndNamespaces(clonedNode);
 
             return clonedNode;
         }
 
-        private void ScrubTransformAttributesAndNamespaces(HtmlNode node) {
+        private void ScrubTransformAttributesAndNamespaces(IElement node) {
             if (node.Attributes != null) {
-                List<HtmlAttribute> attributesToRemove = new List<HtmlAttribute>();
-                foreach (HtmlAttribute attribute in node.Attributes) {
-                    if (attribute.Name.StartsWith(this.xdtPrefix + ":")) {
-                        attributesToRemove.Add(attribute);
-                    }
-                }
-                foreach (HtmlAttribute attributeToRemove in attributesToRemove) {
-                    node.Attributes.Remove(attributeToRemove);
+                foreach (IAttr attributeToRemove in node.Attributes.Where(a => a.NamespaceUri == HtmlTransformation.TransformNamespace)) {
+                    attributeToRemove.RemoveFromParent();
                 }
             }
 
             // Do the same recursively for child nodes
-            foreach (HtmlNode childNode in node.ChildNodes) {
+            foreach (IElement childNode in node.Children) {
                 ScrubTransformAttributesAndNamespaces(childNode);
             }
         }
 
-        private HtmlNodeCollection GetTargetNodes(string xpath) {
-            return TargetDocument.DocumentNode.SelectNodes(xpath);
+        private List<INode> GetTargetNodes(string xpath) {
+            return TargetDocument.DocumentElement.SelectNodes(xpath);
         }
 
         private Exception WrapException(Exception ex) {
             return HtmlNodeException.Wrap(ex, Element);
         }
 
-        private Exception WrapException(Exception ex, HtmlNode node) {
+        private Exception WrapException(Exception ex, INode node) {
             return HtmlNodeException.Wrap(ex, node);
         }
 
-        private Exception WrapException(Exception ex, HtmlAttribute attribute)
+        private Exception WrapException(Exception ex, Attr attribute)
         {
             return HtmlNodeException.Wrap(ex, attribute);
         }
@@ -315,11 +304,11 @@ namespace XdtHtml
             }
         }
 
-        private ObjectType CreateObjectFromAttribute<ObjectType>(out string argumentString, out HtmlAttribute objectAttribute) where ObjectType : class {
-            objectAttribute = Element.Attributes[this.xdtPrefix + ":" + typeof(ObjectType).Name];
+        private ObjectType CreateObjectFromAttribute<ObjectType>(out string argumentString, out IAttr objectAttribute) where ObjectType : class {
+            objectAttribute = Element.Attributes.FirstOrDefault(a => a.NamespaceUri == HtmlTransformation.TransformNamespace && a.LocalName == typeof(ObjectType).Name);
             try {
                 if (objectAttribute != null) {
-                    string typeName = ParseNameAndArguments(objectAttribute.DeEntitizeValue, out argumentString);
+                    string typeName = ParseNameAndArguments(objectAttribute.Value, out argumentString);
                     if (!String.IsNullOrEmpty(typeName)) {
                         NamedTypeFactory factory = GetService<NamedTypeFactory>();
                         return factory.Construct<ObjectType>(typeName);
@@ -378,7 +367,7 @@ namespace XdtHtml
         private bool ExistedInOriginal(string xpath) {
             IHtmlOriginalDocumentService service = GetService<IHtmlOriginalDocumentService>();
             if (service != null) {
-                HtmlNodeCollection nodeList = service.SelectNodes(xpath);
+                List<INode> nodeList = service.SelectNodes(xpath);
                 if (nodeList != null && nodeList.Count > 0) {
                     return true;
                 }
