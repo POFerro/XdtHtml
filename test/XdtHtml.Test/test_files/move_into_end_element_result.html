@@ -13,8 +13,6 @@
             </page-header-additional-info>
 
             <page-header-actions>
-                
-
                 <button mat-button *hasEveryPermission="permissionConstants.LeaProdutos.edit" enterEditButton>
                 </button>
 
@@ -34,7 +32,9 @@
                         <span>{{'Global.Actions.Annul' | translate}}</span>
                     </button>
                 </ng-container>
-            <list-counter formErrorsCounter></list-counter></page-header-aditional-options>
+
+                <list-counter formErrorsCounter></list-counter>
+            </page-header-aditional-options>
         </page-header>
 
     </page>

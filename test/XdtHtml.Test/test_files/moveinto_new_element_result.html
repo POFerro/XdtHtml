@@ -32,7 +32,6 @@
                     <card-header-title-container>
                         <card-header-title>{{ 'Configurations.AccessControl.UserProfile.UserProfileDetailsCard._Description' | translate }}</card-header-title>
                     </card-header-title-container>
-                    
                 </card-header>
                 <data-group>
                     <data-field fxFlex="100%" [dataFieldLabel]="'Configurations._Tables.Users._Fields.UserName' | translate">{{ details.userDetails.userName }}</data-field>
@@ -62,9 +61,10 @@
                         <field-error-alert matSuffix></field-error-alert>
                         <mat-error></mat-error>
                     </mat-form-field>
-                    
 
-                <ng-container *hasEveryPermission="PermissionConstants.Configurations.AccessControl.UserProfile.profileRolesEdit; else readOnlyRoles"><mat-form-field fxFlex="100%" floatLabel="always">
+                
+                    <ng-container *hasEveryPermission="PermissionConstants.Configurations.AccessControl.UserProfile.profileRolesEdit; else readOnlyRoles">
+                      <mat-form-field fxFlex="100%" floatLabel="always">
                         <mat-label>
                             <span>{{'Configurations.AccessControl.UserProfile.UserProfileDetailsCard.UserProfileRolesList._Description' |translate}}</span>
                         </mat-label>
@@ -84,21 +84,23 @@
                             </mat-option>
                         </mat-autocomplete>
 
-                    </mat-form-field>
+                      </mat-form-field>
 
-      <ng-template #readOnlyRoles>
+                      <ng-template #readOnlyRoles>
 
-        <data-field fxFlex="100%" [fieldLabel]="'Configurations.AccessControl.UserProfile.UserProfileDetailsCard.UserProfileRolesList._Description' |translate">
-          <mat-chip-set>
-            <mat-chip *ngFor="let role of details.userProfileRolesList">
-              <span>{{role.userRolesRoleName}}</span>
-            </mat-chip>
-          </mat-chip-set>
-        </data-field>
+                        <data-field fxFlex="100%" [fieldLabel]="'Configurations.AccessControl.UserProfile.UserProfileDetailsCard.UserProfileRolesList._Description' |translate">
+                          <mat-chip-set>
+                            <mat-chip *ngFor="let role of details.userProfileRolesList">
+                              <span>{{role.userRolesRoleName}}</span>
+                            </mat-chip>
+                          </mat-chip-set>
+                        </data-field>
 
-      </ng-template>
+                      </ng-template>
 
-    </ng-container></data-group>
+                    </ng-container>
+
+                </data-group>
             </card>
         </page-body>
 

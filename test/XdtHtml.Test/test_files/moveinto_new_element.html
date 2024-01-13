@@ -27,7 +27,6 @@
       <span xdt:Locator="Condition(@readOnlyValue)" xdt:Transform="Replace" readOnlyValue>{{ details.userDetails.email }}</span>
 
     </mat-form-field>
-
     <ng-container *hasEveryPermission="PermissionConstants.Configurations.AccessControl.UserProfile.profileRolesEdit; else readOnlyRoles"
                   xdt:Transform="Insert">
 

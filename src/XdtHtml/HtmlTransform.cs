@@ -5,6 +5,7 @@ using System.Xml;
 using System.Diagnostics;
 using XdtHtml.Properties;
 using HtmlAgilityPack;
+using System.Linq;
 
 namespace XdtHtml
 {
@@ -35,6 +36,8 @@ namespace XdtHtml
         private HtmlTransformationLogger logger = null;
         private HtmlElementContext context = null;
         private HtmlNode currentTransformNode = null;
+        private List<HtmlNode> currentTransformNodePreamble = null;
+        private List<HtmlNode> currentTransformNodePostamble = null;
         private HtmlNode currentTargetNode = null;
 
         private string argumentString = null;
@@ -87,6 +90,28 @@ namespace XdtHtml
 
         protected abstract void Apply();
 
+        protected HtmlNode OriginalTransformNode
+        {
+            get
+            {
+                return context.Element;
+            }
+        }
+        protected string TransformNodeIndentationWithNewline
+        {
+            get
+            {
+                return context.Element.GetIndentationWithNewline();
+            }
+        }
+        protected string TransformNodeIndentationFromParent
+        {
+            get
+            {
+                return context.Element.GetIndentationFromParent();
+            }
+        }
+
         protected HtmlNode TransformNode {
             get {
                 if (currentTransformNode == null) {
@@ -94,6 +119,34 @@ namespace XdtHtml
                 }
                 else {
                     return currentTransformNode;
+                }
+            }
+        }
+        protected IEnumerable<HtmlNode> TransformNodePreamble
+        {
+            get
+            {
+                if (currentTransformNodePreamble == null)
+                {
+                    return context.TransformNodePreamble;
+                }
+                else
+                {
+                    return currentTransformNodePreamble;
+                }
+            }
+        }
+        protected IEnumerable<HtmlNode> TransformNodePostamble
+        {
+            get
+            {
+                if (currentTransformNodePostamble == null)
+                {
+                    return context.TransformNodePostamble;
+                }
+                else
+                {
+                    return currentTransformNodePostamble;
                 }
             }
         }
@@ -254,11 +307,15 @@ namespace XdtHtml
         private bool ApplyOnAllTargetNodes() {
             bool error = false;
             HtmlNode originalTransformNode = TransformNode;
+            IEnumerable<HtmlNode> originalTransformNodePreamble = TransformNodePreamble;
+            IEnumerable<HtmlNode> originalTransformNodePostamble = TransformNodePostamble;
 
             foreach (HtmlNode node in TargetNodes) {
                 try {
                     currentTargetNode = node;
                     currentTransformNode = originalTransformNode.Clone();
+                    currentTransformNodePreamble = originalTransformNodePreamble.ToList();
+                    currentTransformNodePostamble = originalTransformNodePostamble.ToList();
 
                     ApplyOnce();
                 }

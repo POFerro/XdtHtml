@@ -8,6 +8,7 @@ using System.IO;
 using System.Globalization;
 using XdtHtml.Properties;
 using HtmlAgilityPack;
+using System.Linq;
 
 namespace XdtHtml
 {
@@ -21,7 +22,10 @@ namespace XdtHtml
 
         private readonly IServiceProvider serviceProvider;
 
-        private HtmlNode transformNodes = null;
+        private HtmlNode transformNode = null;
+        private List<HtmlNode> transformNodePreamble = null;
+        private List<HtmlNode> transformNodePostamble = null;
+
         private HtmlNodeCollection targetNodes = null;
         private HtmlNodeCollection targetParents = null;
 
@@ -168,10 +172,38 @@ namespace XdtHtml
         #region Context information
         internal HtmlNode TransformNode {
             get {
-                if (transformNodes == null) {
-                    transformNodes = CreateCloneInTargetDocument(Element);
+                if (transformNode == null) {
+                    transformNode = CreateCloneInTargetDocument(Element);
                 }
-                return transformNodes;
+                return transformNode;
+            }
+        }
+        internal IEnumerable<HtmlNode> TransformNodePreamble
+        {
+            get
+            {
+                if (transformNodePreamble == null)
+                {
+                    transformNodePreamble = Element
+                        .GetNodePreamble()
+                        .Select(e => CreateCloneInTargetDocument(e))
+                        .ToList();
+                }
+                return transformNodePreamble;
+            }
+        }
+        internal IEnumerable<HtmlNode> TransformNodePostamble
+        {
+            get
+            {
+                if (transformNodePostamble == null)
+                {
+                    transformNodePostamble = Element
+                        .GetNodePostamble()
+                        .Select(e => CreateCloneInTargetDocument(e))
+                        .ToList();
+                }
+                return transformNodePostamble;
             }
         }
 

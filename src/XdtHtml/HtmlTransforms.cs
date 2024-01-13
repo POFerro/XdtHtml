@@ -5,6 +5,7 @@ using System.Diagnostics;
 using RegularExpressions = System.Text.RegularExpressions;
 using XdtHtml.Properties;
 using HtmlAgilityPack;
+using System.Linq;
 
 namespace XdtHtml
 {
@@ -33,7 +34,7 @@ namespace XdtHtml
 
             HtmlNode parentNode = TargetNode.ParentNode;
             parentNode.ReplaceChild(
-                TransformNode,
+                TransformNode.AdjustIndent(TargetNode.GetIndentationWithNewline(), TransformNodeIndentationWithNewline),
                 TargetNode);
 
             Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageReplace, TargetNode.Name);
@@ -91,7 +92,7 @@ namespace XdtHtml
             CommonErrors.WarnIfMultipleTargets(Log, TransformNameShort, TargetNodes, ApplyTransformToAllTargetNodes);
 
             TargetNode.ReplaceChild(
-                TransformNode,
+                TransformNode.AdjustIndent(ElementToReplace.GetIndentationWithNewline(), TransformNodeIndentationWithNewline),
                 ElementToReplace);
 
             Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageReplace, ElementToReplace.Name);
@@ -109,8 +110,10 @@ namespace XdtHtml
         protected void RemoveNode() {
             CommonErrors.ExpectNoArguments(Log, TransformNameShort, ArgumentString);
 
-            HtmlNode parentNode = TargetNode.ParentNode;
-            parentNode.RemoveChild(TargetNode);
+            foreach (var node in TargetNode.GetNodeWithPreamble().ToList())
+            {
+                node.Remove();
+            }
 
             Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageRemove, TargetNode.Name);
         }
@@ -136,7 +139,15 @@ namespace XdtHtml
         protected override void Apply() {
             CommonErrors.ExpectNoArguments(Log, TransformNameShort, ArgumentString);
 
-            TargetNode.AppendChild(TransformNode);
+            var lastElement = TargetNode.ChildNodes.LastOrDefault(n => n.NodeType == HtmlNodeType.Element);
+
+            IEnumerable<HtmlNode> indentedNodes;
+            if (lastElement != null)
+                indentedNodes = TransformNodePreamble.Append(TransformNode).AdjustIndent(lastElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline).Concat(TargetNode.GetEndTagPreamble().Select(n => n.CloneNode(true))).ToList();
+            else
+                indentedNodes = TransformNodePreamble.Append(TransformNode).AdjustParentIndent(TargetNode.GetIndentationWithNewline(), TransformNodeIndentationWithNewline, TransformNodeIndentationFromParent).Concat(TargetNode.GetEndTagPreamble().Select(n => n.CloneNode(true))).ToList();
+
+            TargetNode.AppendChild(indentedNodes);
 
             Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name);
         }
@@ -149,8 +160,7 @@ namespace XdtHtml
             CommonErrors.ExpectNoArguments(Log, TransformNameShort, ArgumentString);
             if (this.TargetChildNodes == null || this.TargetChildNodes.Count == 0)
             {
-                TargetNode.AppendChild(TransformNode);
-                Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name);
+                base.Apply();
             }
         }
     }
@@ -197,7 +207,7 @@ namespace XdtHtml
     internal class InsertAfter : InsertBase
     {
         protected override void Apply() {
-            SiblingElement.ParentNode.InsertAfter(TransformNode, SiblingElement);
+            SiblingElement.ParentNode.InsertAfter(TransformNodePreamble.Append(TransformNode).AdjustIndent(SiblingElement).ToList(), SiblingElement);
 
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
         }
@@ -206,17 +216,48 @@ namespace XdtHtml
     internal class InsertBefore : InsertBase
     {
         protected override void Apply() {
-            SiblingElement.ParentNode.InsertBefore(TransformNode, SiblingElement);
+            SiblingElement.ParentNode.InsertBefore(TransformNodePreamble.Append(TransformNode).AdjustIndent(SiblingElement), SiblingElement);
 
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
         }
     }
 
-    internal class InsertInto: InsertBase
+    internal class InsertInto: InsertIntoBegining
+    {
+    }
+
+    internal class InsertIntoBegining : InsertBase
     {
         protected override void Apply()
         {
-            SiblingElement.PrependChild(TransformNode);
+            var firstElement = TargetNode.ChildNodes.FirstOrDefault(n => n.NodeType == HtmlNodeType.Element);
+
+            IEnumerable<HtmlNode> indentedNodes;
+            if (firstElement != null)
+                indentedNodes = TransformNodePreamble.Append(TransformNode).AdjustIndent(firstElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline).ToList();
+            else
+                indentedNodes = TransformNodePreamble.Append(TransformNode).AdjustParentIndent(SiblingElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline, TransformNodeIndentationFromParent).ToList();
+            
+            SiblingElement.PrependChild(indentedNodes);
+
+            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+        }
+    }
+
+    internal class InsertIntoEnd : InsertBase
+    {
+        protected override void Apply()
+        {
+            var lastElement = TargetNode.ChildNodes.LastOrDefault(n => n.NodeType == HtmlNodeType.Element);
+
+            IEnumerable<HtmlNode> indentedNodes;
+            if (lastElement != null)
+                indentedNodes = TransformNodePreamble.Append(TransformNode).AdjustIndent(lastElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline).Concat(TargetNode.GetEndTagPreamble().Select(n => n.CloneNode(true))).ToList();
+            else
+                indentedNodes = TransformNodePreamble.Append(TransformNode).AdjustParentIndent(SiblingElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline, TransformNodeIndentationFromParent).Concat(TargetNode.GetEndTagPreamble().Select(n => n.CloneNode(true))).ToList();
+
+            //SiblingElement.AppendChild(TransformNodePreamble.Concat(new[] { TransformNode }).AdjustParentIndent(SiblingElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline, TransformNodeIndentationFromParent).ToList());
+            SiblingElement.AppendChild(indentedNodes);
 
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
         }
@@ -277,8 +318,11 @@ namespace XdtHtml
 
         protected override void Apply()
         {
-            SiblingElement.ParentNode.InsertAfter(TargetNode.CloneNode(true), SiblingElement);
-            TargetNode.Remove();
+            SiblingElement.ParentNode.InsertAfter(TransformNodePreamble.AdjustIndent(SiblingElement).Append(TargetNode).Select(n => n.CloneNode(true)).ToList(), SiblingElement);
+            foreach (var node in TargetNode.GetNodeWithPostamble().ToList())
+            {
+                node.Remove();
+            }
 
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
         }
@@ -293,26 +337,18 @@ namespace XdtHtml
 
         protected override void Apply()
         {
-            SiblingElement.ParentNode.InsertBefore(TargetNode.CloneNode(true), SiblingElement);
-            TargetNode.Remove();
+            SiblingElement.ParentNode.InsertBefore(new[] { TargetNode }.AdjustIndent(SiblingElement).Concat(SiblingElement.GetNodePreamble()).Select(n => n.CloneNode(true)).ToList(), SiblingElement);
+            foreach (var node in TargetNode.GetNodeWithPostamble().ToList())
+            {
+                node.Remove();
+            }
 
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
         }
     }
 
-    internal class MoveInto : MoveToBase
+    internal class MoveInto : MoveIntoBegining
     {
-        public MoveInto()
-        {
-            this.UseParentAsTargetNode = false;
-            this.ApplyTransformToAllTargetNodes = true;
-        }
-        protected override void Apply()
-        {
-            SiblingElement.PrependChild(TargetNode.CloneNode(true));
-            TargetNode.Remove();
-            Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
-        }
     }
 
     internal class MoveIntoBegining : MoveToBase
@@ -324,8 +360,21 @@ namespace XdtHtml
         }
         protected override void Apply()
         {
-            SiblingElement.PrependChild(TargetNode.CloneNode(true));
-            TargetNode.Remove();
+            var firstElement = SiblingElement.ChildNodes.FirstOrDefault(n => n.NodeType == HtmlNodeType.Element);
+
+            IEnumerable<HtmlNode> indentedNodes;
+            if (firstElement != null)
+                indentedNodes = TargetNode.GetNodeWithPreamble().AdjustIndent(firstElement).Select(n => n.CloneNode(true)).ToList();
+            else
+                indentedNodes = TargetNode.GetNodeWithPreamble().AdjustParentIndent(SiblingElement).Select(n => n.CloneNode(true)).ToList();
+
+            SiblingElement.PrependChild(indentedNodes);
+
+            foreach (var node in TargetNode.GetNodeWithPreamble().ToList())
+            {
+                node.Remove();
+            }
+
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
         }
     }
@@ -339,8 +388,24 @@ namespace XdtHtml
         }
         protected override void Apply()
         {
-            SiblingElement.AppendChild(TargetNode.CloneNode(true));
-            TargetNode.Remove();
+            var originalEndTagPreamble = SiblingElement.GetEndTagPreamble().Select(n => n.CloneNode(true)).ToList();
+            SiblingElement.GetEndTagPreamble().OfType<HtmlTextNode>().ToList().ForEach(n => n.Text = n.Text.Trim(' '));
+
+            var lastElement = SiblingElement.ChildNodes.LastOrDefault(n => n.NodeType == HtmlNodeType.Element);
+
+            IEnumerable<HtmlNode> indentedNodes;
+            if (lastElement != null)
+                indentedNodes = TargetNode.GetNodeWithPreamble().AdjustIndent(lastElement).Concat(originalEndTagPreamble).Select(n => n.CloneNode(true)).ToList();
+            else
+                indentedNodes = TargetNode.GetNodeWithPreamble().AdjustParentIndent(SiblingElement).Concat(originalEndTagPreamble).Select(n => n.CloneNode(true)).ToList();
+
+            SiblingElement.AppendChild(indentedNodes);
+
+            foreach (var node in TargetNode.GetNodeWithPostamble().ToList())
+            {
+                node.Remove();
+            }
+
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
         }
     }

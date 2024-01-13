@@ -27,7 +27,8 @@
                 <refresh-button></refresh-button>
             </page-header-actions>
 
-            <page-header-aditional-options><span>Testes</span>
+            <page-header-aditional-options>
+                <span>Testes</span>
                 <ng-container *ngIf="details.stateId != stateCodes.anulado">
                     <button mat-menu-item *hasEveryPermission="permissionConstants.LeaProdutos.remove" (click)="Delete()">
                         <i class="mdi mdi-delete-outline" aria-hidden="true"></i>
