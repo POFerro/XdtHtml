@@ -207,7 +207,7 @@ namespace XdtHtml
     internal class InsertAfter : InsertBase
     {
         protected override void Apply() {
-            SiblingElement.ParentNode.InsertAfter(TransformNodePreamble.Append(TransformNode).AdjustIndent(SiblingElement).ToList(), SiblingElement);
+            SiblingElement.ParentNode.InsertAfter(TransformNodePreamble.Append(TransformNode).AdjustIndent(SiblingElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline).ToList(), SiblingElement);
 
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
         }
@@ -216,7 +216,7 @@ namespace XdtHtml
     internal class InsertBefore : InsertBase
     {
         protected override void Apply() {
-            SiblingElement.ParentNode.InsertBefore(TransformNodePreamble.Append(TransformNode).AdjustIndent(SiblingElement), SiblingElement);
+            SiblingElement.ParentNode.InsertBefore(TransformNodePreamble.Append(TransformNode).AdjustIndent(SiblingElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline), SiblingElement);
 
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
         }
