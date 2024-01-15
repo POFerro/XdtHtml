@@ -320,8 +320,8 @@ namespace XdtHtml
 
         protected override void Apply()
         {
-            SiblingElement.ParentNode.InsertAfter(TransformNodePreamble.AdjustIndent(SiblingElement).Append(TargetNode).Select(n => n.CloneNode(true)).ToList(), SiblingElement);
-            foreach (var node in TargetNode.GetNodeWithPostamble().ToList())
+            SiblingElement.ParentNode.InsertAfter(TargetNode.GetNodeWithPreamble().AdjustIndent(SiblingElement, false).ToList().Select(n => n.CloneNode(true)), SiblingElement);
+            foreach (var node in TargetNode.GetNodeWithPreamble().ToList())
             {
                 node.Remove();
             }
@@ -340,7 +340,7 @@ namespace XdtHtml
         protected override void Apply()
         {
             SiblingElement.ParentNode.InsertBefore(new[] { TargetNode.AdjustIndent(SiblingElement) }.Concat(SiblingElement.GetNodePreamble()).Select(n => n.CloneNode(true)).ToList(), SiblingElement);
-            foreach (var node in TargetNode.GetNodeWithPostamble().ToList())
+            foreach (var node in TargetNode.GetNodeWithPreamble().ToList())
             {
                 node.Remove();
             }
@@ -403,7 +403,7 @@ namespace XdtHtml
 
             SiblingElement.AppendChild(indentedNodes);
 
-            foreach (var node in TargetNode.GetNodeWithPostamble().ToList())
+            foreach (var node in TargetNode.GetNodeWithPreamble().ToList())
             {
                 node.Remove();
             }

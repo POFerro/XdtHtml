@@ -1,0 +1,379 @@
+<form [dataSourceContext]="detailDataSourceContext" (ngSubmit)="OnSaveData()">
+  <results-container fxLayout="row wrap" [dataSourceContext]="detailDataSourceContext">
+    
+    <remove id="ToRemove">
+    
+      <data-field id="idProcesso" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.GrupoPedidos._Fields.IdProcesso' | translate">{{ details.idProcesso }}</data-field>
+    
+    </remove>
+    
+    <layout-container id="ONIAccordionLC" fxFlex="1000px">
+    
+      <mat-accordion id="ONIMatAccordion">
+        <results-container id="ONIDocumentos">
+          <ng-container *ngFor="let item of details.oniDocumentos; let i0 = index">               
+        
+            <mat-expansion-panel id="ExpansionPanel">
+            
+              <mat-expansion-panel-header>
+                <heading>
+                  <heading-title-container>
+                    <heading-title>
+                      <strong>{{ 'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.ONIMatAccordion.ONIDocumentos.ExpansionPanel._Description' | translate }}</strong>
+                    </heading-title>
+                  </heading-title-container>
+                </heading>
+              </mat-expansion-panel-header>
+            
+              <data-group id="FieldGroupTemObitosDetetatosConfirmation">
+                <heading>
+                  <heading-title-container>
+                    <heading-title>
+                      <strong id="ONITxtIndicacaoOutrosObitos">{{ 'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.ONIMatAccordion.ONIDocumentos.ExpansionPanel.ONITxtIndicacaoOutrosObitosHeading.ONITxtIndicacaoOutrosObitos' | translate }}</strong>
+                    </heading-title>
+                  </heading-title-container>
+                </heading>
+                <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                  <mat-label>
+                    <span>{{ 'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.ONIMatAccordion.ONIDocumentos.ExpansionPanel.TemObitosNaoInformados' | translate }}</span>
+                  </mat-label>
+                  <mat-select name="oniDocumentosItem[{{ i0 }}].temObitosNaoInformados"
+                              [(ngModel)]="item.temObitosNaoInformados">
+                    <mat-option></mat-option>
+                    <mat-option *ngFor="let dimension of lcfbit$ | async | activeDimensionsOnly" [value]="dimension.code">
+                        {{ dimension.description }}
+                    </mat-option>
+                  </mat-select>
+                
+                  <span readOnlyValue>{{ item.temObitosNaoInformados | commonData:lcfbit$:'code':'desc' }}</span>
+                
+                  <field-error-alert matSuffix></field-error-alert>
+                  <mat-error></mat-error>
+                </mat-form-field>
+              </data-group>
+              <data-group id="DadosDocumento">
+                <data-field id="oniDocumentosItem[{{ i0 }}].idDocumento" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.DocumentosPedido._Fields.IdDocumento' | translate">{{ item.idDocumento }}</data-field>
+                <data-field id="oniDocumentosItem[{{ i0 }}].codigoTipoDocumento" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.DocumentosPedido._Fields.CodigoTipoDocumento' | translate">{{ item.codigoTipoDocumento | commonData:tiposDocumento$:'code':'code-desc' }}</data-field>
+                <data-field id="oniDocumentosItem[{{ i0 }}].tipoDocumentoDocumentosInteracaoDescricao" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.TiposDocumento._Fields.Descricao' | translate">{{ item.tipoDocumentoDocumentosInteracaoDescricao }}</data-field>
+                <data-field id="oniDocumentosItem[{{ i0 }}].numPaginas" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.DocumentosPedido._Fields.NumPaginas' | translate">{{ item.numPaginas }}</data-field>
+                <mat-checkbox fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%"name="oniDocumentosItem[{{ i0 }}].anulado" [disabled]="true"
+                        [(ngModel)]="item.anulado"
+                        >
+                </mat-checkbox>
+              </data-group>
+              <card id="Card1" fxFlex="100%" editable>
+                <card-header>
+                  <card-header-title-container>
+                    <card-header-title>{{ 'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.ONIMatAccordion.ONIDocumentos.ExpansionPanel.Card1._Description' | translate }}</card-header-title>
+                  </card-header-title-container> 
+                  <card-header-actions>
+                    <list-counter *ngIf="detailsONIObitosDetetadosSelectionModel.selected.length"
+                                  listItemValue="{{ detailsONIObitosDetetadosSelectionModel.selected.length }}"
+                                  listItemLabel="{{'_infrastructure.Lists.ListCounter.ItemsSelected' | translate}}">
+                    </list-counter>
+                    <button mat-button
+                            *hasEveryPermission="PermissionConstants.HabHerdeiros.FilasInternas.FIValidacao.ObitosNaoInformados.edit"
+                            enterEditButton>
+                    </button>
+                    <button mat-button
+                            *hasEveryPermission="PermissionConstants.HabHerdeiros.FilasInternas.FIValidacao.ObitosNaoInformados.edit"
+                            cancelEditButton>
+                    </button>  
+                    <button mat-button
+                            *hasEveryPermission="PermissionConstants.HabHerdeiros.FilasInternas.FIValidacao.ObitosNaoInformados.edit"
+                            type="submit"
+                            confirmEditButton>
+                    </button>
+                    <button mat-button
+                            displayOnEditOnly
+                            [btnLabel]="'Global.Actions.Delete' | translate"
+                            btnIconClass="mdi mdi-delete"
+                            *ngIf="detailsONIObitosDetetadosSelectionModel.selected.length" 
+                            (click)="DeleteONIObitosDetetados(item)"
+                            >
+                    </button>
+                    <button mat-button
+                            displayOnEditOnly
+                            [btnLabel]="'Global.Actions.Add' | translate"
+                            btnIconClass="mdi mdi-plus-thick"
+                            (click)="InsertNewONIObitosDetetados(item)"
+                            >
+                    </button>
+                  </card-header-actions>
+                </card-header>
+                <remove id="ObitosDetetadosNoResultsMsgTitle">{{ 'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.ONIMatAccordion.ONIDocumentos.ExpansionPanel.Card1.ObitosDetetadosNoResultsMsgTitle' | translate }}</remove>
+                <remove id="ObitosDetetadosBtnAddLabel">{{ 'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.ONIMatAccordion.ONIDocumentos.ExpansionPanel.Card1.ObitosDetetadosBtnAddLabel' | translate }}</remove>
+                <results-container>
+                  <table-content>
+                    <table id="ONIObitosDetetados" [attr.aria-label]="'HabHerdeiros._Tables.ObitosDetetadosPedido._Description' | translate"
+                           [selectionModel]="detailsONIObitosDetetadosSelectionModel" 
+                           selectOnEditOnly 
+                           >
+                      <thead>
+                        <tr>
+                          <th id="nome" textAlign="left">{{ 'HabHerdeiros._Tables.ObitosDetetadosPedido._Fields.Nome' | translate }}</th>
+                          <th id="nif" textAlign="left">{{ 'HabHerdeiros._Tables.ObitosDetetadosPedido._Fields.NIF' | translate }}</th>
+                          <th id="tipoDocumentoIdentificacaoId" textAlign="left">{{ 'HabHerdeiros._Tables.ObitosDetetadosPedido._Fields.TipoDocumentoIdentificacao' | translate }}</th>
+                          <th id="numDocumentoIdentificacao" textAlign="left">{{ 'HabHerdeiros._Tables.ObitosDetetadosPedido._Fields.NumDocumentoIdentificacao' | translate }}</th>
+                          <th id="tipoRelacaoFalecidoId" textAlign="left">{{ 'HabHerdeiros._Tables.ObitosDetetadosPedido._Fields.TipoRelacaoFalecido' | translate }}</th>
+                          <th id="idIntervenienteProcesso" textAlign="left">{{ 'HabHerdeiros._Tables.ObitosDetetadosPedido._Fields.IdIntervenienteProcesso' | translate }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <ng-container *ngFor="let oniObitosDetetadosItem of item.oniObitosDetetados | filterNot:{'deleted':true}; let i1 = index">               
+                          <tr [selectionItem]="oniObitosDetetadosItem">
+                            <td textAlign="left">
+                              {{ oniObitosDetetadosItem.nome }}
+                            </td>
+                            <td textAlign="left">
+                              {{ oniObitosDetetadosItem.nif }}
+                            </td>
+                            <td textAlign="left">
+                              {{ oniObitosDetetadosItem.tipoDocumentoIdentificacaoId | commonData:tiposDocumentoIdentificacao$:'id':'desc' }}
+                            </td>
+                            <td textAlign="left">
+                              {{ oniObitosDetetadosItem.numDocumentoIdentificacao }}
+                            </td>
+                            <td textAlign="left">
+                              {{ oniObitosDetetadosItem.tipoRelacaoFalecidoId | commonData:tiposRelacaoFalecido$:'id':'code-desc' }}
+                            </td>
+                            <td textAlign="left">
+                              {{ oniObitosDetetadosItem.idIntervenienteProcesso }}
+                            </td>
+                          </tr>
+                        </ng-container>
+                      </tbody>
+                    </table>
+                  </table-content>
+                </results-container>
+                
+              </card>
+            
+            </mat-expansion-panel>
+        
+          </ng-container>
+        </results-container>
+        
+      </mat-accordion>      
+      <layout-container id="IdentificarObitos">
+        <layout-container-header>
+          <heading>
+            <heading-title-container>
+              <heading-title>
+                <strong>{{ 'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.IdentificarObitos._Description' | translate }}</strong>
+              </heading-title>
+            </heading-title-container>
+          </heading>
+        </layout-container-header>
+      
+        
+        <notes-badge id="NotesLabels" fxFlex="100%">
+        
+          
+          <ul id="ContainerLabels">
+          
+            <li id="TextIdentificarObitosSubHeader">{{ 'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.IdentificarObitos.NotesLabels.ContainerLabels.TextIdentificarObitosSubHeader' | translate }}</li>
+          
+          </ul>
+        
+        </notes-badge>
+        
+        <form id="IdentificarObitosForm">
+        
+          <remove id="IdentificarObitosFormBtnAddLabel">{{ 'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.IdentificarObitos.IdentificarObitosForm.IdentificarObitosFormBtnAddLabel' | translate }}</remove>
+          <results-container id="IdentificarObitosRepeater">
+            <ng-container *ngFor="let item of details.identificarObitosRepeater; let i = index">               
+          
+              <card id="IdentificarObitosRepeaterCard" fxFlex="1 1 50%">
+                <card-header>
+                  <card-header-title-container>
+                    <card-header-title>{{ 'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.IdentificarObitos.IdentificarObitosForm.IdentificarObitosRepeater.IdentificarObitosRepeaterCard._Description' | translate }}</card-header-title>
+                  </card-header-title-container> 
+                  <card-header-actions>
+                  </card-header-actions>
+                </card-header>
+                <data-group id="FieldGroup1">
+                  <mat-form-field fxFlex="100%">
+                    <mat-label>
+                      <span>{{ 'HabHerdeiros._Tables.ObitosDetetadosPedido._Fields.Nome' | translate }}</span>
+                    </mat-label>
+                    <input matInput type="text" required
+                           [(ngModel)]="item.nome"
+                           name="identificarObitosRepeaterItem[{{ i }}].nome"
+                           maxlength="100" />
+                    <mat-hint align="end" fieldLength></mat-hint>
+                  
+                    <field-clear-button matSuffix></field-clear-button>
+                    <field-error-alert matSuffix></field-error-alert>
+                    <mat-error></mat-error>
+                  </mat-form-field>
+                  <mat-form-field fxFlex="100%">
+                    <mat-label>
+                      <span>{{ 'HabHerdeiros._Tables.ObitosDetetadosPedido._Fields.NIF' | translate }}</span>
+                    </mat-label>
+                    <input matInput type="text"
+                           [(ngModel)]="item.nif"
+                           name="identificarObitosRepeaterItem[{{ i }}].nif"
+                           maxlength="9" />
+                    <mat-hint align="end" fieldLength></mat-hint>
+                  
+                    <field-clear-button matSuffix></field-clear-button>
+                    <field-error-alert matSuffix></field-error-alert>
+                    <mat-error></mat-error>
+                  </mat-form-field>
+                  <mat-form-field fxFlex="100%">
+                    <mat-label>
+                      <span>{{ 'HabHerdeiros._Tables.ObitosDetetadosPedido._Fields.TipoDocumentoIdentificacao' | translate }}</span>
+                    </mat-label>
+                    <mat-select name="identificarObitosRepeaterItem[{{ i }}].tipoDocumentoIdentificacaoId"
+                                [(ngModel)]="item.tipoDocumentoIdentificacaoId">
+                      <mat-option></mat-option>
+                      <mat-option *ngFor="let dimension of tiposDocumentoIdentificacao$ | async | activeDimensionsOnly" [value]="dimension.dimensionId">
+                          {{ dimension.description }}
+                      </mat-option>
+                    </mat-select>
+                  
+                    <field-error-alert matSuffix></field-error-alert>
+                    <mat-error></mat-error>
+                  </mat-form-field>
+                  <mat-form-field fxFlex="100%">
+                    <mat-label>
+                      <span>{{ 'HabHerdeiros._Tables.ObitosDetetadosPedido._Fields.NumDocumentoIdentificacao' | translate }}</span>
+                    </mat-label>
+                    <input matInput type="text"
+                           [(ngModel)]="item.numDocumentoIdentificacao"
+                           name="identificarObitosRepeaterItem[{{ i }}].numDocumentoIdentificacao"
+                           maxlength="14" />
+                    <mat-hint align="end" fieldLength></mat-hint>
+                  
+                    <field-clear-button matSuffix></field-clear-button>
+                    <field-error-alert matSuffix></field-error-alert>
+                    <mat-error></mat-error>
+                  </mat-form-field>
+                  <mat-form-field fxFlex="100%">
+                    <mat-label>
+                      <span>{{ 'HabHerdeiros._Tables.ObitosDetetadosPedido._Fields.TipoRelacaoFalecido' | translate }}</span>
+                    </mat-label>
+                    <mat-select name="identificarObitosRepeaterItem[{{ i }}].tipoRelacaoFalecidoId"
+                                [(ngModel)]="item.tipoRelacaoFalecidoId">
+                      <mat-option></mat-option>
+                      <mat-option *ngFor="let dimension of tiposRelacaoFalecido$ | async | activeDimensionsOnly" [value]="dimension.dimensionId">
+                          {{ dimension.code }} - {{ dimension.description }}
+                      </mat-option>
+                    </mat-select>
+                  
+                    <field-error-alert matSuffix></field-error-alert>
+                    <mat-error></mat-error>
+                  </mat-form-field>
+                </data-group>
+              </card>
+          
+            </ng-container>
+          </results-container>
+          
+        
+        </form>
+      
+      </layout-container>
+      <card id="ONIIntervenientesProcessoCard" fxFlex="100%">
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.ONIIntervenientesProcessoCard._Description' | translate }}</card-header-title>
+          </card-header-title-container> 
+          <card-header-actions>
+            <button mat-button
+                    displayOnEditOnly
+                    [btnLabel]="'Global.Actions.Add' | translate"
+                    btnIconClass="mdi mdi-plus-thick"
+                    (click)="InsertNewONIIntervenientesProcesso(details)"
+                    >
+            </button>
+          </card-header-actions>
+        </card-header>
+        <remove id="IdentificarComoObitos">{{ 'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.ONIIntervenientesProcessoCard.IdentificarComoObitos' | translate }}</remove>
+        <results-container>
+          <table-content>
+            <table id="ONIIntervenientesProcesso" [attr.aria-label]="'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.ONIIntervenientesProcessoCard.ONIIntervenientesProcesso._Description' | translate"
+                   >
+              <thead>
+                <tr>
+                  <th id="refExternaCliente" textAlign="left">{{ 'HabHerdeiros._Tables.IntervenientesProcesso._Fields.RefExternaCliente' | translate }}</th>
+                  <th id="nome" textAlign="left">{{ 'HabHerdeiros._Tables.IntervenientesProcesso._Fields.Nome' | translate }}</th>
+                  <th id="codigoTipoInterveniente" textAlign="left">{{ 'HabHerdeiros._Tables.IntervenientesProcesso._Fields.CodigoTipoInterveniente' | translate }}</th>
+                  <th id="tipoDocumentoIdentificacaoId" textAlign="left">{{ 'HabHerdeiros._Tables.IntervenientesProcesso._Fields.TipoDocumentoIdentificacao' | translate }}</th>
+                  <th id="numDocumentoIdentificacao" textAlign="left">{{ 'HabHerdeiros._Tables.IntervenientesProcesso._Fields.NumDocumentoIdentificacao' | translate }}</th>
+                  <th id="nif" textAlign="left">{{ 'HabHerdeiros._Tables.IntervenientesProcesso._Fields.NIF' | translate }}</th>
+                  <th id="relacaoFalecidoId" textAlign="left">{{ 'HabHerdeiros._Tables.IntervenientesProcesso._Fields.RelacaoFalecido' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of details.oniIntervenientesProcesso; let i = index">               
+                  <tr>
+                    <td textAlign="left">
+                      {{ item.refExternaCliente }}
+                    </td>
+                    <td textAlign="left">
+                      {{ item.nome }}
+                    </td>
+                    <td textAlign="left">
+                      {{ item.codigoTipoInterveniente | commonData:tiposInterveniente$:'code':'desc' }}
+                    </td>
+                    <td textAlign="left">
+                      {{ item.tipoDocumentoIdentificacaoId | commonData:tiposDocumentoIdentificacao$:'id':'desc' }}
+                    </td>
+                    <td textAlign="left">
+                      {{ item.numDocumentoIdentificacao }}
+                    </td>
+                    <td textAlign="left">
+                      {{ item.nif }}
+                    </td>
+                    <td textAlign="left">
+                      {{ item.relacaoFalecidoId | commonData:tiposRelacaoFalecido$:'id':'desc' }}
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </table-content>
+        </results-container>
+        
+      </card>
+    
+    </layout-container>
+    
+    <layout-container id="FITabONIImageViewerLC" fxFlex="1 1 0%">
+      <layout-container-header>
+        <heading>
+          <heading-title-container>
+            <heading-title>
+              <strong>{{ 'HabHerdeiros.FIValidacao.ObitosNaoInformados.FITabONIImageViewerLC._Description' | translate }}</strong>
+            </heading-title>
+          </heading-title-container>
+        </heading>
+      </layout-container-header>
+    
+      <card id="FITabONIImageViewerCard" fxFlex="100%">
+        <card-header>
+          <card-header-actions>
+          </card-header-actions>
+        </card-header>
+        
+        <results-container id="FITabONIImageViewerResultsContainer">
+        
+          
+          <div id="FITabONIImageViewerContainer">
+          
+            
+            <image-viewer id="FITabONIImageViewer">
+            
+            
+            </image-viewer>
+          
+          </div>
+        
+        </results-container>
+      </card>
+    
+    </layout-container>
+  </results-container>
+</form>

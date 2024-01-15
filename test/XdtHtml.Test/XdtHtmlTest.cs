@@ -58,6 +58,12 @@ namespace XdtHtml.Test
         }
 
         [TestMethod]
+        public void TestMoveAfterIndent()
+        {
+            ApplyTransform("move_after_indent_input", "move_after_indent");
+        }
+
+        [TestMethod]
         public void TestMoveElementsBefore()
         {
             ApplyTransform("sample_page", "move_element_before");
@@ -137,7 +143,7 @@ namespace XdtHtml.Test
         }
 
         [TestMethod]
-        public void TestPedidos()
+        public void TestCompositeTransform()
         {
             ApplyTransform("composite_transform_input", "composite_transform");
         }

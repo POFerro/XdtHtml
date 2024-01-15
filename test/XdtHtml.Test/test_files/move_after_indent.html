@@ -1,0 +1,259 @@
+<form xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform"
+      xdt:Transform="SetAttributes(*[not(contains(local-name(.), 'xmlns'))])"
+      fxFill>
+
+  <results-container xdt:Locator="XPath(./results-container)" xdt:Transform="SetAttributes"
+                     fxFill
+                     fxLayout="row nowrap"
+                     borderTop>
+
+    <remove xdt:Locator="XPath(.//remove)" xdt:Transform="RemoveAll"></remove>
+
+    <layout-container xdt:Locator="XPath(./layout-container[@id='ONIAccordionLC'])">
+
+      <mat-accordion xdt:Locator="XPath(./mat-accordion[@id='ONIMatAccordion'])" xdt:Transform="SetAttributes"
+                     [multi]="false"
+                     *ngIf="!estaEmModoAdicionarObito"
+                     padding="20">
+        <results-container>
+          <ng-container xdt:Transform="SetAttributes"
+                        *ngFor="let item of details.oniDocumentos; let i0 = index; first as isFirst">
+
+            <mat-expansion-panel xdt:Locator="XPath(.//mat-expansion-panel)" xdt:Transform="SetAttributes"
+                                 id="ExpansionPanel" (afterExpand)="documentoSelecionado=item" [expanded]="item.idDocumento == documentoSelecionado?.idDocumento"
+                                 class="projStyles-expansion-panel-selectable"
+                                 [ngClass]="{'projStyles-expansion-panel-selected':item.idDocumento == documentoSelecionado?.idDocumento}"
+                                 [disableOnEdit]="false">
+
+
+              <strong xdt:Locator="XPath(.//heading-title/strong)" xdt:Transform="Replace">
+                {{ item.codigoTipoDocumento }} - {{ item.tipoDocumentoDocumentosInteracaoDescricao }}
+              </strong>
+
+              <i xdt:Transform="InsertAfter(.//heading-title/strong)" *ngIf="item.temObitosNaoInformados != undefined && !item.temObitosNaoInformados" class="mdi mdi-file-check" textColor="success" matTooltip="Documento analisado e sem Óbito detetado."></i>
+              <i xdt:Transform="InsertAfter(.//heading-title/strong)" *ngIf="item.temObitosNaoInformados != undefined &&  item.temObitosNaoInformados" class="mdi mdi-file-remove" textColor="error" matTooltip="Documento analisado e com pelo menos um Óbito detetado."></i>
+              <i xdt:Transform="InsertAfter(.//heading-title/strong)" *ngIf="item.temObitosNaoInformados == undefined" class="mdi mdi-file-alert" textColor="alert" matTooltip="Documento não analisado."></i>
+
+
+              <data-group xdt:Locator="XPath(./data-group[@id='FieldGroupTemObitosDetetatosConfirmation'])" xdt:Transform="SetAttributes"
+                          paddingLeft="25"
+                          paddingBottom="10">
+
+                <button-group xdt:Locator="XPath(./mat-form-field[mat-select[@name='oniDocumentosItem[{{ i0 }}].temObitosNaoInformados']])" xdt:Transform="Replace"
+                              fxFlex="100%">
+                  <mat-button-toggle-group name="oniDocumentosItem_{{ i0 }}.temObitosDetetados" [(ngModel)]="item.temObitosNaoInformados" required padding="0">
+                    <mat-button-toggle btnToggle [value]="true">{{'Global.Yes' | translate }}</mat-button-toggle>
+                    <mat-button-toggle btnToggle [value]="false" (click)="LimparDocumento(item)">{{'Global.No' | translate }}</mat-button-toggle>
+                  </mat-button-toggle-group>
+                </button-group>
+
+              </data-group>
+
+              <data-group xdt:Locator="XPath(./data-group[@id='DadosDocumento'])" xdt:Transform="Remove">
+              </data-group>
+
+              <card xdt:Locator="XPath(//card[@id='ONIIntervenientesProcessoCard'])" xdt:Transform="SetAttributes"
+                    *ngIf="item.temObitosNaoInformados">
+                <card-header>
+                  <card-header-actions>
+                    <button xdt:Locator="XPath(./button[@btnIconClass='mdi mdi-plus-thick'])" xdt:Transform="SetAttributes" (click)="InsertNewONIIntervenientesProcesso(item)" [btnLabel]="'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.ONIIntervenientesProcessoCard.IdentificarComoObitos' | translate">
+                    </button>
+                  </card-header-actions>
+                </card-header>
+              </card>
+
+              <card xdt:Locator="XPath(./card[@id='Card1'])" xdt:Transform="SetAttributes"
+                    *ngIf="item.temObitosNaoInformados">
+                <card-header>
+                  <card-header-actions xdt:Transform="Replace">
+
+                    <button mat-button displayOnEditOnly [btnLabel]="'Global.Actions.Delete' | translate" btnIconClass="mdi mdi-delete" *ngIf="detailsONIObitosDetetadosSelectionModel.selected.length" (click)="DeleteONIObitosDetetados(item)">
+                    </button>
+                    <button mat-button
+                            [btnLabel]="'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.ONIMatAccordion.ONIDocumentos.ExpansionPanel.Card1.ObitosDetetadosBtnAddLabel' | translate"
+                            btnIconClass="mdi mdi-plus"
+                            (click)="entrarModoIdentificarObitos()">
+                    </button>
+
+                  </card-header-actions>
+                </card-header>
+
+                <input xdt:Transform="Insert"
+                       style="display:none" type="number" name="existemObitosSelecionados" [ngModel]="(item.oniObitosDetetados | filterNot:{'deleted':true }).length ?? 0" min="1" required />
+
+                <results-container xdt:Transform="SetAttributes"
+                                   [totalRecords]="(item.oniObitosDetetados | filterNot:{'deleted':true }).length ?? 0"
+                                   layoutType="compact"
+                                   [noResultsFoundTitle]="'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.ONIMatAccordion.ONIDocumentos.ExpansionPanel.Card1.ObitosDetetadosNoResultsMsgTitle' | translate">
+                  <table-content>
+                    <table id="ONIObitosDetetados" description="{{ 'HabHerdeiros._Tables.ObitosDetetadosPedido._Description' | translate }}" [selectionModel]="detailsONIObitosDetetadosSelectionModel" selectOnEditOnly>
+                      <thead>
+                        <tr>
+                          <th xdt:Transform="Insert"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <ng-container xdt:Transform="SetAttributes"
+                                      *ngFor="let oniObitosDetetadosItem of item.oniObitosDetetados | filterNot:{'deleted':true }; let i1 = index">
+                          <tr [selectionItem]="oniObitosDetetadosItem">
+
+                            <td xdt:Transform="Insert">
+                              <button mat-button btnType="danger" [matTooltip]="'Global.Actions.Remove' | translate" btnIconClass="mdi mdi-delete" btnIconPosition="icon-solo" (click)="ApagarObitoNaoInformado(oniObitosDetetadosItem)">
+                              </button>
+                            </td>
+                          </tr>
+                        </ng-container>
+                      </tbody>
+                    </table>
+                  </table-content>
+                </results-container>
+              </card>
+
+            </mat-expansion-panel>
+
+          </ng-container>
+        </results-container>
+      </mat-accordion>
+
+      <layout-container xdt:Locator="XPath(//layout-container[@id='IdentificarObitos'])" xdt:Transform="SetAttributes"
+                        *ngIf="estaEmModoAdicionarObito"
+                        fxFill>
+
+        <layout-container-header>
+          <heading>
+            <heading-title-container>
+              <heading-title>
+                <span xdt:Transform="Insert">({{ documentoSelecionado.codigoTipoDocumento }} - {{ documentoSelecionado.tipoDocumentoDocumentosInteracaoDescricao }})</span>
+              </heading-title>
+            </heading-title-container>
+          </heading>
+        </layout-container-header>
+
+        <form xdt:Locator="XPath(//form[@id='IdentificarObitosForm'])" xdt:Transform="SetAttributes"
+              #IdentificarObitosForm="ngForm">
+
+          <results-container xdt:Transform="SetAttributes"
+                             fxLayout="row wrap">
+            <ng-container xdt:Transform="SetAttributes"
+                          *ngFor="let item of novosObitosIdentificado; let i = index">
+
+              <card id="IdentificarObitosRepeaterCard">
+                <card-header>
+                  <card-header-actions>
+                    <button xdt:Transform="Insert"
+                            *ngIf="novosObitosIdentificado.length > 1"
+                            mat-button btnType="danger" [matTooltip]="'Global.Actions.Remove' | translate" btnIconClass="mdi mdi-delete" btnIconPosition="icon-solo" (click)="ApagarNovoObitoIdentificado(item)">
+                    </button>
+                  </card-header-actions>
+                </card-header>
+              </card>
+
+            </ng-container>
+          </results-container>
+
+        </form>
+
+
+        <layout-container-footer xdt:Transform="Insert"
+                                 isSticky
+                                 borderTop>
+
+          <button-group fxFlex="100%"
+                        paddingTop="15"
+                        textAlign="center">
+
+            <button mat-button
+                    btnType="neutral"
+                    [btnLabel]="'Global.Actions.Cancel' | translate"
+                    (click)="sairModoIdentificarObitos(true)"></button>
+
+            <button mat-button
+                    [btnLabel]="'HabHerdeiros.FIValidacao.ObitosNaoInformados.ONIAccordionLC.IdentificarObitos.IdentificarObitosForm.IdentificarObitosFormBtnAddLabel' | translate"
+                    btnIconClass="mdi mdi-plus"
+                    (click)="identificarObitoAdicionarNovo()"></button>
+
+            <button mat-button
+                    btnType="regular-highlight"
+                    [disabled]="!IdentificarObitosForm.valid"
+                    [btnLabel]="'Global.Actions.Save' | translate "
+                    (click)="sairModoIdentificarObitos()"></button>
+
+          </button-group>
+        </layout-container-footer>
+
+      </layout-container>
+    </layout-container>
+
+    <!-- #region Tabela Intervenientes Processo-->
+    <table xdt:Locator="XPath(//table[@id='ONIIntervenientesProcesso'])" xdt:Transform="SetAttributes"
+           [selectionModel]="$any(item).selectionModel"></table>
+
+    <tr xdt:Locator="XPath(//table[@id='ONIIntervenientesProcesso']/tbody/ng-container/tr)" xdt:Transform="SetAttributes"
+        [selectionItem]="item.usadoObitoNaoInformado ? false : item"></tr>
+    <!-- #endregion -->
+
+
+
+
+    <card xdt:Locator="XPath(.//card[@id='ONIIntervenientesProcessoCard'])" xdt:Transform="MoveToAfter(//data-group[@id='FieldGroupTemObitosDetetatosConfirmation'])">
+    </card>
+
+
+    <!--image-viewer-->
+    <layout-container xdt:Locator="XPath(.//layout-container[@id='FITabONIImageViewerLC'])"
+                      xdt:Transform="SetAttributes"
+                      borderLeft
+                      backgroundColor="var(--theme_color_gray_lightest)"
+                      class="projStyles-FIValidHerdeiros-docviewer-wrap">
+
+
+      <layout-container-header xdt:Locator="XPath(./layout-container-header)" xdt:Transform="Replace"
+                               borderBottom>
+        <heading paddingLeft="20"
+                 paddingRight="20"
+                 paddingTop="25"
+                 paddingBottom="14">
+          <heading-title-container>
+            <heading-title>
+              <span>{{ 'HabHerdeiros.FIValidacao.ObitosNaoInformados.FITabONIImageViewerLC._Description' | translate }}</span>
+            </heading-title>
+          </heading-title-container>
+        </heading>
+      </layout-container-header>
+
+      <card xdt:Transform="RemoveAttributes">
+
+
+        <card-header xdt:Transform="Remove"></card-header>
+
+        <results-container xdt:Transform="SetAttributes"
+                           [totalRecords]="documentoSelecionado ? 1 : 0"
+                           fxFill>
+
+          <div xdt:Locator="XPath(.//div)"
+               xdt:Transform="SetAttributes"
+               *ngIf="documentoSelecionado != null"
+               class="projStyles-FIValidHerdeiros-selection-list-documents-item-image-frame">
+
+
+            <image-viewer xdt:Locator="XPath(.//image-viewer)"
+                          xdt:Transform="SetAttributes"
+                          [idProcesso]="documentoSelecionado.idProcesso"
+                          [idPedido]="documentoSelecionado.idPedido"
+                          [idDocumento]="documentoSelecionado.idDocumento"></image-viewer>
+
+          </div>
+
+        </results-container>
+
+      </card>
+
+      <card xdt:Transform="SetAttributes" fxFill></card>
+
+    </layout-container>
+
+
+
+  </results-container>
+
+</form>
