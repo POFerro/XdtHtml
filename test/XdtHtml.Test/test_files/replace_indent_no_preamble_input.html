@@ -1,0 +1,238 @@
+<form [dataSourceContext]="detailDataSourceContext" (ngSubmit)="OnSaveData()">
+  <results-container fxLayout="row wrap" [dataSourceContext]="detailDataSourceContext">
+    
+    <layout-container id="ResultadoDadosWrap" fxFlex="1 1 0%">
+      <layout-container-header>
+        <heading>
+          <heading-title-container>
+            <heading-title>
+              <strong>{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap._Description' | translate }}</strong>
+            </heading-title>
+          </heading-title-container>
+        </heading>
+      </layout-container-header>
+    
+      <card id="RequisitosAutomaticosWrap" fxFlex="50%">
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.RequisitosAutomaticosWrap._Description' | translate }}</card-header-title>
+          </card-header-title-container> 
+          <card-header-actions>
+          </card-header-actions>
+        </card-header>
+        
+        <div id="TotalRequisitosWrap" fxFlex="50%">
+          <heading>
+            <heading-title-container>
+              <heading-title>
+                <strong>{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.RequisitosAutomaticosWrap.TotalRequisitosWrap._Description' | translate }}</strong>
+              </heading-title>
+            </heading-title-container>
+          </heading>
+        
+          <strong>{{ details.totalRequisitosAutomaticos | number }}</strong>
+        
+        </div>
+        
+        <div id="AnomaliasDetetadasWrap" fxFlex="50%">
+          <heading>
+            <heading-title-container>
+              <heading-title>
+                <strong>{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.RequisitosAutomaticosWrap.AnomaliasDetetadasWrap._Description' | translate }}</strong>
+              </heading-title>
+            </heading-title-container>
+          </heading>
+        
+          <strong>{{ details.totalAnomaliasDetetadas | number }}</strong>
+        
+        </div>
+      </card>
+      <card id="ObitosDetetadosWrap" fxFlex="50%">
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.ObitosDetetadosWrap._Description' | translate }}</card-header-title>
+          </card-header-title-container> 
+          <card-header-actions>
+          </card-header-actions>
+        </card-header>
+        <results-container>
+          <table-content>
+            <table id="ObitosDetetados" [attr.aria-label]="'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.ObitosDetetadosWrap.ObitosDetetados._Description' | translate"
+                   >
+              <thead>
+                <tr>
+                  <th id="nomeDocumento" textAlign="left">{{ 'HabHerdeiros._Tables.VM_FIValidacao_Resultados_TabelaDocumentos._Fields.NomeDocumento' | translate }}</th>
+                  <th id="totalObitosDetetados" textAlign="right">{{ 'HabHerdeiros._Tables.VM_FIValidacao_Resultados_TabelaDocumentos._Fields.TotalObitosDetetados' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of details.obitosDetetados; let i = index">               
+                  <tr>
+                    <td textAlign="left">
+                      {{ item.nomeDocumento }}
+                    </td>
+                    <td textAlign="right">
+                      {{ item.totalObitosDetetados | number }}
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </table-content>
+        </results-container>
+        
+      </card>
+      <card id="ReqisitosSimplesWrap" fxFlex="50%" expandable>
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.ReqisitosSimplesWrap._Description' | translate }}</card-header-title>
+          </card-header-title-container> 
+          <card-header-actions>
+          </card-header-actions>
+        </card-header>
+        <results-container>
+          <table-content>
+            <table id="ReqisitosSimples" [attr.aria-label]="'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.ReqisitosSimplesWrap.ReqisitosSimples._Description' | translate"
+                   >
+              <thead>
+                <tr>
+                  <th id="nomeDocumento" textAlign="left">{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.ReqisitosSimplesWrap.ReqisitosSimples.Documento' | translate }}</th>
+                  <th id="totalRequisitos" textAlign="right">{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.ReqisitosSimplesWrap.ReqisitosSimples.TotalRequisitos' | translate }}</th>
+                  <th id="totalAnomaliasDetetadas" textAlign="right">{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.ReqisitosSimplesWrap.ReqisitosSimples.TotalAnomaliasDetetadas' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of details.reqisitosSimples; let i = index">               
+                  <tr>
+                    <td textAlign="left">
+                      {{ item.nomeDocumento }}
+                    </td>
+                    <td textAlign="right">
+                      {{ item.totalRequisitos | number }}
+                    </td>
+                    <td textAlign="right">
+                      {{ item.totalAnomaliasDetetadas | number }}
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </table-content>
+        </results-container>
+        
+      </card>
+      <card id="ReqisitosCruzadosWrap" fxFlex="50%" expandable>
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.ReqisitosCruzadosWrap._Description' | translate }}</card-header-title>
+          </card-header-title-container> 
+          <card-header-actions>
+          </card-header-actions>
+        </card-header>
+        <results-container>
+          <table-content>
+            <table id="ReqisitosCruzados" [attr.aria-label]="'HabHerdeiros._Tables.VM_FIValidacao_Resultados_TabelaDocumentos._Description' | translate"
+                   >
+              <thead>
+                <tr>
+                  <th id="nomeDocumento" textAlign="left">{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.ReqisitosCruzadosWrap.ReqisitosCruzados.Documentos' | translate }}</th>
+                  <th id="totalRequisitos" textAlign="right">{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.ReqisitosCruzadosWrap.ReqisitosCruzados.TotalRequsitos' | translate }}</th>
+                  <th id="totalAnomaliasDetetadas" textAlign="right">{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.ReqisitosCruzadosWrap.ReqisitosCruzados.TotalAnomaliasDetetadas' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of details.reqisitosCruzados; let i = index">               
+                  <tr>
+                    <td textAlign="left">
+                      {{ item.nomeDocumento }}
+                    </td>
+                    <td textAlign="right">
+                      {{ item.totalRequisitos | number }}
+                    </td>
+                    <td textAlign="right">
+                      {{ item.totalAnomaliasDetetadas | number }}
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </table-content>
+        </results-container>
+        
+      </card>
+      <card id="MotivosDevolucaoWrap" fxFlex="100%">
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.MotivosDevolucaoWrap.MotivosDevolucao._Description' | translate }}</card-header-title>
+          </card-header-title-container> 
+          <card-header-actions>
+          </card-header-actions>
+        </card-header>
+        <results-container>
+          <table-content>
+            <table id="MotivosDevolucao" [attr.aria-label]="'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.MotivosDevolucaoWrap.MotivosDevolucao._Description' | translate"
+                   >
+              <thead>
+                <tr>
+                  <th id="n1" textAlign="left">{{ 'HabHerdeiros._Tables.VM_FIValidacao_Resultados_MotivosDevolucao._Fields.N1' | translate }}</th>
+                  <th id="n2" textAlign="left">{{ 'HabHerdeiros._Tables.VM_FIValidacao_Resultados_MotivosDevolucao._Fields.N2' | translate }}</th>
+                  <th id="n3" textAlign="left">{{ 'HabHerdeiros._Tables.VM_FIValidacao_Resultados_MotivosDevolucao._Fields.N3' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of details.motivosDevolucao; let i = index">               
+                  <tr>
+                    <td textAlign="left">
+                      {{ item.n1 }}
+                    </td>
+                    <td textAlign="left">
+                      {{ item.n2 }}
+                    </td>
+                    <td textAlign="left">
+                      {{ item.n3 }}
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </table-content>
+        </results-container>
+        
+      </card>
+    
+    </layout-container>
+    
+    <layout-container id="ResultadoObservacoesWrap" fxFlex="500px">
+      <layout-container-header>
+        <heading>
+          <heading-title-container>
+            <heading-title>
+              <strong>{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoObservacoesWrap._Description' | translate }}</strong>
+            </heading-title>
+          </heading-title-container>
+        </heading>
+      </layout-container-header>
+    
+      <data-group id="ResultadoObservacoesWrapFieldGroup">
+        <data-field id="resumoResultadoValidacao" fxFlex="100%" [dataFieldLabel]="'HabHerdeiros.FIValidacao.Resultado.ResultadoObservacoesWrap.ResumoResultadoValidacao' | translate">{{ details.resumoResultadoValidacao }}</data-field>
+        <mat-form-field fxFlex="100%">
+          <mat-label>
+            <span>{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoObservacoesWrap.Observacao' | translate }}</span>
+          </mat-label>
+          <input matInput type="text"
+                 [(ngModel)]="details.observacao"
+                 name="observacao"
+                 maxlength="500" />
+          <mat-hint align="end" fieldLength></mat-hint>
+        
+          <span readOnlyValue>{{ details.observacao }}</span>
+        
+          <field-clear-button matSuffix></field-clear-button>
+          <field-error-alert matSuffix></field-error-alert>
+          <mat-error></mat-error>
+        </mat-form-field>
+      </data-group>
+    
+    </layout-container>
+  </results-container>
+</form>

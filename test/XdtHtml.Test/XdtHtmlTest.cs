@@ -124,6 +124,12 @@ namespace XdtHtml.Test
             ApplyTransform("sample_page_cards", "replace_element_transform");
         }
 
+        [TestMethod]
+        public void TestReplaceIndentNoPreamble()
+        {
+            ApplyTransform("replace_indent_no_preamble_input", "replace_indent_no_preamble", "replace_indent_no_preamble_result");
+        }
+
         protected void ApplyTransform(string contentFileName, string transformFileName, string resultFileName = null)
         {
             resultFileName ??= transformFileName + "_result";

@@ -177,7 +177,7 @@ namespace XdtHtml
 
         private static void AdjustIndent(IndentTreeInfo node)
         {
-            if (node.PreambleNode != null)
+            if (node.PreambleNode != null && node.NodeIndentation.Length > 0)
             {
                 node.PreambleNode.Text = node.PreambleNode.Text.Replace(node.NodeIndentation, node.DesiredIndentation);
             }

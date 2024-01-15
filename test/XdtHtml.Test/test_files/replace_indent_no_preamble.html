@@ -1,0 +1,87 @@
+<form xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform"
+      xdt:Transform="SetAttributes(*[not(contains(local-name(.), 'xmlns'))])"
+      fxFill>
+
+  <results-container xdt:Locator="XPath(./results-container)" xdt:Transform="SetAttributes"
+                     fxFill
+                     fxLayout="row nowrap"
+                     borderTop></results-container>
+
+  <layout-container xdt:Locator="XPath(.//layout-container[@id='ResultadoDadosWrap'])">
+
+    <layout-container-header xdt:Locator="XPath(./layout-container-header)" xdt:Transform="Replace"
+                             borderBottom>
+      <heading paddingLeft="20"
+               paddingRight="20"
+               paddingTop="25"
+               paddingBottom="14">
+        <heading-title-container>
+          <heading-title>
+            <strong>{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap._Description' | translate }}</strong>
+          </heading-title>
+        </heading-title-container>
+      </heading>
+    </layout-container-header>
+
+    <card xdt:Locator="XPath(.//card[@id='RequisitosAutomaticosWrap'])">
+
+      <div xdt:Locator="XPath(.//div[@id='TotalRequisitosWrap'])" xdt:Transform="Replace"
+           id="TotalRequisitosWrap"
+           fxFlex="50%"
+           class="projStyles-count-badge">
+
+        <div class="projStyles-count-badge-inner">
+          <span>{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.RequisitosAutomaticosWrap.TotalRequisitosWrap._Description' | translate }}</span>
+          <em>{{ details.totalRequisitosAutomaticos | number }}</em>
+        </div>
+
+      </div>
+
+      <div xdt:Locator="XPath(.//div[@id='AnomaliasDetetadasWrap'])" xdt:Transform="Replace"
+           id="AnomaliasDetetadasWrap"
+           fxFlex="50%"
+           class="projStyles-count-badge projStyles-count-badge-type-warning">
+
+        <div class="projStyles-count-badge-inner">
+          <span>{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.RequisitosAutomaticosWrap.AnomaliasDetetadasWrap._Description' | translate }}</span>
+          <em>{{ details.totalAnomaliasDetetadas | number }}</em>
+        </div>
+
+      </div>
+
+    </card>
+
+    <card xdt:Locator="XPath(.//card[@id='ReqisitosSimplesWrap'])" xdt:Transform="SetAttributes" expanded="false">
+      <card-header-title xdt:Locator="XPath(.//card-header-title)" xdt:Transform="Replace">{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.ReqisitosSimplesWrap._Description' | translate }} <span> (Total de Anomalias: {{totalAnomaliasReqSimples}}) </span></card-header-title>
+    </card>
+
+    <card xdt:Locator="XPath(.//card[@id='ReqisitosCruzadosWrap'])" xdt:Transform="SetAttributes" expanded="false">
+      <card-header-title xdt:Locator="XPath(.//card-header-title)" xdt:Transform="Replace">{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoDadosWrap.ReqisitosCruzadosWrap._Description' | translate }} <span> (Total de Anomalias: {{totalAnomaliasReqCruzados}}) </span></card-header-title>
+    </card>
+
+
+  </layout-container>
+
+  <layout-container xdt:Locator="XPath(.//layout-container[@id='ResultadoObservacoesWrap'])" xdt:Transform="SetAttributes"
+                    borderLeft>
+
+    <layout-container-header xdt:Locator="XPath(./layout-container-header)" xdt:Transform="Replace"
+                             borderBottom>
+      <heading paddingLeft="20"
+               paddingRight="20"
+               paddingTop="25"
+               paddingBottom="14">
+        <heading-title-container>
+          <heading-title>
+            <strong>{{ 'HabHerdeiros.FIValidacao.Resultado.ResultadoObservacoesWrap._Description' | translate }}</strong>
+          </heading-title>
+        </heading-title-container>
+      </heading>
+    </layout-container-header>
+
+    <data-group xdt:Locator="XPath(./data-group)" xdt:Transform="SetAttributes"
+                class="projStyles-FIValidHerdeiros-details-form"></data-group>
+
+  </layout-container>
+
+</form>
