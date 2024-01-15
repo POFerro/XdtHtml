@@ -46,15 +46,21 @@ namespace XdtHtml.Test
         }
 
         [TestMethod]
+        public void TestReplaceIndentWithComments()
+        {
+            ApplyTransform("replace_indent_comments_input", "replace_indent_comments", "replace_indent_comments_result");
+        }
+
+        [TestMethod]
         public void TestMoveElementsAfter()
         {
-            ApplyTransform("sample_page", "move_elements");
+            ApplyTransform("sample_page", "move_element_after");
         }
 
         [TestMethod]
         public void TestMoveElementsBefore()
         {
-            ApplyTransform("sample_page", "move_elements2");
+            ApplyTransform("sample_page", "move_element_before");
         }
 
 
@@ -83,9 +89,33 @@ namespace XdtHtml.Test
         }
 
         [TestMethod]
+        public void TestInsertAfterElement()
+        {
+            ApplyTransform("sample_page", "insert_after_element");
+        }
+
+        [TestMethod]
+        public void TestInsertBeforeElement()
+        {
+            ApplyTransform("sample_page", "insert_before_element");
+        }
+
+        [TestMethod]
         public void TestInsertElementsInto()
         {
             ApplyTransform("sample_page", "insert_into_element");
+        }
+
+        [TestMethod]
+        public void TestInsertElementsIntoBegining()
+        {
+            ApplyTransform("sample_page", "insert_into_begining_element");
+        }
+
+        [TestMethod]
+        public void TestInsertElementsIntoEnd()
+        {
+            ApplyTransform("sample_page", "insert_into_end_element");
         }
 
         [TestMethod]

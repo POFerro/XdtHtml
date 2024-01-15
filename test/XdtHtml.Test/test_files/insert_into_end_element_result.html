@@ -1,4 +1,4 @@
-﻿<form #editForm="ngForm" (ngSubmit)="OnSaveData()" name="globalForm" [dataSourceContext]="detailDataSourceContext">
+<form #editForm="ngForm" (ngSubmit)="OnSaveData()" name="globalForm" [dataSourceContext]="detailDataSourceContext">
     <page editable (beginEdit)="OnBeginEdit()" (cancelEdit)="OnCancelEdit($event)">
 
         <page-header pageHeaderIcon="_Lea_ mdi mdi-code-json">
@@ -25,13 +25,17 @@
                 </button>
 
                 <refresh-button></refresh-button>
+
+
+                <page-header-aditional-options>
+                    <button mat-menu-item (click)="addedFunctionalityByCustomCode()">
+                        <i class="mdi mdi-delete-outline" aria-hidden="true"></i>
+                        <span>{{'Global.Actions.AddedFunctionalityByCustomCode' | translate}}</span>
+                    </button>
+                </page-header-aditional-options>
             </page-header-actions>
 
             <page-header-aditional-options>
-                <button mat-menu-item (click)="addedFunctionalityByCustomCode()">
-                    <i class="mdi mdi-delete-outline" aria-hidden="true"></i>
-                    <span>{{'Global.Actions.AddedFunctionalityByCustomCode' | translate}}</span>
-                </button>
                 <ng-container *ngIf="details.stateId != stateCodes.anulado">
                     <button mat-menu-item *hasEveryPermission="permissionConstants.LeaProdutos.remove" (click)="Delete()">
                         <i class="mdi mdi-delete-outline" aria-hidden="true"></i>

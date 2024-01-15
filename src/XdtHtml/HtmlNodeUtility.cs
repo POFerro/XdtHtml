@@ -49,7 +49,7 @@ namespace XdtHtml
 
         public static IEnumerable<HtmlNode> GetNodePreamble(this HtmlNode node)
         {
-            return node.GetPreviousSiblings(breakBefore: n => n.NodeType != HtmlNodeType.Text && n.NodeType != HtmlNodeType.Comment);
+            return node.GetPreviousSiblings(breakBefore: n => n.NodeType != HtmlNodeType.Text && n.NodeType != HtmlNodeType.Comment).Reverse();
         }
 
         public static IEnumerable<HtmlNode> GetNodePostamble(this HtmlNode node)
@@ -231,7 +231,7 @@ namespace XdtHtml
             };
 
             info.ChildNodes = node.ChildNodes
-                                 .Where(n => n.NodeType == HtmlNodeType.Element)
+                                 .Where(n => n.NodeType == HtmlNodeType.Element || n.NodeType == HtmlNodeType.Comment)
                                  .Select(n => GetIndentTreeInfo(n, desiredIndent + n.GetIndentationFromParent(currentNodeIndentation), n.GetIndentationWithNewline()))
                                  .ToList()
                                  ;
@@ -241,7 +241,7 @@ namespace XdtHtml
 
         public static string GetIndentationFromParent(this HtmlNode node, string parentNodeIndentation)
         {
-            if (node.ParentNode?.NodeType != HtmlNodeType.Element)
+            if (node.ParentNode == null || node.ParentNode.NodeType == HtmlNodeType.Text)
                 return node.GetIndentationWithNewline().Replace("\r", "").Replace("\n", "");
             else
             {
@@ -255,7 +255,7 @@ namespace XdtHtml
 
         public static string GetIndentationFromParent(this HtmlNode node)
         {
-            if (node.ParentNode?.NodeType != HtmlNodeType.Element)
+            if (node.ParentNode == null || node.ParentNode.NodeType == HtmlNodeType.Text)
                 return node.GetIndentationWithNewline().Replace("\r", "").Replace("\n", "");
             else
             {

@@ -1,0 +1,126 @@
+<form [dataSourceContext]="detailDataSourceContext" (ngSubmit)="OnSaveData()">
+  <page editable (beginEdit)="OnBeginEdit()" (cancelEdit)="OnCancelEdit($event)">
+  
+    <page-header pageHeaderIcon="mdi mdi-account-key">
+      <page-header-title title="{{ 'Global.Details' | translate }}"></page-header-title>
+    
+      <page-header-actions>
+        <list-counter formErrorsCounter></list-counter>
+        
+        <ng-container *ngIf="details.canBeEdited">
+          <button mat-button
+                *hasEveryPermission="PermissionConstants.Configurations.AccessControl.RolesTab.RoleDetails.edit"
+                enterEditButton>
+          </button>
+        </ng-container>
+        
+        <button mat-button
+                *hasEveryPermission="PermissionConstants.Configurations.AccessControl.RolesTab.RoleDetails.edit"
+                cancelEditButton>
+        </button>
+        
+        <button mat-button
+                *hasEveryPermission="PermissionConstants.Configurations.AccessControl.RolesTab.RoleDetails.edit"
+                type="submit"
+                confirmEditButton>
+        </button>
+        
+        <refresh-button></refresh-button>
+      </page-header-actions>
+    
+      <page-header-aditional-options>
+      </page-header-aditional-options>
+    
+    </page-header>
+    
+    <page-body>
+      <card id="RoleDetailsCard" fxFlex="100%" editable expandable>
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'Configurations.AccessControl.RoleDetails.RoleDetailsCard._Description' | translate }}</card-header-title>
+          </card-header-title-container> 
+          <card-header-actions>
+          </card-header-actions>
+        </card-header>
+        <data-group id="FieldGroup1">
+          <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+            <mat-label>
+              <span>{{ 'Configurations._Tables.Roles._Fields.RoleCode' | translate }}</span>
+            </mat-label>
+            <input matInput type="text" required [disabled]="!detailDataSourceContext.isNewRecord"
+                   [(ngModel)]="details.roleCode"
+                   name="roleCode"
+                   maxlength="50" />
+            <mat-hint align="end" fieldLength></mat-hint>
+          
+            <span readOnlyValue>{{ details.roleCode }}</span>
+          
+            <field-clear-button matSuffix></field-clear-button>
+            <field-error-alert matSuffix></field-error-alert>
+            <mat-error></mat-error>
+          </mat-form-field>
+          <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+            <mat-label>
+              <span>{{ 'Configurations._Tables.Roles._Fields.DefaultPageMenuCode' | translate }}</span>
+            </mat-label>
+            <input matInput type="text"
+                   [(ngModel)]="details.defaultPageMenuCode"
+                   name="defaultPageMenuCode"
+                   maxlength="50" />
+            <mat-hint align="end" fieldLength></mat-hint>
+          
+            <span readOnlyValue>{{ details.defaultPageMenuCode }}</span>
+          
+            <field-clear-button matSuffix></field-clear-button>
+            <field-error-alert matSuffix></field-error-alert>
+            <mat-error></mat-error>
+          </mat-form-field>
+        </data-group>
+      </card>
+      <card id="PermissionsCard" fxFlex="100%" expandable>
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'Configurations._Tables.RolePermissions._Description' | translate }}</card-header-title>
+          </card-header-title-container> 
+          <card-header-actions>
+          </card-header-actions>
+        </card-header>
+        <results-container>
+          <table-content>
+            <table id="PermissionsList" [attr.aria-label]="'Configurations._Tables.RolePermissions._Description' | translate"
+                   >
+              <thead>
+                <tr>
+                  <th id="permissionCode" textAlign="left">{{ 'Configurations._Tables.RolePermissions._Fields.PermissionCode' | translate }}</th>
+                  <th id="hasPermission" textAlign="left">{{ 'Configurations._Tables.RolePermissions._Fields.HasPermission' | translate }}</th>
+                  <th id="description" textAlign="left">{{ 'Configurations.AccessControl.RoleDetails.PermissionsCard.PermissionsList.Description' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of details.permissionsList; let i = index">               
+                  <tr>
+                    <td textAlign="left">
+                      {{ item.permissionCode }}
+                    </td>
+                    <td textAlign="left">
+                      <mat-checkbox fxFlex="100%"name="permissionsList[{{ i }}].hasPermission" [disabled]="true"
+                              [(ngModel)]="item.hasPermission"
+                              >
+                      </mat-checkbox>
+                    </td>
+                    <td textAlign="left">
+                      {{ item.description }}
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </table-content>
+        </results-container>
+        
+      </card>
+    
+    </page-body>
+    
+  </page>
+</form>

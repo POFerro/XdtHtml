@@ -1,0 +1,126 @@
+<form [dataSourceContext]="detailDataSourceContext" (ngSubmit)="OnSaveData()">
+  <page editable (beginEdit)="OnBeginEdit()" (cancelEdit)="OnCancelEdit($event)">
+  
+    <page-header pageHeaderIcon="mdi mdi-account-key">
+      <page-header-title title="{{ 'Global.Details' | translate }}"></page-header-title>
+    
+      <page-header-actions>
+        <list-counter formErrorsCounter></list-counter>
+        
+        <ng-container *ngIf="details.canBeEdited">
+          <button mat-button *hasEveryPermission="PermissionConstants.Configurations.AccessControl.RolesTab.RoleDetails.edit" enterEditButton>
+          </button>
+        </ng-container>
+        
+        <button mat-button *hasEveryPermission="PermissionConstants.Configurations.AccessControl.RolesTab.RoleDetails.edit" cancelEditButton>
+        </button>
+        
+        <button mat-button *hasEveryPermission="PermissionConstants.Configurations.AccessControl.RolesTab.RoleDetails.edit" type="submit" confirmEditButton>
+        </button>
+        
+        <refresh-button></refresh-button>
+      </page-header-actions>
+    
+      <page-header-aditional-options>
+      </page-header-aditional-options>
+    
+    </page-header>
+    
+    <page-body>
+      <card id="RoleDetailsCard" fxFlex="100%" editable expandable>
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'Configurations.AccessControl.RoleDetails.RoleDetailsCard._Description' | translate }}</card-header-title>
+          </card-header-title-container> 
+          <card-header-actions>
+          </card-header-actions>
+        </card-header>
+        <data-group id="FieldGroup1">
+          <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+            <mat-label>
+              <span>{{ 'Configurations._Tables.Roles._Fields.RoleCode' | translate }}</span>
+            </mat-label>
+            <input matInput type="text" required [disabled]="!detailDataSourceContext.isNewRecord" [(ngModel)]="details.roleCode" name="roleCode" maxlength="50" />
+            <mat-hint align="end" fieldLength></mat-hint>
+          
+            <span readOnlyValue>{{ details.roleCode }}</span>
+          
+            <field-clear-button matSuffix></field-clear-button>
+            <field-error-alert matSuffix></field-error-alert>
+            <mat-error></mat-error>
+          </mat-form-field>
+          <mat-form-field fxFlex="230px" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" *ngIf="!!keys?.roleCode">
+            <mat-label>
+              <span>{{ 'Configurations._Tables.Roles._Fields.DefaultPageMenuCode' | translate }}</span>
+            </mat-label>
+            <mat-select name="defaultPageMenuCode" [(ngModel)]="details.defaultPageMenuCode">
+              <mat-option>
+                {{'Configurations.AccessControl.RoleDetails.SystemDefaultValue' | translate}}
+              </mat-option>
+              <mat-option *ngFor="let page of details.availableDefaultPages" [value]="page.menuCode">
+                {{page.description}}
+              </mat-option>
+            </mat-select>
+          
+            <span readOnlyValue>{{ getMenuDescription(details.defaultPageMenuCode) }}</span>
+          
+            <field-clear-button matSuffix></field-clear-button>
+            <field-error-alert matSuffix></field-error-alert>
+            <mat-error></mat-error>
+          </mat-form-field>
+        </data-group>
+      </card>
+      <card fxFlex="100%" editable expandable>
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'Configurations._Tables.RolePermissions._Description' | translate }}</card-header-title>
+          </card-header-title-container>
+          <card-header-actions>
+          </card-header-actions>
+        </card-header>
+
+        <results-container>
+
+          <mat-form-field quickSearchField borderBottom>
+            <span matPrefix class="nbtpl-icon">
+              <i class="mdi mdi-magnify" aria-hidden="true"></i>
+            </span>
+            <input matInput type="text" [placeholder]="'Global.Actions.Search' | translate" [filterFor]="filteredPermissions" />
+            <field-clear-button matSuffix></field-clear-button>
+          </mat-form-field>
+
+          <mat-tree [dataSource]="filteredPermissions" [treeControl]="permissionsTreeControl">
+
+
+            <!--Leaf Permission-->
+            <mat-nested-tree-node *matTreeNodeDef="let node">
+
+              <tree-node-header [(ngModel)]="node.hasPermission" [name]="node.permissionCode">
+                <span>{{node.description | translate}}</span>
+              </tree-node-header>
+
+            </mat-nested-tree-node>
+
+            <!--Expandable Permission Group-->
+            <mat-nested-tree-node *matTreeNodeDef="let node; when: isPermissionGroup" role="group">
+
+              <tree-node-header>
+                <span>{{node.description | translate}}</span>
+              </tree-node-header>
+
+              <tree-node-content>
+                <ng-container matTreeNodeOutlet></ng-container>
+              </tree-node-content>
+
+            </mat-nested-tree-node>
+
+          </mat-tree>
+
+        </results-container>
+
+      </card>
+    
+    </page-body>
+    
+  </page>
+</form>

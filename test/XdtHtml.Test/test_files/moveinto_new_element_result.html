@@ -1,108 +1,112 @@
 <form [dataSourceContext]="detailDataSourceContext" (ngSubmit)="OnSaveData()">
-    <page editable (beginEdit)="OnBeginEdit()" (cancelEdit)="OnCancelEdit($event)">
+  <page editable (beginEdit)="OnBeginEdit()" (cancelEdit)="OnCancelEdit($event)">
+  
+    <page-header pageHeaderIcon="mdi mdi-account-key">
+      <page-header-title title="{{ 'Configurations.AccessControl.UserProfile._Description' | translate }}"></page-header-title>
+    
+      <page-header-actions>
+        <list-counter formErrorsCounter></list-counter>
+        
+        <ng-container>
+          <button mat-button *hasEveryPermission="PermissionConstants.Configurations.AccessControl.UserProfile.edit" enterEditButton>
+          </button>
+        </ng-container>
+        
+        <button mat-button *hasEveryPermission="PermissionConstants.Configurations.AccessControl.UserProfile.edit" cancelEditButton>
+        </button>
+        
+        <button mat-button *hasEveryPermission="PermissionConstants.Configurations.AccessControl.UserProfile.edit" type="submit" confirmEditButton>
+        </button>
+        
+        <refresh-button></refresh-button>
+      </page-header-actions>
+    
+      <page-header-aditional-options>
+      </page-header-aditional-options>
+    
+    </page-header>
+    
+    <page-body>
+      <card id="UserProfileDetailsCard" fxFlex="100%" editable expandable>
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'Configurations.AccessControl.UserProfile.UserProfileDetailsCard._Description' | translate }}</card-header-title>
+          </card-header-title-container>
+        </card-header>
+        <data-group id="FieldGroup1">
+          <data-field fxFlex="100%" [dataFieldLabel]="'Configurations._Tables.Users._Fields.UserName' | translate">{{ details.userDetails.userName }}</data-field>
+          <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+            <mat-label>
+              <span>{{ 'Configurations._Tables.Users._Fields.DisplayName' | translate }}</span>
+            </mat-label>
+            <input matInput type="text" required [(ngModel)]="details.userDetails.displayName" name="displayName" maxlength="250" />
+            <mat-hint align="end" fieldLength></mat-hint>
+          
+            <span readOnlyValue>{{ details.userDetails.displayName }}</span>
+          
+            <field-clear-button matSuffix></field-clear-button>
+            <field-error-alert matSuffix></field-error-alert>
+            <mat-error></mat-error>
+          </mat-form-field>
+          <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+            <mat-label>
+              <span>{{ 'Configurations._Tables.Users._Fields.Email' | translate }}</span>
+            </mat-label>
+            <input matInput type="text" required [(ngModel)]="details.userDetails.email" name="email" maxlength="250" />
+            <mat-hint align="end" fieldLength></mat-hint>
+          
+            <span readOnlyValue>{{ details.userDetails.email }}</span>
+          
+            <field-clear-button matSuffix></field-clear-button>
+            <field-error-alert matSuffix></field-error-alert>
+            <mat-error></mat-error>
+          </mat-form-field>
+          
+        
 
-        <page-header pageHeaderIcon="mdi mdi-account-key">
-            <page-header-title title="{{ 'Configurations.AccessControl.UserProfile._Description' | translate }}"></page-header-title>
+          <ng-container *hasEveryPermission="PermissionConstants.Configurations.AccessControl.UserProfile.profileRolesEdit; else readOnlyRoles">
+            <mat-form-field id="UserProfileRolesList" fxFlex="100%" floatLabel="always">
+              <mat-label>
+                <span>{{'Configurations.AccessControl.UserProfile.UserProfileDetailsCard.UserProfileRolesList._Description' |translate}}</span>
+              </mat-label>
+          
+              <mat-chip-grid #chipListUserProfileRolesList>
+                <mat-chip-row *ngFor="let chip of details.userProfileRolesList | filterNot:{'deleted':true}" (removed)="DeleteUserProfileRolesList(chip.roleCode)">
+                  <span>{{ chip.userRolesRoleName }}</span>
+                  <button matChipRemove mat-button>
+                  </button>
+                </mat-chip-row>
+                <input [placeholder]="'Configurations.AccessControl.UserProfile.UserProfileDetailsCard.UserProfileRolesList.AddUserProfileRolesList' | translate" [matAutocomplete]="userProfileRolesListAuto" [matChipInputFor]="chipListUserProfileRolesList" name="userProfileRolesList" />
+              </mat-chip-grid>
+              <mat-autocomplete #userProfileRolesListAuto="matAutocomplete" (optionSelected)="InsertNewUserProfileRolesList($event.option.dataContext.roleCode, $event.option.dataContext.name)">
+                <mat-option *ngFor="let option of allRoles" [value]="option.roleCode" [data-context]="option" [disabled]="!isSelectableRolesItem(option.roleCode)">
+          
+                  <option-content [primaryText]="option.name" [secondaryText]="option.roleCode"></option-content>
+                </mat-option>
+              </mat-autocomplete>
+              
+              </mat-form-field>
 
-            <page-header-actions>
-                <list-counter formErrorsCounter></list-counter>
+          </ng-container>
+          
+        
 
-                <ng-container>
-                    <button mat-button *hasEveryPermission="PermissionConstants.Configurations.AccessControl.UserProfile.edit" enterEditButton>
-                    </button>
-                </ng-container>
+          <ng-template #readOnlyRoles>
 
-                <button mat-button *hasEveryPermission="PermissionConstants.Configurations.AccessControl.UserProfile.edit" cancelEditButton>
-                </button>
+            <data-field fxFlex="100%" [dataFieldLabel]="'Configurations.AccessControl.UserProfile.UserProfileDetailsCard.UserProfileRolesList._Description' |translate">
+              <mat-chip-set>
+                <mat-chip *ngFor="let role of details.userProfileRolesList">
+                  <span>{{role.userRolesRoleName}}</span>
+                </mat-chip>
+              </mat-chip-set>
+            </data-field>
 
-                <button mat-button *hasEveryPermission="PermissionConstants.Configurations.AccessControl.UserProfile.edit" type="submit" confirmEditButton>
-                </button>
-
-                <refresh-button></refresh-button>
-            </page-header-actions>
-
-            <page-header-aditional-options>
-            </page-header-aditional-options>
-
-        </page-header>
-
-        <page-body>
-            <card fxFlex="100%" editable expandable>
-                <card-header>
-                    <card-header-title-container>
-                        <card-header-title>{{ 'Configurations.AccessControl.UserProfile.UserProfileDetailsCard._Description' | translate }}</card-header-title>
-                    </card-header-title-container>
-                </card-header>
-                <data-group>
-                    <data-field fxFlex="100%" [dataFieldLabel]="'Configurations._Tables.Users._Fields.UserName' | translate">{{ details.userDetails.userName }}</data-field>
-                    <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
-                        <mat-label>
-                            <span>{{ 'Configurations._Tables.Users._Fields.DisplayName' | translate }}</span>
-                        </mat-label>
-                        <input matInput type="text" required [(ngModel)]="details.userDetails.displayName" name="displayName" maxlength="250" />
-                        <mat-hint align="end" fieldLength></mat-hint>
-
-                        <span readOnlyValue>{{ details.userDetails.displayName }}</span>
-
-                        <field-clear-button matSuffix></field-clear-button>
-                        <field-error-alert matSuffix></field-error-alert>
-                        <mat-error></mat-error>
-                    </mat-form-field>
-                    <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
-                        <mat-label>
-                            <span>{{ 'Configurations._Tables.Users._Fields.Email' | translate }}</span>
-                        </mat-label>
-                        <input matInput type="text" required [(ngModel)]="details.userDetails.email" name="email" maxlength="250" />
-                        <mat-hint align="end" fieldLength></mat-hint>
-
-                        <span readOnlyValue>{{ details.userDetails.email }}</span>
-
-                        <field-clear-button matSuffix></field-clear-button>
-                        <field-error-alert matSuffix></field-error-alert>
-                        <mat-error></mat-error>
-                    </mat-form-field>
-
-                
-                    <ng-container *hasEveryPermission="PermissionConstants.Configurations.AccessControl.UserProfile.profileRolesEdit; else readOnlyRoles">
-                      <mat-form-field fxFlex="100%" floatLabel="always">
-                        <mat-label>
-                            <span>{{'Configurations.AccessControl.UserProfile.UserProfileDetailsCard.UserProfileRolesList._Description' |translate}}</span>
-                        </mat-label>
-
-                        <mat-chip-grid #chipList>
-                            <mat-chip-row *ngFor="let chip of getNotDeletedRoles()" (removed)="DeleteUserProfileRolesList(chip.roleCode)">
-                                <span>{{ chip.roleCode + " - " + chip.userRolesRoleName }}</span>
-                                <button matChipRemove mat-button>
-                                </button>
-                            </mat-chip-row>
-                            <input [placeholder]="'Configurations.AccessControl.UserProfile.UserProfileDetailsCard.UserProfileRolesList.AddUserProfileRolesList' | translate" [matAutocomplete]="userProfileRolesListAuto" [matChipInputFor]="chipList" name="userProfileRolesList" />
-                        </mat-chip-grid>
-                        <mat-autocomplete #userProfileRolesListAuto="matAutocomplete" (optionSelected)="InsertNewUserProfileRolesList($event.option.dataContext.roleCode, $event.option.dataContext.name)">
-                            <mat-option *ngFor="let option of allRoles" [value]="option.roleCode" [data-context]="option" [disabled]="!isSelectableRole(option.roleCode)">
-
-                                <option-content [primaryText]="option.name"></option-content>
-                            </mat-option>
-                        </mat-autocomplete>
-
-                      </mat-form-field>
-
-                      <ng-template #readOnlyRoles>
-
-                        <data-field fxFlex="100%" [fieldLabel]="'Configurations.AccessControl.UserProfile.UserProfileDetailsCard.UserProfileRolesList._Description' |translate">
-                          <mat-chip-set>
-                            <mat-chip *ngFor="let role of details.userProfileRolesList">
-                              <span>{{role.userRolesRoleName}}</span>
-                            </mat-chip>
-                          </mat-chip-set>
-                        </data-field>
-
-                      </ng-template>
-
-                    </ng-container>
-
-                </data-group>
-            </card>
-        </page-body>
-
-    </page>
+          </ng-template>
+          
+        </data-group>
+      </card>
+    
+    </page-body>
+    
+  </page>
 </form>

@@ -1,17 +1,14 @@
-﻿<form xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+<form xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
     <page>
-
         <page-header>
 
-            <page-header-actions>
-                <button xdt:Transform="InsertInto(/form/page/page-header/page-header-aditional-options)"
-                        mat-menu-item
+            <page-header-aditional-options xdt:Transform="InsertAfter(page-header-actions)">
+                <button mat-menu-item
                         (click)="addedFunctionalityByCustomCode()">
                     <i class="mdi mdi-delete-outline" aria-hidden="true"></i>
                     <span>{{'Global.Actions.AddedFunctionalityByCustomCode' | translate}}</span>
                 </button>
-
-            </page-header-actions>
+            </page-header-aditional-options>
 
         </page-header>
 

@@ -1,0 +1,77 @@
+<form xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+
+
+  <mat-form-field xdt:Locator="XPath(//mat-form-field[input/@name = 'defaultPageMenuCode'])" xdt:Transform="SetAttributes" *ngIf="!!keys?.roleCode" fxFlex="230px">
+
+    <mat-hint xdt:Locator="Condition(@fieldLength)" xdt:Transform="Remove" fieldLength></mat-hint>
+
+    <span xdt:Locator="Condition(@readOnlyValue)" xdt:Transform="Replace" readOnlyValue>{{ getMenuDescription(details.defaultPageMenuCode) }}</span>
+
+    <mat-select xdt:Locator="XPath(input)" xdt:Transform="Replace" name="defaultPageMenuCode" [(ngModel)]="details.defaultPageMenuCode">
+      <mat-option>
+        {{'Configurations.AccessControl.RoleDetails.SystemDefaultValue' | translate}}
+      </mat-option>
+      <mat-option *ngFor="let page of details.availableDefaultPages" [value]="page.menuCode">
+        {{page.description}}
+      </mat-option>
+    </mat-select>
+
+  </mat-form-field>
+
+  <card fxFlex="100%" editable expandable xdt:Transform="Replace" xdt:Locator="XPath(//card[.//card-header-title[contains(., 'Configurations._Tables.RolePermissions._Description')]])">
+    <card-header>
+      <card-header-title-container>
+        <card-header-title>{{ 'Configurations._Tables.RolePermissions._Description' | translate }}</card-header-title>
+      </card-header-title-container>
+      <card-header-actions>
+      </card-header-actions>
+    </card-header>
+
+    <results-container>
+
+      <mat-form-field quickSearchField
+                      borderBottom>
+        <span matPrefix
+              class="nbtpl-icon">
+          <i class="mdi mdi-magnify" aria-hidden="true"></i>
+        </span>
+        <input matInput
+               type="text"
+               [placeholder]="'Global.Actions.Search' | translate"
+               [filterFor]="filteredPermissions" />
+        <field-clear-button matSuffix></field-clear-button>
+      </mat-form-field>
+
+      <mat-tree [dataSource]="filteredPermissions"
+                [treeControl]="permissionsTreeControl">
+
+
+        <!--Leaf Permission-->
+        <mat-nested-tree-node *matTreeNodeDef="let node">
+
+          <tree-node-header [(ngModel)]="node.hasPermission" [name]="node.permissionCode">
+            <span>{{node.description | translate}}</span>
+          </tree-node-header>
+
+        </mat-nested-tree-node>
+
+        <!--Expandable Permission Group-->
+        <mat-nested-tree-node *matTreeNodeDef="let node; when: isPermissionGroup" role="group">
+
+          <tree-node-header>
+            <span>{{node.description | translate}}</span>
+          </tree-node-header>
+
+          <tree-node-content>
+            <ng-container matTreeNodeOutlet></ng-container>
+          </tree-node-content>
+
+        </mat-nested-tree-node>
+
+      </mat-tree>
+
+    </results-container>
+
+  </card>
+
+</form>

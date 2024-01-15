@@ -216,7 +216,7 @@ namespace XdtHtml
     internal class InsertBefore : InsertBase
     {
         protected override void Apply() {
-            SiblingElement.ParentNode.InsertBefore(TransformNodePreamble.Append(TransformNode).AdjustIndent(SiblingElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline), SiblingElement);
+            SiblingElement.ParentNode.InsertBefore(new[] { TransformNode }.AdjustIndent(SiblingElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline).Concat(SiblingElement.GetNodePreamble()).Select(n => n.CloneNode(true)).ToList(), SiblingElement);
 
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
         }
@@ -230,7 +230,7 @@ namespace XdtHtml
     {
         protected override void Apply()
         {
-            var firstElement = TargetNode.ChildNodes.FirstOrDefault(n => n.NodeType == HtmlNodeType.Element);
+            var firstElement = SiblingElement.ChildNodes.FirstOrDefault(n => n.NodeType == HtmlNodeType.Element);
 
             IEnumerable<HtmlNode> indentedNodes;
             if (firstElement != null)
@@ -248,15 +248,17 @@ namespace XdtHtml
     {
         protected override void Apply()
         {
-            var lastElement = TargetNode.ChildNodes.LastOrDefault(n => n.NodeType == HtmlNodeType.Element);
+            var originalEndTagPreamble = SiblingElement.GetEndTagPreamble().Select(n => n.CloneNode(true)).ToList();
+            SiblingElement.GetEndTagPreamble().OfType<HtmlTextNode>().ToList().ForEach(n => n.Text = n.Text.Trim(' '));
+
+            var lastElement = SiblingElement.ChildNodes.LastOrDefault(n => n.NodeType == HtmlNodeType.Element);
 
             IEnumerable<HtmlNode> indentedNodes;
             if (lastElement != null)
-                indentedNodes = TransformNodePreamble.Append(TransformNode).AdjustIndent(lastElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline).Concat(TargetNode.GetEndTagPreamble().Select(n => n.CloneNode(true))).ToList();
+                indentedNodes = TransformNodePreamble.Append(TransformNode).AdjustIndent(lastElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline).Concat(originalEndTagPreamble).ToList();
             else
-                indentedNodes = TransformNodePreamble.Append(TransformNode).AdjustParentIndent(SiblingElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline, TransformNodeIndentationFromParent).Concat(TargetNode.GetEndTagPreamble().Select(n => n.CloneNode(true))).ToList();
+                indentedNodes = TransformNodePreamble.Append(TransformNode).AdjustParentIndent(SiblingElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline, TransformNodeIndentationFromParent).Concat(originalEndTagPreamble).ToList();
 
-            //SiblingElement.AppendChild(TransformNodePreamble.Concat(new[] { TransformNode }).AdjustParentIndent(SiblingElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline, TransformNodeIndentationFromParent).ToList());
             SiblingElement.AppendChild(indentedNodes);
 
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
