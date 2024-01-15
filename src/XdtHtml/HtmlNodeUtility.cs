@@ -52,6 +52,14 @@ namespace XdtHtml
             return node.GetPreviousSiblings(breakBefore: n => n.NodeType != HtmlNodeType.Text && n.NodeType != HtmlNodeType.Comment).Reverse();
         }
 
+        public static IEnumerable<HtmlNode> GetNodePreambleComments(this HtmlNode node)
+        {
+            return node.GetPreviousSiblings(breakBefore: n => n.NodeType != HtmlNodeType.Text && n.NodeType != HtmlNodeType.Comment)
+                       .Where(n => n.NodeType == HtmlNodeType.Comment)
+                       .Reverse()
+                       ;
+        }
+
         public static IEnumerable<HtmlNode> GetNodePostamble(this HtmlNode node)
         {
             return node.GetNextSiblings(breakBefore: n => n.NodeType != HtmlNodeType.Text && n.NodeType != HtmlNodeType.Comment);
@@ -60,6 +68,15 @@ namespace XdtHtml
         public static IEnumerable<HtmlNode> GetNodeWithPreamble(this HtmlNode node)
         {
             foreach (var preamble in node.GetNodePreamble())
+            {
+                yield return preamble;
+            }
+            yield return node;
+        }
+
+        public static IEnumerable<HtmlNode> GetNodeWithPreambleComments(this HtmlNode node)
+        {
+            foreach (var preamble in node.GetNodePreambleComments())
             {
                 yield return preamble;
             }
@@ -94,24 +111,30 @@ namespace XdtHtml
             return AdjustIndent(node, desiredIndent, node.GetIndentationWithNewline());
         }
 
-        public static IEnumerable<HtmlNode> AdjustIndent(this IEnumerable<HtmlNode> list, HtmlNode indentReference)
+        public static IEnumerable<HtmlNode> AdjustIndent(this IEnumerable<HtmlNode> list, HtmlNode indentReference, bool adjustTextNodes = true)
         {
             var desiredIndent = indentReference.GetIndentationWithNewline();
 
-            return list.AdjustIndent(desiredIndent);
+            return list.AdjustIndent(desiredIndent, adjustTextNodes);
         }
-        public static IEnumerable<HtmlNode> AdjustIndent(this IEnumerable<HtmlNode> list, string desiredIndent)
+        public static IEnumerable<HtmlNode> AdjustIndent(this IEnumerable<HtmlNode> list, string desiredIndent, bool adjustTextNodes = true)
         {
             foreach (var node in list)
             {
-                yield return node.AdjustIndent(desiredIndent, node.GetIndentationWithNewline());
+                if (!adjustTextNodes && node.NodeType == HtmlNodeType.Text)
+                    yield return node;
+                else
+                    yield return node.AdjustIndent(desiredIndent, node.GetIndentationWithNewline());
             }
         }
-        public static IEnumerable<HtmlNode> AdjustIndent(this IEnumerable<HtmlNode> list, string desiredIndent, string currentElementsIndent)
+        public static IEnumerable<HtmlNode> AdjustIndent(this IEnumerable<HtmlNode> list, string desiredIndent, string currentElementsIndent, bool adjustTextNodes = true)
         {
             foreach (var node in list)
             {
-                yield return node.AdjustIndent(desiredIndent, currentElementsIndent);
+                if (!adjustTextNodes && node.NodeType == HtmlNodeType.Text)
+                    yield return node;
+                else
+                    yield return node.AdjustIndent(desiredIndent, currentElementsIndent);
             }
         }
 
@@ -129,12 +152,15 @@ namespace XdtHtml
             return AdjustIndent(node, desiredIndentation, currentElementIndent);
         }
 
-        public static IEnumerable<HtmlNode> AdjustParentIndent(this IEnumerable<HtmlNode> list, HtmlNode indentParentReference)
+        public static IEnumerable<HtmlNode> AdjustParentIndent(this IEnumerable<HtmlNode> list, HtmlNode indentParentReference, bool adjustTextNodes = true)
         {
             var desiredParentIndent = indentParentReference.GetIndentationWithNewline();
             foreach (var node in list)
             {
-                yield return node.AdjustParentIndent(desiredParentIndent, node.GetIndentationWithNewline(), node.GetIndentationFromParent());
+                if (!adjustTextNodes && node.NodeType == HtmlNodeType.Text)
+                    yield return node;
+                else
+                    yield return node.AdjustParentIndent(desiredParentIndent, node.GetIndentationWithNewline(), node.GetIndentationFromParent());
             }
         }
         //public static IEnumerable<HtmlNode> AdjustParentIndent(this IEnumerable<HtmlNode> list, string desiredParentIndent)
@@ -144,11 +170,14 @@ namespace XdtHtml
         //        yield return node.AdjustParentIndent(desiredParentIndent);
         //    }
         //}
-        public static IEnumerable<HtmlNode> AdjustParentIndent(this IEnumerable<HtmlNode> list, string desiredParentIndent, string currentElementIndent, string currentElementParentIndent)
+        public static IEnumerable<HtmlNode> AdjustParentIndent(this IEnumerable<HtmlNode> list, string desiredParentIndent, string currentElementIndent, string currentElementParentIndent, bool adjustTextNodes = true)
         {
             foreach (var node in list)
             {
-                yield return node.AdjustParentIndent(desiredParentIndent, currentElementIndent, currentElementParentIndent);
+                if (!adjustTextNodes && node.NodeType == HtmlNodeType.Text)
+                    yield return node;
+                else
+                    yield return node.AdjustParentIndent(desiredParentIndent, currentElementIndent, currentElementParentIndent);
             }
         }
 
@@ -156,21 +185,6 @@ namespace XdtHtml
         {
             var identInfo = GetIndentTreeInfo(node, desiredIndent, currentElementIndent);
             AdjustIndent(identInfo);
-
-            //var nodeIndentation = node.GetIndentationWithNewline();
-
-            //var childrenIndent = node.ChildNodes.Where(n => n.NodeType == HtmlNodeType.Element).Select(n => n.GetIndentationFromParent()).FirstOrDefault();
-
-            //var indentTreeInfo = GetIndentTreeInfo(node, previousIndent);
-
-            //if (node is HtmlTextNode text && nodeIndentation.Length > 0)
-            //{
-            //    text.Text = text.Text.Replace(nodeIndentation, previousIndent);
-            //}
-            //foreach (var child in node.ChildNodes)
-            //{
-            //    AdjustIndent(child, previousIndent + (childrenIndent ?? ""));
-            //}
 
             return node;
         }
@@ -196,8 +210,6 @@ namespace XdtHtml
         {
             public string NodeIndentation { get; set; }
             public string DesiredIndentation { get; set; }
-
-            //public IEnumerable<HtmlTextNode> IndentationNodes { get; set; }
 
             public IndentTreeInfo ParentNode { get; set; }
             public IEnumerable<IndentTreeInfo> ChildNodes { get; set; }

@@ -1,0 +1,211 @@
+<form [dataSourceContext]="detailDataSourceContext" (ngSubmit)="OnSaveData()">
+  <results-container fxLayout="row wrap" [dataSourceContext]="detailDataSourceContext">
+    
+    <layout-container id="ContainerPedidoEntregaValores">
+      
+      <card id="CardEntregas" fxFlex="100%" editable>
+        <results-container>
+          <table-content>
+            <table id="ListaEntregaValores" [attr.aria-label]="'HabHerdeiros._Tables.EntregaValores._Description' | translate"
+                   tableRowsExpandable
+                   [selectionModel]="detailsListaEntregaValoresSelectionModel" 
+                   selectOnEditOnly 
+                   >
+              <thead>
+                <tr>
+                  <th id="entregaValoresDeIntervenienteBeneficiarioNome" textAlign="left">{{ 'HabHerdeiros._Tables.IntervenientesProcesso._Fields.Nome' | translate }}</th>
+                  <th id="meioEntregaId" textAlign="left">{{ 'HabHerdeiros._Tables.EntregaValores._Fields.MeioEntrega' | translate }}</th>
+                  <th id="iban" textAlign="left">{{ 'HabHerdeiros._Tables.EntregaValores._Fields.IBAN' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of details.listaEntregaValores | filterNot:{'deleted':true}; let i = index">               
+                  <tr [selectionItem]="item">
+                    <td textAlign="left">
+                      {{ item.entregaValoresDeIntervenienteBeneficiarioNome }}
+                    </td>
+                    <td textAlign="left">
+                      <mat-form-field fxFlex="100%">
+                        <mat-select name="listaEntregaValores[{{ i }}].meioEntregaId"
+                                    [(ngModel)]="item.meioEntregaId">
+                          <mat-option></mat-option>
+                          <mat-option *ngFor="let dimension of tiposMeioEntregaValores$ | async | activeDimensionsOnly" [value]="dimension.dimensionId">
+                              {{ dimension.description }}
+                          </mat-option>
+                        </mat-select>
+                      
+                        <span readOnlyValue>{{ item.meioEntregaId | commonData:tiposMeioEntregaValores$:'id':'desc' }}</span>
+                      
+                        <field-error-alert matSuffix></field-error-alert>
+                        <mat-error></mat-error>
+                      </mat-form-field>
+                    </td>
+                    <td textAlign="left">
+                      <mat-form-field fxFlex="100%">
+                        <input matInput type="text"
+                               [(ngModel)]="item.iban"
+                               name="listaEntregaValores[{{ i }}].iban"
+                               maxlength="50" />
+                        <mat-hint align="end" fieldLength></mat-hint>
+                      
+                        <span readOnlyValue>{{ item.iban }}</span>
+                      
+                        <field-clear-button matSuffix></field-clear-button>
+                        <field-error-alert matSuffix></field-error-alert>
+                        <mat-error></mat-error>
+                      </mat-form-field>
+                    </td>
+                  </tr>
+                  <tr tableRowExpansion>
+                    
+                    <layout-container id="InstrumentoAdditionalInfo">
+                      <layout-container-header>
+                        <heading>
+                          <heading-title-container>
+                            <heading-title>
+                              <strong>{{ 'HabHerdeiros.Processos.CriarProcesso.TabPedidos.ContainerPedidoEntregaValores.CardEntregas.ListaEntregaValores.InstrumentoAdditionalInfo._Description' | translate }}</strong>
+                            </heading-title>
+                          </heading-title-container>
+                        </heading>
+                      </layout-container-header>
+                    
+                      <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                        <mat-label>
+                          <span>{{ 'HabHerdeiros._Tables.EntregaValores._Fields.IdInterveniente' | translate }}</span>
+                        </mat-label>
+                        <input matInput type="text" required
+                               [(ngModel)]="item.idInterveniente"
+                               name="listaEntregaValores[{{ i }}].idInterveniente"
+                               numeric="10" inputAlign="left" />
+                      
+                        <span readOnlyValue>{{ item.idInterveniente }}</span>
+                      
+                        <field-clear-button matSuffix></field-clear-button>
+                        <field-error-alert matSuffix></field-error-alert>
+                        <mat-error></mat-error>
+                      </mat-form-field>
+                      <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                        <mat-label>
+                          <span>{{ 'HabHerdeiros.Processos.CriarProcesso.TabPedidos.ContainerPedidoEntregaValores.CardEntregas.ListaEntregaValores.InstrumentoAdditionalInfo.CasasDecimais' | translate }}</span>
+                        </mat-label>
+                        <input matInput type="text"
+                               [(ngModel)]="item.casasDecimais"
+                               name="listaEntregaValores[{{ i }}].casasDecimais"
+                               numeric="5" />
+                      
+                        <span readOnlyValue>{{ item.casasDecimais }}</span>
+                      
+                        <field-clear-button matSuffix></field-clear-button>
+                        <field-error-alert matSuffix></field-error-alert>
+                        <mat-error></mat-error>
+                      </mat-form-field>
+                      <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                        <mat-label>
+                          <span>{{ 'HabHerdeiros.Processos.CriarProcesso.TabPedidos.ContainerPedidoEntregaValores.CardEntregas.ListaEntregaValores.InstrumentoAdditionalInfo.QuotaParteConsiderada' | translate }}</span>
+                        </mat-label>
+                        <input matInput type="text" required
+                               [(ngModel)]="item.quotaParteConsiderada"
+                               name="listaEntregaValores[{{ i }}].quotaParteConsiderada"
+                               numeric="15.2" />
+                      
+                        <span readOnlyValue>{{ item.quotaParteConsiderada | number }}</span>
+                      
+                        <field-clear-button matSuffix></field-clear-button>
+                        <field-error-alert matSuffix></field-error-alert>
+                        <mat-error></mat-error>
+                      </mat-form-field>
+                      <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                        <mat-label>
+                          <span>{{ 'HabHerdeiros._Tables.EntregaValores._Fields.IdProcesso' | translate }}</span>
+                        </mat-label>
+                        <input matInput type="text" required [disabled]="true"
+                               [(ngModel)]="item.idProcesso"
+                               name="listaEntregaValores[{{ i }}].idProcesso"
+                               numeric="10" inputAlign="left" />
+                      
+                        <span readOnlyValue>{{ item.idProcesso }}</span>
+                      
+                        <field-clear-button matSuffix></field-clear-button>
+                        <field-error-alert matSuffix></field-error-alert>
+                        <mat-error></mat-error>
+                      </mat-form-field>
+                      <mat-checkbox fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%"name="listaEntregaValores[{{ i }}].selectableParaEntrega"
+                              [(ngModel)]="item.selectableParaEntrega"
+                              >
+                        	{{ 'HabHerdeiros.Processos.CriarProcesso.TabPedidos.ContainerPedidoEntregaValores.CardEntregas.ListaEntregaValores.InstrumentoAdditionalInfo.SelectableParaEntrega' | translate }}
+                      </mat-checkbox>
+                      
+                      <layout-container id="InstrumentoValorFracaoInfo">
+                        <layout-container-header>
+                          <heading>
+                            <heading-title-container>
+                              <heading-title>
+                                <strong>{{ 'HabHerdeiros.Processos.CriarProcesso.TabPedidos.ContainerPedidoEntregaValores.CardEntregas.ListaEntregaValores.InstrumentoAdditionalInfo.InstrumentoValorFracaoInfo._Description' | translate }}</strong>
+                              </heading-title>
+                            </heading-title-container>
+                          </heading>
+                        </layout-container-header>
+                      
+                        <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                          <mat-label>
+                            <span>{{ 'HabHerdeiros._Tables.EntregaValores._Fields.FracaoFracionamento' | translate }}</span>
+                          </mat-label>
+                          <input matInput type="text"
+                                 [(ngModel)]="item.fracaoFracionamento"
+                                 name="listaEntregaValores[{{ i }}].fracaoFracionamento"
+                                 maxlength="10" />
+                          <mat-hint align="end" fieldLength></mat-hint>
+                        
+                          <span readOnlyValue>{{ item.fracaoFracionamento }}</span>
+                        
+                          <field-clear-button matSuffix></field-clear-button>
+                          <field-error-alert matSuffix></field-error-alert>
+                          <mat-error></mat-error>
+                        </mat-form-field>
+                        <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                          <mat-label>
+                            <span>{{ 'HabHerdeiros._Tables.EntregaValores._Fields.PercentagemFracionamento' | translate }}</span>
+                          </mat-label>
+                          <input matInput type="text"
+                                 [(ngModel)]="item.percentagemFracionamento"
+                                 name="listaEntregaValores[{{ i }}].percentagemFracionamento"
+                                 numeric="5.2" />
+                        
+                          <span readOnlyValue>{{ item.percentagemFracionamento | percentage:'1.1-2' }}</span>
+                        
+                          <field-clear-button matSuffix></field-clear-button>
+                          <field-error-alert matSuffix></field-error-alert>
+                          <mat-error></mat-error>
+                        </mat-form-field>
+                        <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                          <mat-label>
+                            <span>{{ 'HabHerdeiros._Tables.EntregaValores._Fields.MontanteFracionamento' | translate }}</span>
+                          </mat-label>
+                          <input matInput type="text" required
+                                 [(ngModel)]="item.montanteFracionamento"
+                                 name="listaEntregaValores[{{ i }}].montanteFracionamento"
+                                 numeric="15.2" />
+                        
+                          <span readOnlyValue>{{ item.montanteFracionamento | number }}</span>
+                        
+                          <field-clear-button matSuffix></field-clear-button>
+                          <field-error-alert matSuffix></field-error-alert>
+                          <mat-error></mat-error>
+                        </mat-form-field>
+                      
+                      </layout-container>
+                    
+                    </layout-container>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </table-content>
+        </results-container>
+        
+      </card>
+    
+    </layout-container>
+    
+  </results-container>
+</form>

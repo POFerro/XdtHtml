@@ -216,7 +216,7 @@ namespace XdtHtml
     internal class InsertBefore : InsertBase
     {
         protected override void Apply() {
-            SiblingElement.ParentNode.InsertBefore(new[] { TransformNode }.AdjustIndent(SiblingElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline).Concat(SiblingElement.GetNodePreamble()).Select(n => n.CloneNode(true)).ToList(), SiblingElement);
+            SiblingElement.ParentNode.InsertBefore(new[] { TransformNode.AdjustIndent(SiblingElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline) }.Concat(SiblingElement.GetNodePreamble()).Select(n => n.CloneNode(true)).ToList(), SiblingElement);
 
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
         }
@@ -339,7 +339,7 @@ namespace XdtHtml
 
         protected override void Apply()
         {
-            SiblingElement.ParentNode.InsertBefore(new[] { TargetNode }.AdjustIndent(SiblingElement).Concat(SiblingElement.GetNodePreamble()).Select(n => n.CloneNode(true)).ToList(), SiblingElement);
+            SiblingElement.ParentNode.InsertBefore(new[] { TargetNode.AdjustIndent(SiblingElement) }.Concat(SiblingElement.GetNodePreamble()).Select(n => n.CloneNode(true)).ToList(), SiblingElement);
             foreach (var node in TargetNode.GetNodeWithPostamble().ToList())
             {
                 node.Remove();
@@ -366,9 +366,9 @@ namespace XdtHtml
 
             IEnumerable<HtmlNode> indentedNodes;
             if (firstElement != null)
-                indentedNodes = TargetNode.GetNodeWithPreamble().AdjustIndent(firstElement).Select(n => n.CloneNode(true)).ToList();
+                indentedNodes = TargetNode.GetNodeWithPreamble().AdjustIndent(firstElement, false).ToList().Select(n => n.CloneNode(true));
             else
-                indentedNodes = TargetNode.GetNodeWithPreamble().AdjustParentIndent(SiblingElement).Select(n => n.CloneNode(true)).ToList();
+                indentedNodes = TargetNode.GetNodeWithPreamble().AdjustParentIndent(SiblingElement, false).ToList().Select(n => n.CloneNode(true));
 
             SiblingElement.PrependChild(indentedNodes);
 
@@ -397,9 +397,9 @@ namespace XdtHtml
 
             IEnumerable<HtmlNode> indentedNodes;
             if (lastElement != null)
-                indentedNodes = TargetNode.GetNodeWithPreamble().AdjustIndent(lastElement).Concat(originalEndTagPreamble).Select(n => n.CloneNode(true)).ToList();
+                indentedNodes = TargetNode.GetNodeWithPreamble().AdjustIndent(lastElement, false).ToList().Select(n => n.CloneNode(true)).Concat(originalEndTagPreamble);
             else
-                indentedNodes = TargetNode.GetNodeWithPreamble().AdjustParentIndent(SiblingElement).Concat(originalEndTagPreamble).Select(n => n.CloneNode(true)).ToList();
+                indentedNodes = TargetNode.GetNodeWithPreamble().AdjustParentIndent(SiblingElement, false).ToList().Select(n => n.CloneNode(true)).Concat(originalEndTagPreamble);
 
             SiblingElement.AppendChild(indentedNodes);
 

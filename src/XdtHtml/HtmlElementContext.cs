@@ -186,6 +186,9 @@ namespace XdtHtml
                 {
                     transformNodePreamble = Element
                         .GetNodePreamble()
+                        .Reverse()
+                        .TakeWhile(n => n.NodeType == HtmlNodeType.Text)
+                        .Reverse()
                         .Select(e => CreateCloneInTargetDocument(e))
                         .ToList();
                 }
@@ -200,6 +203,8 @@ namespace XdtHtml
                 {
                     transformNodePostamble = Element
                         .GetNodePostamble()
+                        .TakeWhile(n => n.NodeType == HtmlNodeType.Text)
+                        .OfType<HtmlTextNode>()
                         .Select(e => CreateCloneInTargetDocument(e))
                         .ToList();
                 }

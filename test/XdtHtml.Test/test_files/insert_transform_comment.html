@@ -1,0 +1,155 @@
+<modal xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+
+  <modal-header>
+
+    <modal-header-title-container>
+
+      <modal-header-actions>
+        <button xdt:Locator="XPath(.//button[@modalCloseButton])" xdt:Transform="Remove"></button>
+      </modal-header-actions>
+
+      <modal-header-actions xdt:Locator="Condition(last())">
+
+        <!--
+        TODO: link para futura pagina de detalhe ??
+          <a mat-button
+           btnLabel="Ver detalhe completo"
+           btnIconClass="mdi mdi-file-document-outline"
+           xdt:Transform="Insert"></a>
+          -->
+        <button mat-button modalCloseButton (click)="cancel()" xdt:Transform="Insert"></button>
+      </modal-header-actions>
+
+    </modal-header-title-container>
+  </modal-header>
+
+  <table xdt:Locator="XPath(.//table[@id='ResumoProcessoListaDocumentos'])">
+    <thead>
+      <tr>
+        <th xdt:Transform="Insert"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container>
+        <tr>
+          <td xdt:Transform="Insert"
+              textAlign="left">
+            <button mat-button
+                    btnType="neutral"
+                    btnIconClass="mdi mdi-open-in-new"
+                    btnIconPosition="right"
+                    (click)="OpenDocInNewTab(item)">
+            </button>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+  <card xdt:Locator="Condition(@id = 'Evidencias')">
+    <results-container xdt:Transform="Remove">
+
+    </results-container>
+    <div xdt:Transform="Insert"
+         class="projStyles-file-upload-wrap">
+
+      <div class="projStyles-no-files"
+           *ngIf="!fileUploaderEvidencias?.queue.length && !resultsEvidenciasTratamentosProcesso?.length">Nenhum ficheiro associado</div>
+
+      <div class="projStyles-file-upload-list"
+           *ngIf="fileUploaderEvidencias?.queue.length || resultsEvidenciasTratamentosProcesso?.length">
+
+        <div *ngFor="let item of resultsEvidenciasTratamentosProcesso"
+             class="projStyles-file-upload-list-item">
+
+          <div class="projStyles-file-upload-list-item-icon">
+            <i class="mdi mdi-file" aria-hidden="true"></i>
+          </div>
+
+          <div class="projStyles-file-upload-list-item-content">
+            <div class="projStyles-file-upload-list-item-head">
+              <div class="projStyles-file-upload-list-item-id">
+                <span>{{ item.filePath.substr(item.filePath.lastIndexOf('\\') + 1) }}</span>
+              </div>
+              <div class="projStyles-file-upload-list-item-info">
+                <span nowrap>{{ item.fileSizeBytes/1024/1024 | number:'.2' }} MB</span>
+              </div>
+              <div class="projStyles-file-upload-list-item-actions">
+
+                <button mat-button btnType="link" btnIconClass="mdi mdi-download" btnIconPosition="icon-solo" btnLabel="Abrir">
+                </button>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div *ngFor="let item of fileUploaderEvidencias?.queue"
+             class="projStyles-file-upload-list-item">
+
+          <div class="projStyles-file-upload-list-item-icon">
+            <i class="mdi mdi-file-upload" aria-hidden="true"></i>
+          </div>
+
+          <div class="projStyles-file-upload-list-item-content">
+            <div class="projStyles-file-upload-list-item-head">
+              <div class="projStyles-file-upload-list-item-id">
+                <span>{{ item.file?.name }}</span>
+              </div>
+              <div class="projStyles-file-upload-list-item-info">
+                <span nowrap>{{ item.file?.size/1024/1024 | number:'.2' }} MB</span>
+              </div>
+              <div class="projStyles-file-upload-list-item-actions">
+
+                <button mat-button
+                        btnType="link"
+                        btnIconClass="mdi mdi-cancel"
+                        btnIconPosition="icon-solo"
+                        btnLabel="Cancel"
+                        (click)="item.remove()"
+                        *ngIf="item.isUploading">
+                </button>
+
+              </div>
+            </div>
+            <div class="projStyles-file-upload-list-item-body">
+              <div class="projStyles-file-upload-list-item-progress">
+                <progress-bar [progressValue]="fileUploaderEvidencias?.progress"></progress-bar>
+              </div>
+              <div class="projStyles-file-upload-list-item-progress-result">
+                <div class="projStyles-file-upload-list-item-progress-result-msg">
+                  <span *ngIf="item.isError" textColor="error">
+                    <i class="mdi mdi-alert-octagon"></i>
+                    <strong> Error</strong>
+                  </span>
+                </div>
+                <div class="projStyles-file-upload-list-item-progress-txt">
+                  <span>{{ fileUploaderEvidencias.progress | percentage }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </card>
+
+  <modal-footer>
+
+    <button-group xdt:Transform="Replace">
+
+      <button mat-button
+              modalConfirmButton
+              [btnLabel]="'Global.Actions.Close' | translate"
+              (click)="cancel()">
+      </button>
+
+    </button-group>
+
+  </modal-footer>
+
+</modal>

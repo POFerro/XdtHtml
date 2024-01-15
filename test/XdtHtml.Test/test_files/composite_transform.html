@@ -1,0 +1,74 @@
+<form xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+
+  <layout-container xdt:Locator="XPath(.//layout-container[@id = 'ContainerPedidoEntregaValores'])" *ngIf="isTipoPedidoEntregaValoresSelecionado" xdt:Transform="SetAttributes">
+
+    <card xdt:Locator="XPath(.//card[@id ='CardEntregas'])" xdt:Transform="SetAttributes" *ngIf="pedidoEntregaValores.isEntregaExclusivaCC === false" isolateFromParent [editMode]="!details.isMapaEntregasCriado">
+      <results-container>
+        <table-content>
+          <table xdt:Locator="XPath(./table[@id='ListaEntregaValores'])" xdt:Transform="RemoveAttributes(tableRowsExpandable)">
+            <thead>
+              <tr>
+
+                <th xdt:Locator="XPath(./th[@id='entregaValoresDeIntervenienteBeneficiarioNome'])" xdt:Transform="Replace">{{ 'HabHerdeiros.Processos.CriarProcesso.TabPedidos.ContainerPedidoEntregaValores.CardEntregas.ListaEntregaValores.CodigoTipoInterveniente' | translate }}</th>
+
+                <th id="meioEntregaId" textAlign="left">{{ 'HabHerdeiros._Tables.EntregaValores._Fields.MeioEntrega' | translate }}</th>
+                <th xdt:Locator="XPath(./th[@id='iban'])" xdt:Transform="Remove"></th>
+
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container>
+
+                <tr>
+
+                  <td xdt:Locator="XPath(./td[./mat-form-field/mat-select[@name='listaEntregaValores[{{ i }}].meioEntregaId']])" xdt:Transform="SetAttributes"
+                      class="projStyles-table-column-format-3">
+                    <mat-form-field xdt:Transform="SetAttributes"
+                                    [hideRequiredMarker]="!item.isEntregaDoPedido"></mat-form-field>
+                    <mat-form-field xdt:Transform="RemoveAttributes(fxFlex)">
+                      <mat-select xdt:Transform="SetAttributes"
+                                  (selectionChange)="item.iban = undefined"
+                                  required
+                                  [disabled]="!item.isEntregaDoPedido">
+                      </mat-select>
+                      <span xdt:Locator="XPath(./span[@readOnlyValue])" xdt:Transform="Remove"></span>
+                    </mat-form-field>
+                    <div xdt:Transform="Insert" id="ibanWrap" class="projStyles-table-formfield-slim-box">
+                    </div>
+                  </td>
+
+                  <td xdt:Locator="XPath(./td[./mat-form-field/input[@name='listaEntregaValores[{{ i }}].iban']])" xdt:Transform="SetAttributes"
+                      id="ibanRemove">
+
+                    <mat-form-field xdt:Transform="SetAttributes"
+                                    floatLabel="always"
+                                    *ngIf="(item.meioEntregaId | commonData:tiposMeioEntregaValores$:'id':'code') == DimensionCodes.HabHerdeiros.TiposMeioEntregaValores.transferencia"
+                                    [hideRequiredMarker]="!item.isEntregaDoPedido">
+                      <input xdt:Transform="SetAttributes"
+                             placeholder="{{ 'HabHerdeiros._Tables.EntregaValores._Fields.IBAN' | translate }}"
+                             [required]="(item.meioEntregaId | commonData:tiposMeioEntregaValores$:'id':'code') == DimensionCodes.HabHerdeiros.TiposMeioEntregaValores.transferencia"
+                             [disabled]="!(item.isEntregaDoPedido && (item.meioEntregaId | commonData:tiposMeioEntregaValores$:'id':'code') == DimensionCodes.HabHerdeiros.TiposMeioEntregaValores.transferencia)"
+                             />
+                      <span xdt:Locator="XPath(./span[@readOnlyValue])" xdt:Transform="Remove"></span>
+                    </mat-form-field>
+
+                    <mat-form-field xdt:Locator="XPath(./mat-form-field)" xdt:Transform="MoveIntoEnd(//table[@id='ListaEntregaValores']/tbody//div[@id='ibanWrap'])"></mat-form-field>
+
+                  </td>
+
+                  <!-- [remove columns] -->
+                  <td xdt:Locator="XPath(./td[@id='ibanRemove'])" xdt:Transform="Remove"></td>
+
+                </tr>
+
+                <tr xdt:Locator="XPath(.//tr[layout-container[@id='InstrumentoAdditionalInfo']])" xdt:Transform="Remove"></tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </table-content>
+      </results-container>
+
+    </card>
+  </layout-container>
+
+</form>

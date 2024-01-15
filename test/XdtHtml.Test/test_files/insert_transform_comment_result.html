@@ -1,0 +1,255 @@
+<modal [dataSourceContext]="detailDataSourceContext">
+
+  <modal-header>
+    <modal-header-title-container>
+      <modal-header-actions>
+      </modal-header-actions>
+  
+      <modal-header-title>
+        {{ 'HabHerdeiros._Dialogs.ResumoProcesso._Description'| translate }}
+      </modal-header-title>
+  
+      <modal-header-actions>
+      
+        <button mat-button modalCloseButton (click)="cancel()"></button>
+      </modal-header-actions>
+  
+    </modal-header-title-container>
+  </modal-header>
+  
+  <card id="ResumoProcessoFalecido" fxFlex="100%" expandable>
+    <card-header>
+      <card-header-title-container>
+        <card-header-title>{{ 'HabHerdeiros._Dialogs.ResumoProcesso.ResumoProcessoFalecido._Description' | translate }}</card-header-title>
+      </card-header-title-container> 
+      <card-header-actions>
+      </card-header-actions>
+    </card-header>
+    <data-group id="FieldGroup1">
+      <data-field id="falecidoDoProcessoDataObito" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.IntervenientesProcesso._Fields.DataObito' | translate">{{ details.falecidoDoProcessoDataObito | date:'dd-MM-yyyy' }}</data-field>
+      <data-field id="falecidoDoProcessoRefExternaCliente" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.IntervenientesProcesso._Fields.RefExternaCliente' | translate">{{ details.falecidoDoProcessoRefExternaCliente }}</data-field>
+      <data-field id="falecidoDoProcessoNome" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.IntervenientesProcesso._Fields.Nome' | translate">{{ details.falecidoDoProcessoNome }}</data-field>
+      <data-field id="falecidoDoProcessoNIF" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.IntervenientesProcesso._Fields.NIF' | translate">{{ details.falecidoDoProcessoNIF }}</data-field>
+    </data-group>
+  </card>
+  <card id="Requerente" fxFlex="100%" expandable>
+    <card-header>
+      <card-header-title-container>
+        <card-header-title>{{ 'HabHerdeiros._Dialogs.ResumoProcesso.Requerente._Description' | translate }}</card-header-title>
+      </card-header-title-container> 
+      <card-header-actions>
+      </card-header-actions>
+    </card-header>
+    <data-group id="FieldGroup2">
+      <data-field id="origemId" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.Processos._Fields.Origem' | translate">{{ details.origemId | commonData:tiposOrigemProcesso$:'id':'desc' }}</data-field>
+    </data-group>
+  </card>
+  <card id="ResumoProcessoCardPedidos" fxFlex="100%" expandable>
+    <card-header>
+      <card-header-title-container>
+        <card-header-title>{{ 'HabHerdeiros._Tables.Pedidos._Description' | translate }}</card-header-title>
+      </card-header-title-container> 
+      <card-header-actions>
+      </card-header-actions>
+    </card-header>
+    <results-container>
+      <table-content>
+        <table id="ResumoProcssoListaPedidos" [attr.aria-label]="'HabHerdeiros._Tables.Pedidos._Description' | translate" tableRowsExpandable>
+          <thead>
+            <tr>
+              <th id="idPedido" textAlign="left">{{ 'HabHerdeiros._Tables.Pedidos._Fields.IdPedido' | translate }}</th>
+              <th id="codigoTipoPedido" textAlign="left">{{ 'HabHerdeiros._Tables.Pedidos._Fields.CodigoTipoPedido' | translate }}</th>
+              <th id="requerenteDoGrupoPedidosNome" textAlign="left">{{ 'HabHerdeiros._Dialogs.ResumoProcesso.ResumoProcessoCardPedidos.ResumoProcssoListaPedidos.NomeRequerente' | translate }}</th>
+              <th id="insDate" textAlign="left">{{ 'Global.System.InsDate' | translate }}</th>
+              <th id="updDate" textAlign="left">{{ 'Global.System.UpdDate' | translate }}</th>
+              <th id="estadoId" textAlign="left">{{ 'HabHerdeiros._Dialogs.ResumoProcesso.ResumoProcessoCardPedidos.ResumoProcssoListaPedidos.EstadoPendencia' | translate }}</th>
+              <th id="resultado" textAlign="left">{{ 'HabHerdeiros._Tables.Pedidos._Fields.Resultado' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let item of details.resumoProcssoListaPedidos; let i0 = index">               
+              <tr>
+                <td textAlign="left">
+                  {{ item.idPedido }}
+                </td>
+                <td textAlign="left">
+                  {{ item.codigoTipoPedido | commonData:tiposPedido$:'code':'desc' }}
+                </td>
+                <td textAlign="left">
+                  {{ item.requerenteDoGrupoPedidosNome }}
+                </td>
+                <td textAlign="left">
+                  {{ item.insDate | date:'dd-MM-yyyy HH:mm' }}
+                </td>
+                <td textAlign="left">
+                  {{ item.updDate | date:'dd-MM-yyyy HH:mm' }}
+                </td>
+                <td textAlign="left">
+                  <state-chip [stateId]="item.estadoId" [domainCode]="DomainCodes.HabHerdeiros.estadoPedido"></state-chip>
+                </td>
+                <td textAlign="left">
+                  {{ item.resultado }}
+                </td>
+              </tr>
+              <tr tableRowExpansion>
+                <results-container>
+                  <mat-list id="ListaEtapasPedidos">
+                    <mat-list-item *ngFor="let listaEtapasPedidosItem of item.listaEtapasPedidos; let i1 = index">
+                
+                      <span fxFlex="50" matListItemTitle>{{ listaEtapasPedidosItem.descricao }}</span>
+                      <span fxFlex="50" matListItemLine>{{ listaEtapasPedidosItem.insDate | date:'dd-MM-yyyy HH:mm' }}</span>
+                
+                    </mat-list-item>
+                  </mat-list>
+                </results-container>
+                
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </table-content>
+    </results-container>
+    
+  </card>
+  <card id="ResumoProcessoCardDocumento" fxFlex="100%" expandable>
+    <card-header>
+      <card-header-title-container>
+        <card-header-title>{{ 'HabHerdeiros._Dialogs.ResumoProcesso.ResumoProcessoCardDocumento.ResumoProcessoListaDocumentos._Description' | translate }}</card-header-title>
+      </card-header-title-container> 
+      <card-header-actions>
+      </card-header-actions>
+    </card-header>
+    <results-container>
+      <table-content>
+        <table id="ResumoProcessoListaDocumentos" [attr.aria-label]="'HabHerdeiros._Dialogs.ResumoProcesso.ResumoProcessoCardDocumento.ResumoProcessoListaDocumentos._Description' | translate">
+          <thead>
+            <tr>
+              <th id="codigoTipoDocumento" textAlign="left">{{ 'HabHerdeiros._Tables.DocumentosPedido._Fields.CodigoTipoDocumento' | translate }}</th>
+              <th id="numPaginas" textAlign="left">{{ 'HabHerdeiros._Tables.DocumentosPedido._Fields.NumPaginas' | translate }}</th>
+            
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let item of details.resumoProcessoListaDocumentos; let i = index">               
+              <tr>
+                <td textAlign="left">
+                  {{ item.codigoTipoDocumento | commonData:tiposDocumento$:'code':'desc' }}
+                </td>
+                <td textAlign="left">
+                  {{ item.numPaginas }}
+                </td>
+              
+                <td textAlign="left">
+                  <button mat-button btnType="neutral" btnIconClass="mdi mdi-open-in-new" btnIconPosition="right" (click)="OpenDocInNewTab(item)">
+                  </button>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </table-content>
+    </results-container>
+    
+  </card>
+  <card id="Evidencias" fxFlex="100%" expandable [dataSourceContext]="dataSourceContextEvidenciasTratamentosProcesso">
+    <card-header>
+      <card-header-title-container>
+        <card-header-title>{{ 'HabHerdeiros._Dialogs.ResumoProcesso.Evidencias.EvidenciasTratamentosProcesso._Description' | translate }}</card-header-title>
+      </card-header-title-container> 
+      <card-header-actions>
+        
+        <refresh-button></refresh-button>
+      </card-header-actions>
+    </card-header>
+    
+  
+    <div class="projStyles-file-upload-wrap">
+
+      <div class="projStyles-no-files" *ngIf="!fileUploaderEvidencias?.queue.length && !resultsEvidenciasTratamentosProcesso?.length">Nenhum ficheiro associado</div>
+
+      <div class="projStyles-file-upload-list" *ngIf="fileUploaderEvidencias?.queue.length || resultsEvidenciasTratamentosProcesso?.length">
+
+        <div *ngFor="let item of resultsEvidenciasTratamentosProcesso" class="projStyles-file-upload-list-item">
+
+          <div class="projStyles-file-upload-list-item-icon">
+            <i class="mdi mdi-file" aria-hidden="true"></i>
+          </div>
+
+          <div class="projStyles-file-upload-list-item-content">
+            <div class="projStyles-file-upload-list-item-head">
+              <div class="projStyles-file-upload-list-item-id">
+                <span>{{ item.filePath.substr(item.filePath.lastIndexOf('\\') + 1) }}</span>
+              </div>
+              <div class="projStyles-file-upload-list-item-info">
+                <span nowrap>{{ item.fileSizeBytes/1024/1024 | number:'.2' }} MB</span>
+              </div>
+              <div class="projStyles-file-upload-list-item-actions">
+
+                <button mat-button btnType="link" btnIconClass="mdi mdi-download" btnIconPosition="icon-solo" btnLabel="Abrir">
+                </button>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div *ngFor="let item of fileUploaderEvidencias?.queue" class="projStyles-file-upload-list-item">
+
+          <div class="projStyles-file-upload-list-item-icon">
+            <i class="mdi mdi-file-upload" aria-hidden="true"></i>
+          </div>
+
+          <div class="projStyles-file-upload-list-item-content">
+            <div class="projStyles-file-upload-list-item-head">
+              <div class="projStyles-file-upload-list-item-id">
+                <span>{{ item.file?.name }}</span>
+              </div>
+              <div class="projStyles-file-upload-list-item-info">
+                <span nowrap>{{ item.file?.size/1024/1024 | number:'.2' }} MB</span>
+              </div>
+              <div class="projStyles-file-upload-list-item-actions">
+
+                <button mat-button btnType="link" btnIconClass="mdi mdi-cancel" btnIconPosition="icon-solo" btnLabel="Cancel" (click)="item.remove()" *ngIf="item.isUploading">
+                </button>
+
+              </div>
+            </div>
+            <div class="projStyles-file-upload-list-item-body">
+              <div class="projStyles-file-upload-list-item-progress">
+                <progress-bar [progressValue]="fileUploaderEvidencias?.progress"></progress-bar>
+              </div>
+              <div class="projStyles-file-upload-list-item-progress-result">
+                <div class="projStyles-file-upload-list-item-progress-result-msg">
+                  <span *ngIf="item.isError" textColor="error">
+                    <i class="mdi mdi-alert-octagon"></i>
+                    <strong> Error</strong>
+                  </span>
+                </div>
+                <div class="projStyles-file-upload-list-item-progress-txt">
+                  <span>{{ fileUploaderEvidencias.progress | percentage }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+    
+  </card>
+  <modal-footer>
+  
+    <button-group>
+
+      <button mat-button modalConfirmButton [btnLabel]="'Global.Actions.Close' | translate" (click)="cancel()">
+      </button>
+
+    </button-group>
+  
+  </modal-footer>
+  
+</modal>

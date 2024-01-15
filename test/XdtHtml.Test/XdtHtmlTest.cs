@@ -127,7 +127,19 @@ namespace XdtHtml.Test
         [TestMethod]
         public void TestReplaceIndentNoPreamble()
         {
-            ApplyTransform("replace_indent_no_preamble_input", "replace_indent_no_preamble", "replace_indent_no_preamble_result");
+            ApplyTransform("replace_indent_no_preamble_input", "replace_indent_no_preamble");
+        }
+
+        [TestMethod]
+        public void TestInsertTransformComment()
+        {
+            ApplyTransform("insert_transform_comment_input", "insert_transform_comment");
+        }
+
+        [TestMethod]
+        public void TestPedidos()
+        {
+            ApplyTransform("composite_transform_input", "composite_transform");
         }
 
         protected void ApplyTransform(string contentFileName, string transformFileName, string resultFileName = null)
