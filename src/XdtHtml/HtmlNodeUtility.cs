@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace XdtHtml
 {
@@ -49,12 +48,12 @@ namespace XdtHtml
 
         public static IEnumerable<HtmlNode> GetNodePreamble(this HtmlNode node)
         {
-            return node.GetPreviousSiblings(breakBefore: n => n.NodeType != HtmlNodeType.Text && n.NodeType != HtmlNodeType.Comment).Reverse();
+            return node.GetPreviousSiblings(breakBefore: n => (n.NodeType != HtmlNodeType.Text || !string.IsNullOrWhiteSpace(((HtmlTextNode)n).Text)) && n.NodeType != HtmlNodeType.Comment).Reverse();
         }
 
         public static IEnumerable<HtmlNode> GetNodePreambleComments(this HtmlNode node)
         {
-            return node.GetPreviousSiblings(breakBefore: n => n.NodeType != HtmlNodeType.Text && n.NodeType != HtmlNodeType.Comment)
+            return node.GetPreviousSiblings(breakBefore: n => (n.NodeType != HtmlNodeType.Text || !string.IsNullOrWhiteSpace(((HtmlTextNode)n).Text)) && n.NodeType != HtmlNodeType.Comment)
                        .Where(n => n.NodeType == HtmlNodeType.Comment)
                        .Reverse()
                        ;
@@ -62,7 +61,7 @@ namespace XdtHtml
 
         public static IEnumerable<HtmlNode> GetNodePostamble(this HtmlNode node)
         {
-            return node.GetNextSiblings(breakBefore: n => n.NodeType != HtmlNodeType.Text && n.NodeType != HtmlNodeType.Comment);
+            return node.GetNextSiblings(breakBefore: n => (n.NodeType != HtmlNodeType.Text || !string.IsNullOrWhiteSpace(((HtmlTextNode)n).Text)) && n.NodeType != HtmlNodeType.Comment);
         }
 
         public static IEnumerable<HtmlNode> GetNodeWithPreamble(this HtmlNode node)
@@ -86,7 +85,7 @@ namespace XdtHtml
         public static IEnumerable<HtmlNode> GetEndTagPreamble(this HtmlNode node)
         {
             var lastChild = node.LastChild;
-            if (lastChild != null && (lastChild.NodeType == HtmlNodeType.Text || lastChild.NodeType == HtmlNodeType.Comment))
+            if (lastChild != null && ((lastChild.NodeType == HtmlNodeType.Text && string.IsNullOrWhiteSpace(((HtmlTextNode)lastChild).Text)) || lastChild.NodeType == HtmlNodeType.Comment))
             {
                 return lastChild.GetNodeWithPreamble();
             }
@@ -121,7 +120,7 @@ namespace XdtHtml
         {
             foreach (var node in list)
             {
-                if (!adjustTextNodes && node.NodeType == HtmlNodeType.Text)
+                if (!adjustTextNodes && node.NodeType == HtmlNodeType.Text && string.IsNullOrWhiteSpace(((HtmlTextNode)node).Text))
                     yield return node;
                 else
                     yield return node.AdjustIndent(desiredIndent, node.GetIndentationWithNewline());
@@ -131,7 +130,7 @@ namespace XdtHtml
         {
             foreach (var node in list)
             {
-                if (!adjustTextNodes && node.NodeType == HtmlNodeType.Text)
+                if (!adjustTextNodes && node.NodeType == HtmlNodeType.Text && string.IsNullOrWhiteSpace(((HtmlTextNode)node).Text))
                     yield return node;
                 else
                     yield return node.AdjustIndent(desiredIndent, currentElementsIndent);
@@ -142,12 +141,12 @@ namespace XdtHtml
         {
             return node.AdjustParentIndent(indentParentReference.GetIndentationWithNewline(), node.GetIndentationWithNewline(), node.GetIndentationFromParent());
         }
-        //public static HtmlNode AdjustParentIndent(this HtmlNode node, string desiredParentIndent)
-        //{
-        //    return AdjustParentIndent(node, desiredParentIndent, node.GetIndentationWithNewline(), node.GetIndentationFromParent());
-        //}
+
         public static HtmlNode AdjustParentIndent(this HtmlNode node, string desiredParentIndent, string currentElementIndent, string currentElementParentIndent)
         {
+            if (desiredParentIndent.Length == 0)
+                desiredParentIndent = currentElementIndent.Replace(currentElementParentIndent, "");
+
             var desiredIndentation = desiredParentIndent + currentElementParentIndent;
             return AdjustIndent(node, desiredIndentation, currentElementIndent);
         }
@@ -157,24 +156,18 @@ namespace XdtHtml
             var desiredParentIndent = indentParentReference.GetIndentationWithNewline();
             foreach (var node in list)
             {
-                if (!adjustTextNodes && node.NodeType == HtmlNodeType.Text)
+                if (!adjustTextNodes && node.NodeType == HtmlNodeType.Text && string.IsNullOrWhiteSpace(((HtmlTextNode)node).Text))
                     yield return node;
                 else
                     yield return node.AdjustParentIndent(desiredParentIndent, node.GetIndentationWithNewline(), node.GetIndentationFromParent());
             }
         }
-        //public static IEnumerable<HtmlNode> AdjustParentIndent(this IEnumerable<HtmlNode> list, string desiredParentIndent)
-        //{
-        //    foreach (var node in list)
-        //    {
-        //        yield return node.AdjustParentIndent(desiredParentIndent);
-        //    }
-        //}
+
         public static IEnumerable<HtmlNode> AdjustParentIndent(this IEnumerable<HtmlNode> list, string desiredParentIndent, string currentElementIndent, string currentElementParentIndent, bool adjustTextNodes = true)
         {
             foreach (var node in list)
             {
-                if (!adjustTextNodes && node.NodeType == HtmlNodeType.Text)
+                if (!adjustTextNodes && node.NodeType == HtmlNodeType.Text && string.IsNullOrWhiteSpace(((HtmlTextNode)node).Text))
                     yield return node;
                 else
                     yield return node.AdjustParentIndent(desiredParentIndent, currentElementIndent, currentElementParentIndent);
@@ -243,7 +236,7 @@ namespace XdtHtml
             };
 
             info.ChildNodes = node.ChildNodes
-                                 .Where(n => n.NodeType == HtmlNodeType.Element || n.NodeType == HtmlNodeType.Comment)
+                                 .Where(n => n.NodeType == HtmlNodeType.Element || n.NodeType == HtmlNodeType.Comment || (n.NodeType == HtmlNodeType.Text && !string.IsNullOrWhiteSpace(((HtmlTextNode)n).Text)))
                                  .Select(n => GetIndentTreeInfo(n, desiredIndent + n.GetIndentationFromParent(currentNodeIndentation), n.GetIndentationWithNewline()))
                                  .ToList()
                                  ;
@@ -294,16 +287,6 @@ namespace XdtHtml
             if (lastIndentIndex == -1)
                 lastIndentIndex = lastIndentText.LastIndexOf("\n");
             return lastIndentText.Substring(lastIndentIndex);
-                           //.Split('\n')
-                           //.Select(n => n + '\n')
-                           //.First();
-            //return node.GetNodeWithPreamble()
-            //           .OfType<HtmlTextNode>()
-            //           .Where(n => n.Text.Contains("\n"))
-            //           .LastOrDefault()?
-            //               .Text.Split('\n')
-            //               .Select(n => n + '\n')
-            //               .First();
         }
 
         public static IEnumerable<HtmlNode> AppendChild(this HtmlNode parentNode, IEnumerable<HtmlNode> newChildren)
