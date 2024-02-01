@@ -1,0 +1,160 @@
+<form (ngSubmit)="nextStep()"></form><results-container fxLayout="row wrap" [dataSourceContext]="detailDataSourceContext">
+  <form fxFlex="100%" fxLayout="row wrap" isolatedSubmit [dataSourceContext]="dataSourceContextFiValidacaoPartilhasEntregasValores" (ngSubmit)="OnSaveFiValidacaoPartilhasEntregasValoresData()">
+    <card id="MapaPartilhasCard" fxFlex="1000px" editable editOnNewRecord (beginEdit)="OnBeginEditFiValidacaoPartilhasEntregasValores()" (cancelEdit)="OnCancelEditFiValidacaoPartilhasEntregasValores($event)">
+      <card-header>
+        <card-header-title-container>
+          <card-header-title>{{ 'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores._Description' | translate }}
+            <state-motivos-devolucao [motivosDevolucao]="motivosDevolucao">
+            </state-motivos-devolucao></card-header-title>
+        </card-header-title-container> 
+        <card-header-actions>
+          <list-counter *ngIf="detailsFiValidacaoPartilhasEntregasValoresSelectionModel.selected.length" listItemValue="{{ detailsFiValidacaoPartilhasEntregasValoresSelectionModel.selected.length }}" listItemLabel="{{'_infrastructure.Lists.ListCounter.ItemsSelected' | translate}}">
+          </list-counter>
+          <ng-container *hasEveryPermission="PermissionConstants.HabHerdeiros.FilasInternas.FIValidacao.Partilhas.delete">
+            <button mat-button [btnLabel]="'Global.Actions.Delete' | translate" btnIconClass="mdi mdi-delete" *ngIf="detailsFiValidacaoPartilhasEntregasValoresSelectionModel.selected.length" (click)="DeleteFiValidacaoPartilhasEntregasValores()" displayOnEditOnly>
+            </button>
+          </ng-container>
+          <button mat-button [btnLabel]="'Global.Actions.Add' | translate" btnIconClass="mdi mdi-plus" *hasEveryPermission="PermissionConstants.HabHerdeiros.FilasInternas.FIValidacao.Partilhas.add" (click)="InsertNewFiValidacaoPartilhasEntregasValores()" displayOnEditOnly>
+          </button>
+          <button mat-button *hasEveryPermission="PermissionConstants.HabHerdeiros.FilasInternas.FIValidacao.Partilhas.edit" enterEditButton>
+          </button>
+          <button mat-button *hasEveryPermission="PermissionConstants.HabHerdeiros.FilasInternas.FIValidacao.Partilhas.edit" cancelEditButton>
+          </button>  
+          <button mat-button *hasEveryPermission="PermissionConstants.HabHerdeiros.FilasInternas.FIValidacao.Partilhas.edit" type="submit" confirmEditButton>
+          </button>
+        </card-header-actions>
+      </card-header>
+      <results-container>
+        <table-content>
+          <table id="FiValidacaoPartilhasEntregasValores" [attr.aria-label]="'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores._Description' | translate" matSort tableRowsZebra [selectionModel]="detailsFiValidacaoPartilhasEntregasValoresSelectionModel">
+            <thead>
+              <tr>
+                <th>{{ 'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores.CodigoTipoInterveniente' | translate }}</th>
+                <th id="idInstrumento" mat-sort-header="idInstrumento" textAlign="left">{{ 'HabHerdeiros._Tables.EntregaValores._Relations.EntregasDoInstrumento' | translate }}</th>
+                <th>Fração</th>
+                <th id="valor" mat-sort-header="valor" textAlign="right">{{ 'HabHerdeiros._Tables.EntregaValores._Fields.Valor' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let item of resultsFiValidacaoPartilhasEntregasValores | filterNot:{'deleted':true}; let i = index">               
+                <tr [selectionItem]="item">
+                  <td>
+                    <div style="width: 150px;"><strong>{{ item.entregaValoresDeIntervenienteBeneficiarioNome }}</strong></div>
+                    <div>{{ item.entregaValoresDeIntervenienteBeneficiarioCodigoTipoInterveniente | commonData:tiposInterveniente$:'code':'desc' }}</div>
+                    <div>NIF: {{ item.entregaValoresDeIntervenienteBeneficiarioNIF }}</div>
+                  </td>
+                  <td textAlign="left" class="projStyles-table-column-format-4" stopClickPropagation>
+                    <mat-form-field>
+                    
+                      <input matInput type="text" [disabled]="item.idProcesso == undefined" name="fiValidacaoPartilhasEntregasValores[{{ i }}].idInstrumento" [fixed.idProcesso]="item.idProcesso" [(lookup.idContrato)]="item.idContrato" [(lookup.tipoContratoId)]="item.tipoContratoId" [(lookup.tipoInstrumentoId)]="item.entregasDoInstrumentoTipoInstrumentoId" [(ngModel)]="item.idInstrumento" [lookupTrigger]="idInstrumentoTrigger" hab-herdeiros-search-modal-instrumentos-considerados-lookup-field [matAutocomplete]="idInstrumentoAuto" #idInstrumentoLookup="HabHerdeirosSearchModalInstrumentosConsideradosLookupField" #idInstrumentoAutoTrigger="matAutocompleteTriggerEx" [(lookup.casasDecimais)]="item.casasDecimais" [(lookup.quotaParteConsiderada)]="item.quotaParteConsiderada" (ngModelChange)="instrumentoOnChange(item)" />
+                    
+                      <mat-autocomplete #idInstrumentoAuto="matAutocomplete" [displayValue]="item.idContrato">
+                        <mat-option *ngFor="let option of idInstrumentoAutoTrigger.filteredItems" [value]="option.idInstrumento" [data-context]="option">
+                          {{ option.idContrato }}
+                        </mat-option>
+                      </mat-autocomplete>
+                    
+                      <span readOnlyValue>{{ item.idContrato }}</span>
+                    
+                      <span matSuffix matTooltip="{{ 'HabHerdeiros.FIValidacao.Partilhas.InstrumentoComEntregasPorConfigurar' | translate:{ somaEntregas: somaMontanteInstrumentoDistribuidoEntregas(item), montanteAfeto: item.quotaParteConsiderada } }}" class="nbtpl-form-field-error-alert">
+                        <i class="mdi mdi-alert-octagon" aria-hidden="true" *ngIf="item.idInstrumento && item.valor && somaMontanteInstrumentoDistribuidoEntregas(item) != item.quotaParteConsiderada"></i>
+                      </span>
+                    
+                      <field-clear-button matSuffix></field-clear-button>
+                      <field-error-alert matSuffix></field-error-alert>
+                      <button mat-button [disabled]="item.idProcesso == undefined" fieldSearchButton matSuffix #idInstrumentoTrigger="fieldSearchButton"></button>
+                      <mat-error></mat-error>
+                    </mat-form-field>
+                  
+
+                    <div>Tipo Contrato: {{ item.tipoContratoId | commonData:tiposContrato$:'id':'desc' }}</div>
+                  
+                    <div>Tipo Instrumento: {{ item.entregasDoInstrumentoTipoInstrumentoId | commonData:tiposInstrumento$:'id':'desc' }}</div>
+                  </td>
+                  <td textAlign="left" class="projStyles-table-column-format-1" stopClickPropagation>
+                    <mat-form-field>
+                      <mat-select name="fiValidacaoPartilhasEntregasValores[{{ i }}].tipoFracionamentoId" required [(ngModel)]="item.tipoFracionamentoId" (selectionChange)="tipoFracionamentoOnChange(item)">
+                        <mat-option *ngFor="let dimension of tiposFracionamento$ | async | activeDimensionsOnly" [value]="dimension.dimensionId">
+                            {{ dimension.description }}
+                        </mat-option>
+                      </mat-select>
+                    
+                      <span readOnlyValue>{{ item.tipoFracionamentoId | commonData:tiposFracionamento$:'id':'desc' }}</span>
+                    
+                      <field-error-alert matSuffix></field-error-alert>
+                      <mat-error></mat-error>
+                    </mat-form-field>
+                  
+                    <div id="fracaoWrap" class="projStyles-table-formfield-slim-box">
+                      <mat-form-field fxFlex="100%" floatLabel="always" *ngIf="!item.tipoFracionamentoId">
+                        <input matInput type="text" [(ngModel)]="item.valorFracao" name="fiValidacaoPartilhasEntregasValores[{{ i }}].valorFracao" maxlength="255" disabled />
+                        <mat-hint align="end" fieldLength></mat-hint>
+                    
+                        <span readOnlyValue>{{ item.valorFracao }}</span>
+                    
+                        <field-clear-button matSuffix></field-clear-button>
+                        <field-error-alert matSuffix></field-error-alert>
+                        <mat-error></mat-error>
+                      </mat-form-field>
+
+                      
+                      <mat-form-field fxFlex="100%" fxFlex.lt-sm="100%" floatLabel="always" *ngIf="(item.tipoFracionamentoId | commonData:tiposFracionamento$:'id':'code') == 'F'">
+                        <input matInput type="text" [(ngModel)]="item.fracaoFracionamento" name="fiValidacaoPartilhasEntregasValores[{{ i }}].fracaoFracionamento" maxlength="10" placeholder="{{ 'HabHerdeiros._Tables.EntregaValores._Fields.FracaoFracionamento' | translate }}" (ngModelChange)="fracaoOnChange($event, item)" pattern="^[0-9]+\/[1-9][0-9]*$" />
+                        <mat-hint align="end" fieldLength></mat-hint>
+                        
+                        <span readOnlyValue>{{ item.fracaoFracionamento }}</span>
+                        
+                        <field-clear-button matSuffix></field-clear-button>
+                        <field-error-alert matSuffix></field-error-alert>
+                        <mat-error></mat-error>
+                      </mat-form-field>
+
+                      <mat-form-field fxFlex="100%" fxFlex.lt-sm="100%" floatLabel="always" *ngIf="(item.tipoFracionamentoId | commonData:tiposFracionamento$:'id':'code') == 'P'">
+                        <input matInput type="text" [(ngModel)]="item.percentagemFracionamento" name="fiValidacaoPartilhasEntregasValores[{{ i }}].percentagemFracionamento" numeric="5.2" placeholder="{{ 'HabHerdeiros._Tables.EntregaValores._Fields.PercentagemFracionamento' | translate }}" (ngModelChange)="percentagemOnChange($event, item)" />
+                        
+                        <span readOnlyValue>{{ item.percentagemFracionamento | percentage:'1.1-2' }}</span>
+                        
+                        <field-clear-button matSuffix></field-clear-button>
+                        <field-error-alert matSuffix></field-error-alert>
+                        <mat-error></mat-error>
+                      </mat-form-field>
+
+                      <mat-form-field fxFlex="100%" fxFlex.lt-sm="100%" floatLabel="always" *ngIf="(item.tipoFracionamentoId | commonData:tiposFracionamento$:'id':'code') == 'VQ'">
+                        <input matInput type="text" required [(ngModel)]="item.montanteFracionamento" name="fiValidacaoPartilhasEntregasValores[{{ i }}].montanteFracionamento" numeric="21.8" placeholder="{{ 'HabHerdeiros._Tables.EntregaValores._Fields.MontanteFracionamento' | translate }}" (ngModelChange)="montanteOnChange($event, item)" />
+                        
+                        <span readOnlyValue>{{ item.montanteFracionamento | number }}</span>
+                        
+                        <field-clear-button matSuffix></field-clear-button>
+                        <field-error-alert matSuffix></field-error-alert>
+                        <mat-error></mat-error>
+                      </mat-form-field></div>
+                  </td>
+                  <td textAlign="right" class="projStyles-table-column-format-2" stopClickPropagation>
+                    <mat-form-field>
+                      <input matInput type="text" [(ngModel)]="item.valor" name="fiValidacaoPartilhasEntregasValores[{{ i }}].valor" numeric="21.8" disabled />
+                    
+                      <span readOnlyValue>{{ item.valor | number }}</span>
+                    
+                      <field-clear-button matSuffix></field-clear-button>
+                      <field-error-alert matSuffix></field-error-alert>
+                      <mat-error></mat-error>
+                    </mat-form-field>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </table-content>
+        <mat-paginator></mat-paginator>
+      </results-container>
+      
+    </card>
+  </form>
+  
+  <layout-container id="ImageViewer">
+    <div *ngIf="details?.imageViewerDocumentoPedido != null" class="projStyles-FIValidHerdeiros-selection-list-documents-item-image-frame">
+      <image-viewer id="FITabHerdeirosImageViewer" [idProcesso]="details.imageViewerDocumentoPedido.idProcesso" [idPedido]="details.imageViewerDocumentoPedido.idPedido" [idDocumento]="details.imageViewerDocumentoPedido.idDocumento">
+      </image-viewer>
+    </div>
+  </layout-container>
+</results-container>

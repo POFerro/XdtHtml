@@ -148,6 +148,12 @@ namespace XdtHtml.Test
             ApplyTransform("composite_transform_input", "composite_transform");
         }
 
+        [TestMethod]
+        public void TestContentTextNode()
+        {
+            ApplyTransform("content_textnode_input", "content_textnode");
+        }
+
         protected void ApplyTransform(string contentFileName, string transformFileName, string resultFileName = null)
         {
             resultFileName ??= transformFileName + "_result";

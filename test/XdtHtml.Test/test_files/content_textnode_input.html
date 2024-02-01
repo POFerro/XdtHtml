@@ -1,0 +1,466 @@
+<results-container fxLayout="row wrap" [dataSourceContext]="detailDataSourceContext">
+  <form fxFlex="100%" fxLayout="row wrap" isolatedSubmit [dataSourceContext]="dataSourceContextFiValidacaoPartilhasEntregasValores" (ngSubmit)="OnSaveFiValidacaoPartilhasEntregasValoresData()">
+    <card id="MapaPartilhasCard" fxFlex="1000px" editable editOnNewRecord (beginEdit)="OnBeginEditFiValidacaoPartilhasEntregasValores()" (cancelEdit)="OnCancelEditFiValidacaoPartilhasEntregasValores($event)">
+      <card-header>
+        <card-header-title-container>
+          <card-header-title>{{ 'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores._Description' | translate }}</card-header-title>
+        </card-header-title-container> 
+        <card-header-actions>
+          <list-counter *ngIf="detailsFiValidacaoPartilhasEntregasValoresSelectionModel.selected.length"
+                        listItemValue="{{ detailsFiValidacaoPartilhasEntregasValoresSelectionModel.selected.length }}"
+                        listItemLabel="{{'_infrastructure.Lists.ListCounter.ItemsSelected' | translate}}">
+          </list-counter>
+          <button mat-button
+                  *hasEveryPermission="PermissionConstants.HabHerdeiros.FilasInternas.FIValidacao.Partilhas.edit"
+                  enterEditButton>
+          </button>
+          <button mat-button
+                  *hasEveryPermission="PermissionConstants.HabHerdeiros.FilasInternas.FIValidacao.Partilhas.edit"
+                  cancelEditButton>
+          </button>  
+          <button mat-button
+                  *hasEveryPermission="PermissionConstants.HabHerdeiros.FilasInternas.FIValidacao.Partilhas.edit"
+                  type="submit"
+                  confirmEditButton>
+          </button>
+          <ng-container *hasEveryPermission="PermissionConstants.HabHerdeiros.FilasInternas.FIValidacao.Partilhas.delete">
+            <button mat-button
+                    displayOnReadOnly
+                    [btnLabel]="'Global.Actions.Delete' | translate"
+                    btnIconClass="mdi mdi-delete"
+                    *ngIf="detailsFiValidacaoPartilhasEntregasValoresSelectionModel.selected.length" 
+                    (click)="DeleteFiValidacaoPartilhasEntregasValores()"
+                    >
+            </button>
+          </ng-container>
+          <button mat-button
+                  displayOnReadOnly
+                  [btnLabel]="'Global.Actions.Add' | translate"
+                  btnIconClass="mdi mdi-plus"
+                  *hasEveryPermission="PermissionConstants.HabHerdeiros.FilasInternas.FIValidacao.Partilhas.add"
+                  (click)="InsertNewFiValidacaoPartilhasEntregasValores()"
+                  >
+          </button>
+          
+          <refresh-button></refresh-button>
+        </card-header-actions>
+      </card-header>
+      <results-container>
+        <table-content>
+          <table id="FiValidacaoPartilhasEntregasValores" [attr.aria-label]="'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores._Description' | translate"
+                 matSort
+                 tableRowsZebra
+                 tableRowsExpandable
+                 [selectionModel]="detailsFiValidacaoPartilhasEntregasValoresSelectionModel" 
+                 >
+            <thead>
+              <tr>
+                <th id="entregaValoresDeIntervenienteBeneficiarioNome" mat-sort-header="entregaValoresDeIntervenienteBeneficiarioNome" textAlign="left">{{ 'HabHerdeiros._Tables.IntervenientesProcesso._Fields.Nome' | translate }}</th>
+                <th id="entregaValoresDeIntervenienteBeneficiarioCodigoTipoInterveniente" mat-sort-header="entregaValoresDeIntervenienteBeneficiarioCodigoTipoInterveniente" textAlign="left">{{ 'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores.CodigoTipoInterveniente' | translate }}</th>
+                <th id="entregaValoresDeIntervenienteBeneficiarioNIF" mat-sort-header="entregaValoresDeIntervenienteBeneficiarioNIF" textAlign="left">{{ 'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores.NIFHerdeiro' | translate }}</th>
+                <th id="idInstrumento" mat-sort-header="idInstrumento" textAlign="left">{{ 'HabHerdeiros._Tables.EntregaValores._Relations.EntregasDoInstrumento' | translate }}</th>
+                <th id="tipoFracionamentoId" mat-sort-header="tipoFracionamentoId" textAlign="left">{{ 'HabHerdeiros._Tables.EntregaValores._Fields.TipoFracionamento' | translate }}</th>
+                <th id="valorFracao" mat-sort-header="valorFracao" textAlign="left">{{ 'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores.ValorFracao' | translate }}</th>
+                <th id="valor" mat-sort-header="valor" textAlign="right">{{ 'HabHerdeiros._Tables.EntregaValores._Fields.Valor' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let item of resultsFiValidacaoPartilhasEntregasValores | filterNot:{'deleted':true}; let i = index">               
+                <tr [selectionItem]="item">
+                  <td textAlign="left">
+                    {{ item.entregaValoresDeIntervenienteBeneficiarioNome }}
+                  </td>
+                  <td textAlign="left">
+                    {{ item.entregaValoresDeIntervenienteBeneficiarioCodigoTipoInterveniente | commonData:tiposInterveniente$:'code':'desc' }}
+                  </td>
+                  <td textAlign="left">
+                    {{ item.entregaValoresDeIntervenienteBeneficiarioNIF }}
+                  </td>
+                  <td textAlign="left">
+                    <mat-form-field fxFlex="100%">
+                    
+                      <input matInput type="text" [disabled]="item.idProcesso == undefined"
+                             name="fiValidacaoPartilhasEntregasValores[{{ i }}].idInstrumento"
+                             [fixed.idProcesso]="item.idProcesso"
+                             [(lookup.idContrato)]="item.idContrato"
+                             [(lookup.tipoContratoId)]="item.tipoContratoId"
+                             [(lookup.tipoInstrumentoId)]="item.entregasDoInstrumentoTipoInstrumentoId"
+                             [(ngModel)]="item.idInstrumento"
+                             [lookupTrigger]="idInstrumentoTrigger"
+                             hab-herdeiros-search-modal-instrumentos-considerados-lookup-field
+                             [matAutocomplete]="idInstrumentoAuto"
+                             #idInstrumentoLookup="HabHerdeirosSearchModalInstrumentosConsideradosLookupField"
+                             #idInstrumentoAutoTrigger="matAutocompleteTriggerEx" />
+                    
+                      <mat-autocomplete #idInstrumentoAuto="matAutocomplete"
+                                        [displayValue]="[item.idContrato, item.tipoContratoId | commonData:tiposContrato$:'id':'desc', idInstrumentoLookup.tipoInstrumentoId | commonData:tiposInstrumento$:'id':'desc'] | join:' - '">
+                        <mat-option *ngFor="let option of idInstrumentoAutoTrigger.filteredItems"
+                                    [value]="option.idInstrumento"
+                                    [data-context]="option">
+                            {{ [option.idContrato, option.tipoContratoId | commonData:tiposContrato$:'id':'desc', option.tipoInstrumentoId | commonData:tiposInstrumento$:'id':'desc'] | join:' - ' }}
+                        </mat-option>
+                      </mat-autocomplete>
+                    
+                      <span readOnlyValue>{{ [item.idContrato, item.tipoContratoId | commonData:tiposContrato$:'id':'desc', item.entregasDoInstrumentoTipoInstrumentoId | commonData:tiposInstrumento$:'id':'desc'] | join:' - ' }}</span>
+                    
+                      <field-clear-button matSuffix></field-clear-button>
+                      <field-error-alert matSuffix></field-error-alert>
+                      <button mat-button [disabled]="item.idProcesso == undefined" fieldSearchButton matSuffix #idInstrumentoTrigger="fieldSearchButton"></button>
+                      <mat-error></mat-error>
+                    </mat-form-field>
+                  </td>
+                  <td textAlign="left">
+                    <mat-form-field fxFlex="100%">
+                      <mat-select name="fiValidacaoPartilhasEntregasValores[{{ i }}].tipoFracionamentoId" required
+                                  [(ngModel)]="item.tipoFracionamentoId">
+                        <mat-option *ngFor="let dimension of tiposFracionamento$ | async | activeDimensionsOnly" [value]="dimension.dimensionId">
+                            {{ dimension.description }}
+                        </mat-option>
+                      </mat-select>
+                    
+                      <span readOnlyValue>{{ item.tipoFracionamentoId | commonData:tiposFracionamento$:'id':'desc' }}</span>
+                    
+                      <field-error-alert matSuffix></field-error-alert>
+                      <mat-error></mat-error>
+                    </mat-form-field>
+                  </td>
+                  <td textAlign="left">
+                    <mat-form-field fxFlex="100%">
+                      <input matInput type="text"
+                             [(ngModel)]="item.valorFracao"
+                             name="fiValidacaoPartilhasEntregasValores[{{ i }}].valorFracao"
+                             maxlength="255" />
+                      <mat-hint align="end" fieldLength></mat-hint>
+                    
+                      <span readOnlyValue>{{ item.valorFracao }}</span>
+                    
+                      <field-clear-button matSuffix></field-clear-button>
+                      <field-error-alert matSuffix></field-error-alert>
+                      <mat-error></mat-error>
+                    </mat-form-field>
+                  </td>
+                  <td textAlign="right">
+                    <mat-form-field fxFlex="100%">
+                      <input matInput type="text"
+                             [(ngModel)]="item.valor"
+                             name="fiValidacaoPartilhasEntregasValores[{{ i }}].valor"
+                             numeric="21.8" />
+                    
+                      <span readOnlyValue>{{ item.valor | number }}</span>
+                    
+                      <field-clear-button matSuffix></field-clear-button>
+                      <field-error-alert matSuffix></field-error-alert>
+                      <mat-error></mat-error>
+                    </mat-form-field>
+                  </td>
+                </tr>
+                <tr tableRowExpansion>
+                  
+                  <layout-container id="FiValidacaoPartilasInstrumentoAdditionalInfo">
+                    <layout-container-header>
+                      <heading>
+                        <heading-title-container>
+                          <heading-title>
+                            <strong>{{ 'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores.FiValidacaoPartilasInstrumentoAdditionalInfo._Description' | translate }}</strong>
+                          </heading-title>
+                        </heading-title-container>
+                      </heading>
+                    </layout-container-header>
+                  
+                    <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                      <mat-label>
+                        <span>{{ 'HabHerdeiros._Tables.EntregaValores._Fields.IdInterveniente' | translate }}</span>
+                      </mat-label>
+                      <input matInput type="text" required
+                             [(ngModel)]="item.idInterveniente"
+                             name="fiValidacaoPartilhasEntregasValores[{{ i }}].idInterveniente"
+                             numeric="10" inputAlign="left" />
+                    
+                      <span readOnlyValue>{{ item.idInterveniente }}</span>
+                    
+                      <field-clear-button matSuffix></field-clear-button>
+                      <field-error-alert matSuffix></field-error-alert>
+                      <mat-error></mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                      <mat-label>
+                        <span>{{ 'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores.FiValidacaoPartilasInstrumentoAdditionalInfo.CasasDecimais' | translate }}</span>
+                      </mat-label>
+                      <input matInput type="text"
+                             [(ngModel)]="item.casasDecimais"
+                             name="fiValidacaoPartilhasEntregasValores[{{ i }}].casasDecimais"
+                             numeric="5" />
+                    
+                      <span readOnlyValue>{{ item.casasDecimais }}</span>
+                    
+                      <field-clear-button matSuffix></field-clear-button>
+                      <field-error-alert matSuffix></field-error-alert>
+                      <mat-error></mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                      <mat-label>
+                        <span>{{ 'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores.FiValidacaoPartilasInstrumentoAdditionalInfo.QuotaParteConsiderada' | translate }}</span>
+                      </mat-label>
+                      <input matInput type="text" required
+                             [(ngModel)]="item.quotaParteConsiderada"
+                             name="fiValidacaoPartilhasEntregasValores[{{ i }}].quotaParteConsiderada"
+                             numeric="15.2" />
+                    
+                      <span readOnlyValue>{{ item.quotaParteConsiderada | number }}</span>
+                    
+                      <field-clear-button matSuffix></field-clear-button>
+                      <field-error-alert matSuffix></field-error-alert>
+                      <mat-error></mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                      <mat-label>
+                        <span>{{ 'HabHerdeiros._Tables.EntregaValores._Fields.IdProcesso' | translate }}</span>
+                      </mat-label>
+                      <input matInput type="text" required [disabled]="true"
+                             [(ngModel)]="item.idProcesso"
+                             name="fiValidacaoPartilhasEntregasValores[{{ i }}].idProcesso"
+                             numeric="10" inputAlign="left" />
+                    
+                      <span readOnlyValue>{{ item.idProcesso }}</span>
+                    
+                      <field-clear-button matSuffix></field-clear-button>
+                      <field-error-alert matSuffix></field-error-alert>
+                      <mat-error></mat-error>
+                    </mat-form-field>
+                    <mat-checkbox fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%"name="fiValidacaoPartilhasEntregasValores[{{ i }}].selectableParaEntrega"
+                            [(ngModel)]="item.selectableParaEntrega"
+                            >
+                      	{{ 'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores.FiValidacaoPartilasInstrumentoAdditionalInfo.SelectableParaEntrega' | translate }}
+                    </mat-checkbox>
+                    
+                    <layout-container id="FiValidacaoPartilhasInstrumentoValorFracaoInfo">
+                      <layout-container-header>
+                        <heading>
+                          <heading-title-container>
+                            <heading-title>
+                              <strong>{{ 'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores.FiValidacaoPartilasInstrumentoAdditionalInfo.FiValidacaoPartilhasInstrumentoValorFracaoInfo._Description' | translate }}</strong>
+                            </heading-title>
+                          </heading-title-container>
+                        </heading>
+                      </layout-container-header>
+                    
+                      <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                        <mat-label>
+                          <span>{{ 'HabHerdeiros._Tables.EntregaValores._Fields.FracaoFracionamento' | translate }}</span>
+                        </mat-label>
+                        <input matInput type="text"
+                               [(ngModel)]="item.fracaoFracionamento"
+                               name="fiValidacaoPartilhasEntregasValores[{{ i }}].fracaoFracionamento"
+                               maxlength="10" />
+                        <mat-hint align="end" fieldLength></mat-hint>
+                      
+                        <span readOnlyValue>{{ item.fracaoFracionamento }}</span>
+                      
+                        <field-clear-button matSuffix></field-clear-button>
+                        <field-error-alert matSuffix></field-error-alert>
+                        <mat-error></mat-error>
+                      </mat-form-field>
+                      <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                        <mat-label>
+                          <span>{{ 'HabHerdeiros._Tables.EntregaValores._Fields.PercentagemFracionamento' | translate }}</span>
+                        </mat-label>
+                        <input matInput type="text"
+                               [(ngModel)]="item.percentagemFracionamento"
+                               name="fiValidacaoPartilhasEntregasValores[{{ i }}].percentagemFracionamento"
+                               numeric="5.2" />
+                      
+                        <span readOnlyValue>{{ item.percentagemFracionamento | percentage:'1.1-2' }}</span>
+                      
+                        <field-clear-button matSuffix></field-clear-button>
+                        <field-error-alert matSuffix></field-error-alert>
+                        <mat-error></mat-error>
+                      </mat-form-field>
+                      <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                        <mat-label>
+                          <span>{{ 'HabHerdeiros._Tables.EntregaValores._Fields.MontanteFracionamento' | translate }}</span>
+                        </mat-label>
+                        <input matInput type="text" required
+                               [(ngModel)]="item.montanteFracionamento"
+                               name="fiValidacaoPartilhasEntregasValores[{{ i }}].montanteFracionamento"
+                               numeric="21.8" />
+                      
+                        <span readOnlyValue>{{ item.montanteFracionamento | number }}</span>
+                      
+                        <field-clear-button matSuffix></field-clear-button>
+                        <field-error-alert matSuffix></field-error-alert>
+                        <mat-error></mat-error>
+                      </mat-form-field>
+                    
+                    </layout-container>
+                  
+                  </layout-container>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </table-content>
+        <mat-paginator></mat-paginator>
+      </results-container>
+      
+    </card>
+  </form>
+  
+  <layout-container id="MotivosDevolucaoContainer">
+    <layout-container-header>
+      <heading>
+        <heading-title-container>
+          <heading-title>
+            <strong>{{ 'HabHerdeiros.FIValidacao.Partilhas.MotivosDevolucaoContainer._Description' | translate }}</strong>
+          </heading-title>
+        </heading-title-container>
+      </heading>
+    </layout-container-header>
+  
+    <results-container>
+      <table-content>
+        <table id="FiValidacaoPartilhasComprovativosPedido" [attr.aria-label]="'HabHerdeiros._Tables.ComprovativosPedido._Description' | translate"
+               tableRowsExpandable
+               >
+          <thead>
+            <tr>
+              <th id="idDocumento" textAlign="left">{{ 'HabHerdeiros._Tables.ComprovativosPedido._Fields.IdDocumento' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let item of details.fiValidacaoPartilhasComprovativosPedido; let i0 = index">               
+              <tr>
+                <td textAlign="left">
+                  {{ item.idDocumento }}
+                </td>
+              </tr>
+              <tr tableRowExpansion>
+                <results-container>
+                  <table-content>
+                    <table id="FiValidacaoPartilhasMotivosDevolucao" [attr.aria-label]="'HabHerdeiros._Tables.MotivosDevolucao._Description' | translate"
+                           >
+                      <thead>
+                        <tr>
+                          <th id="idMotivoDevolucao" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.IdMotivoDevolucao' | translate }}</th>
+                          <th id="idProcesso" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.IdProcesso' | translate }}</th>
+                          <th id="idPedido" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.IdPedido' | translate }}</th>
+                          <th id="idIntervenienteProcesso" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.IdIntervenienteProcesso' | translate }}</th>
+                          <th id="codigoTipoComprovativoPedido" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.CodigoTipoComprovativoPedido' | translate }}</th>
+                          <th id="codigoTipoComprovativoInterveniente" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.CodigoTipoComprovativoInterveniente' | translate }}</th>
+                          <th id="idDocumento" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.IdDocumento' | translate }}</th>
+                          <th id="codigoMotivoDevolucao" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.CodigoMotivoDevolucao' | translate }}</th>
+                          <th id="codigoRequisito" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.CodigoRequisito' | translate }}</th>
+                          <th id="codigoTipoReqCruzadoPedido" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.CodigoTipoReqCruzadoPedido' | translate }}</th>
+                          <th id="codigoTipoReqCruzadoInterveniente" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.CodigoTipoReqCruzadoInterveniente' | translate }}</th>
+                          <th id="isAutomatico" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.IsAutomatico' | translate }}</th>
+                          <th id="motivoN1" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.MotivoN1' | translate }}</th>
+                          <th id="motivoN2" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.MotivoN2' | translate }}</th>
+                          <th id="motivoN3" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.MotivoN3' | translate }}</th>
+                          <th id="isResolvido" textAlign="left">{{ 'HabHerdeiros._Tables.MotivosDevolucao._Fields.IsResolvido' | translate }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <ng-container *ngFor="let fiValidacaoPartilhasMotivosDevolucaoItem of item.fiValidacaoPartilhasMotivosDevolucao; let i1 = index">               
+                          <tr>
+                            <td textAlign="left">
+                              {{ fiValidacaoPartilhasMotivosDevolucaoItem.idMotivoDevolucao }}
+                            </td>
+                            <td textAlign="left">
+                              {{ fiValidacaoPartilhasMotivosDevolucaoItem.idProcesso }}
+                            </td>
+                            <td textAlign="left">
+                              {{ fiValidacaoPartilhasMotivosDevolucaoItem.idPedido }}
+                            </td>
+                            <td textAlign="left">
+                              {{ fiValidacaoPartilhasMotivosDevolucaoItem.idIntervenienteProcesso }}
+                            </td>
+                            <td textAlign="left">
+                              {{ fiValidacaoPartilhasMotivosDevolucaoItem.codigoTipoComprovativoPedido | commonData:tiposComprovativo$:'code':'code-desc' }}
+                            </td>
+                            <td textAlign="left">
+                              {{ fiValidacaoPartilhasMotivosDevolucaoItem.codigoTipoComprovativoInterveniente | commonData:tiposComprovativo$:'code':'code-desc' }}
+                            </td>
+                            <td textAlign="left">
+                              {{ fiValidacaoPartilhasMotivosDevolucaoItem.idDocumento }}
+                            </td>
+                            <td textAlign="left">
+                              {{ fiValidacaoPartilhasMotivosDevolucaoItem.codigoMotivoDevolucao | commonData:tiposMotivoDevolucao$:'code':'code-desc' }}
+                            </td>
+                            <td textAlign="left">
+                              {{ fiValidacaoPartilhasMotivosDevolucaoItem.codigoRequisito }}
+                            </td>
+                            <td textAlign="left">
+                              {{ fiValidacaoPartilhasMotivosDevolucaoItem.codigoTipoReqCruzadoPedido }}
+                            </td>
+                            <td textAlign="left">
+                              {{ fiValidacaoPartilhasMotivosDevolucaoItem.codigoTipoReqCruzadoInterveniente }}
+                            </td>
+                            <td textAlign="left">
+                              <mat-checkbox fxFlex="100%"name="fiValidacaoPartilhasComprovativosPedido[{{ i0 }}].fiValidacaoPartilhasMotivosDevolucao[{{ i1 }}].isAutomatico" [disabled]="true"
+                                      [(ngModel)]="fiValidacaoPartilhasMotivosDevolucaoItem.isAutomatico"
+                                      >
+                              </mat-checkbox>
+                            </td>
+                            <td textAlign="left">
+                              {{ fiValidacaoPartilhasMotivosDevolucaoItem.motivoN1 }}
+                            </td>
+                            <td textAlign="left">
+                              {{ fiValidacaoPartilhasMotivosDevolucaoItem.motivoN2 }}
+                            </td>
+                            <td textAlign="left">
+                              {{ fiValidacaoPartilhasMotivosDevolucaoItem.motivoN3 }}
+                            </td>
+                            <td textAlign="left">
+                              <mat-checkbox fxFlex="100%"name="fiValidacaoPartilhasComprovativosPedido[{{ i0 }}].fiValidacaoPartilhasMotivosDevolucao[{{ i1 }}].isResolvido" [disabled]="true"
+                                      [(ngModel)]="fiValidacaoPartilhasMotivosDevolucaoItem.isResolvido"
+                                      >
+                              </mat-checkbox>
+                            </td>
+                          </tr>
+                        </ng-container>
+                      </tbody>
+                    </table>
+                  </table-content>
+                </results-container>
+                
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </table-content>
+    </results-container>
+    
+  
+  </layout-container>
+  
+  <layout-container id="ImageViewer" fxFlex="1">
+    <layout-container-header>
+      <heading>
+        <heading-title-container>
+          <heading-title>
+            <strong>{{ 'HabHerdeiros.FIValidacao.Partilhas.ImageViewer._Description' | translate }}</strong>
+          </heading-title>
+        </heading-title-container>
+      </heading>
+    </layout-container-header>
+  
+    <results-container>
+      <table-content>
+        <table id="ImageViewerDocumentoPedido" [attr.aria-label]="'HabHerdeiros._Tables.ComprovativosPedido._Description' | translate"
+               >
+          <thead>
+            <tr>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let item of details.imageViewerDocumentoPedido; let i = index">               
+              <tr>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </table-content>
+    </results-container>
+    
+  
+  </layout-container>
+</results-container>

@@ -1,0 +1,204 @@
+<results-container xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <form xdt:Transform="InsertBefore(/results-container)"
+        (ngSubmit)="nextStep()"></form>
+  <card xdt:Locator="XPath(.//card[@id='MapaPartilhasCard'])">
+    <card-header xdt:Locator="XPath(.//card-header)">
+      <card-header-title-container xdt:Locator="XPath(.//card-header-title-container)">
+        <card-header-title xdt:Locator="XPath(.//card-header-title)">
+          <card-header-title>{{ 'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores._Description' | translate }}</card-header-title>
+          <state-motivos-devolucao [motivosDevolucao]="motivosDevolucao"
+                           xdt:Transform="Insert">
+          </state-motivos-devolucao>
+        </card-header-title>
+      </card-header-title-container>
+
+      <card-header-actions xdt:Locator="XPath(.//card-header-actions)">
+
+
+        <ng-container xdt:Locator="XPath(.//ng-container[@*[contains(.,'Partilhas.delete')]])"
+                      xdt:Transform="MoveToAfter(..//list-counter)">
+        </ng-container>
+
+        <button xdt:Locator="XPath(.//button[@*[contains(.,'Partilhas.add')]])"
+                xdt:Transform="MoveToAfter(.//ng-container[@*[contains(.,'Partilhas.delete')]])">
+        </button>
+
+        <button xdt:Locator="XPath(.//button[@displayOnReadOnly])"
+                xdt:Transform="SetAttributes"
+                displayOnEditOnly>
+        </button>
+        <button xdt:Locator="XPath(.//button[@displayOnReadOnly])"
+                xdt:Transform="RemoveAttributes(displayOnReadOnly)">
+        </button>
+
+        <refresh-button xdt:Locator="XPath(.//refresh-button)"
+                        xdt:Transform="Remove"></refresh-button>
+
+      </card-header-actions>
+
+    </card-header>
+
+    <results-container>
+      <table-content>
+        <table xdt:Locator="XPath(./table[@id='FiValidacaoPartilhasEntregasValores'])" xdt:Transform="RemoveAttributes(tableRowsExpandable)">
+          <thead>
+            <tr>
+
+              <th xdt:Locator="XPath(./th[@id='entregaValoresDeIntervenienteBeneficiarioNome'])" xdt:Transform="Replace">{{ 'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores.CodigoTipoInterveniente' | translate }}</th>
+              <th xdt:Locator="XPath(./th[@id='entregaValoresDeIntervenienteBeneficiarioCodigoTipoInterveniente'])" xdt:Transform="Remove"></th>
+              <th xdt:Locator="XPath(./th[@id='entregaValoresDeIntervenienteBeneficiarioNIF'])" xdt:Transform="Remove"></th>
+
+              <th id="idInstrumento" textAlign="left">{{ 'HabHerdeiros._Tables.EntregaValores._Relations.EntregasDoInstrumento' | translate }}</th>
+
+              <th xdt:Locator="XPath(./th[@id='tipoFracionamentoId'])" xdt:Transform="Replace">Fração</th>
+              <th xdt:Locator="XPath(./th[@id='valorFracao'])" xdt:Transform="Remove"></th>
+
+              <th id="isEntregaDoPedido" textAlign="left">{{ 'HabHerdeiros.FIValidacao.Partilhas.MapaPartilhasCard.FiValidacaoPartilhasEntregasValores.IsEntregaDoPedido' | translate }}</th>
+
+              <th id="meioEntregaId" textAlign="left">{{ 'HabHerdeiros._Tables.EntregaValores._Fields.MeioEntrega' | translate }}</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container>
+
+              <mat-form-field xdt:Locator="XPath(.//layout-container[@id='FiValidacaoPartilhasInstrumentoValorFracaoInfo']/mat-form-field)" xdt:Transform="MoveIntoEnd(//table[@id='FiValidacaoPartilhasEntregasValores']//td[mat-form-field[input[contains(@name,'fiValidacaoPartilhasEntregasValores[{{ i }}].valorFracao')]]])">
+              </mat-form-field>
+
+              <tr>
+
+                <td xdt:Locator="XPath(./td[1])" xdt:Transform="Replace">
+                  <div style="width: 150px;"><strong>{{ item.entregaValoresDeIntervenienteBeneficiarioNome }}</strong></div>
+                  <div>{{ item.entregaValoresDeIntervenienteBeneficiarioCodigoTipoInterveniente | commonData:tiposInterveniente$:'code':'desc' }}</div>
+                  <div>NIF: {{ item.entregaValoresDeIntervenienteBeneficiarioNIF }}</div>
+                </td>
+
+                <td xdt:Locator="XPath(./td[./mat-form-field/input[@name='fiValidacaoPartilhasEntregasValores[{{ i }}].idInstrumento']])" xdt:Transform="SetAttributes"
+                    class="projStyles-table-column-format-4">
+                  <mat-form-field xdt:Transform="RemoveAttributes(fxFlex)">
+
+                    <span xdt:Transform="InsertBefore(./field-clear-button)"
+                          matSuffix
+                          matTooltip="{{ 'HabHerdeiros.FIValidacao.Partilhas.InstrumentoComEntregasPorConfigurar' | translate:{ somaEntregas: somaMontanteInstrumentoDistribuidoEntregas(item), montanteAfeto: item.quotaParteConsiderada } }}"
+                          class="nbtpl-form-field-error-alert">
+                      <i class="mdi mdi-alert-octagon" aria-hidden="true" *ngIf="item.idInstrumento && item.valor && somaMontanteInstrumentoDistribuidoEntregas(item) != item.quotaParteConsiderada"></i>
+                    </span>
+                    <input xdt:Transform="SetAttributes"
+                           [(lookup.casasDecimais)]="item.casasDecimais"
+                           [(lookup.quotaParteConsiderada)]="item.quotaParteConsiderada"
+                           (ngModelChange)="instrumentoOnChange(item)" />
+
+                    <mat-autocomplete xdt:Transform="SetAttributes"
+                                      [displayValue]="item.idContrato">
+                      <mat-option xdt:Transform="Replace"
+                                  *ngFor="let option of idInstrumentoAutoTrigger.filteredItems" [value]="option.idInstrumento" [data-context]="option">
+                        {{ option.idContrato }}
+                      </mat-option>
+                    </mat-autocomplete>
+
+                    <span xdt:Locator="XPath(./span[@readOnlyValue])" xdt:Transform="Replace"
+                          readOnlyValue>{{ item.idContrato }}</span>
+
+                  </mat-form-field>
+
+                  <div xdt:Transform="Insert">Tipo Contrato: {{ item.tipoContratoId | commonData:tiposContrato$:'id':'desc' }}</div>
+                  <div xdt:Transform="Insert">Tipo Instrumento: {{ item.entregasDoInstrumentoTipoInstrumentoId | commonData:tiposInstrumento$:'id':'desc' }}</div>
+
+                </td>
+
+                <td xdt:Locator="XPath(.//td[mat-form-field[mat-select[@name='fiValidacaoPartilhasEntregasValores[{{ i }}].tipoFracionamentoId']]])" xdt:Transform="SetAttributes"
+                    class="projStyles-table-column-format-1">
+                  <mat-form-field xdt:Transform="RemoveAttributes(fxFlex)"></mat-form-field>
+                  <mat-select xdt:Locator="XPath(.//mat-select[contains(@name,'tipoFracionamentoId')])" xdt:Transform="SetAttributes" (selectionChange)="tipoFracionamentoOnChange(item)"></mat-select>
+                  <div xdt:Transform="Insert" id="fracaoWrap" class="projStyles-table-formfield-slim-box"></div>
+                </td>
+
+                <td xdt:Locator="XPath(./td[./mat-form-field/input[@name='fiValidacaoPartilhasEntregasValores[{{ i }}].valorFracao']])" xdt:Transform="SetAttributes"
+                    id="valorFracaoRemove">
+
+                  <mat-form-field xdt:Locator="XPath(./mat-form-field[input[contains(@name, 'valorFracao')]])" xdt:Transform="SetAttributes"
+                                  floatLabel="always"
+                                  *ngIf="!item.tipoFracionamentoId">
+                    <input xdt:Transform="SetAttributes"
+                           disabled />
+                  </mat-form-field>
+
+                  <mat-form-field xdt:Locator="XPath(./mat-form-field[input[contains(@name, 'percentagemFracionamento')]])"
+                                  xdt:Transform="SetAttributes"
+                                  fxFlex="100%"
+                                  floatLabel="always"
+                                  *ngIf="(item.tipoFracionamentoId | commonData:tiposFracionamento$:'id':'code') == 'P'">
+                    <input xdt:Transform="SetAttributes"
+                           placeholder="{{ 'HabHerdeiros._Tables.EntregaValores._Fields.PercentagemFracionamento' | translate }}"
+                           (ngModelChange)="percentagemOnChange($event, item)" />
+                    <mat-label xdt:Locator="XPath(./mat-label)" xdt:Transform="Remove"></mat-label>
+                  </mat-form-field>
+
+                  <mat-form-field xdt:Locator="XPath(./mat-form-field[input[contains(@name, 'fracaoFracionamento')]])"
+                                  xdt:Transform="SetAttributes"
+                                  fxFlex="100%"
+                                  floatLabel="always"
+                                  *ngIf="(item.tipoFracionamentoId | commonData:tiposFracionamento$:'id':'code') == 'F'">
+                    <input xdt:Transform="SetAttributes"
+                           placeholder="{{ 'HabHerdeiros._Tables.EntregaValores._Fields.FracaoFracionamento' | translate }}"
+                           (ngModelChange)="fracaoOnChange($event, item)" pattern="^[0-9]+\/[1-9][0-9]*$" />
+                    <mat-label xdt:Locator="XPath(./mat-label)" xdt:Transform="Remove"></mat-label>
+                  </mat-form-field>
+
+                  <mat-form-field xdt:Locator="XPath(./mat-form-field[input[contains(@name, 'montanteFracionamento')]])"
+                                  xdt:Transform="SetAttributes"
+                                  fxFlex="100%"
+                                  floatLabel="always"
+                                  *ngIf="(item.tipoFracionamentoId | commonData:tiposFracionamento$:'id':'code') == 'VQ'">
+                    <input xdt:Transform="SetAttributes"
+                           placeholder="{{ 'HabHerdeiros._Tables.EntregaValores._Fields.MontanteFracionamento' | translate }}"
+                           (ngModelChange)="montanteOnChange($event, item)" />
+                    <mat-label xdt:Locator="XPath(./mat-label)" xdt:Transform="Remove"></mat-label>
+                  </mat-form-field>
+
+                  <mat-form-field xdt:Locator="Condition(@fxFlex.lt-md or @fxFlex.lt-sm)" xdt:Transform="RemoveAttributes(fxFlex.lt-md,fxFlex.lt-sm)"></mat-form-field>
+
+                  <mat-form-field xdt:Locator="XPath(./mat-form-field)" xdt:Transform="MoveIntoEnd(//table[@id='FiValidacaoPartilhasEntregasValores']/tbody//div[@id='fracaoWrap'])"></mat-form-field>
+
+                </td>
+
+                <td xdt:Locator="XPath(./td[./mat-form-field/input[@name='fiValidacaoPartilhasEntregasValores[{{ i }}].valor']])" xdt:Transform="SetAttributes"
+                    class="projStyles-table-column-format-2">
+                  <mat-form-field xdt:Transform="RemoveAttributes(fxFlex)">
+                    <input xdt:Transform="SetAttributes"
+                           disabled />
+                  </mat-form-field>
+                </td>
+
+                <!-- [remove columns] -->
+                <td xdt:Locator="XPath(./td[3])" xdt:Transform="Remove"></td>
+                <td xdt:Locator="XPath(./td[2])" xdt:Transform="Remove"></td>
+                <td xdt:Locator="XPath(./td[@id='valorFracaoRemove'])" xdt:Transform="Remove"></td>
+
+                <td xdt:Locator="XPath(./td)" xdt:Transform="SetAttributes"
+                    stopClickPropagation></td>
+                <td xdt:Locator="XPath(./td[1])" xdt:Transform="RemoveAttributes(stopClickPropagation)"></td>
+
+              </tr>
+
+              <tr xdt:Locator="XPath(.//tr[layout-container[@id='FiValidacaoPartilasInstrumentoAdditionalInfo']])" xdt:Transform="Remove"></tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </table-content>
+    </results-container>
+  </card>
+  <layout-container xdt:Locator="XPath(.//layout-container[@id='MotivosDevolucaoContainer'])"
+                    xdt:Transform="Remove">
+  </layout-container>
+  <layout-container xdt:Locator="XPath(.//layout-container[@id='ImageViewer'])"
+                    xdt:Transform="Replace"
+                    id="ImageViewer">
+    <div *ngIf="details?.imageViewerDocumentoPedido != null"
+         class="projStyles-FIValidHerdeiros-selection-list-documents-item-image-frame">
+      <image-viewer id="FITabHerdeirosImageViewer" [idProcesso]="details.imageViewerDocumentoPedido.idProcesso" [idPedido]="details.imageViewerDocumentoPedido.idPedido"
+                    [idDocumento]="details.imageViewerDocumentoPedido.idDocumento">
+      </image-viewer>
+    </div>
+  </layout-container>
+</results-container>
