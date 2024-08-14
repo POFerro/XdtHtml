@@ -16,7 +16,6 @@ namespace XdtHtml
             newDoc.OptionWriteEmptyNodes = true;
             newDoc.OptionEmptyCollection = true;
             newDoc.OptionDefaultUseOriginalName = true;
-            newDoc.GlobalAttributeValueQuote = AttributeValueQuote.Initial;
 
             return newDoc;
         }
