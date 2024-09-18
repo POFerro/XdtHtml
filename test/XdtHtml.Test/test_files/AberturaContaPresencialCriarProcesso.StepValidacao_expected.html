@@ -1,0 +1,286 @@
+<form [dataSourceContext]="detailDataSourceContext" (ngSubmit)="OnSaveData()" fxFill fxLayout="column nowrap">
+  <results-container fxLayout="column nowrap" [dataSourceContext]="detailDataSourceContext" fxFill>
+    
+    <div id="ContainerEscolhaEntidade" class="projStyles-btn-toggle-toolbar">
+      <results-container class="projStyles-btn-toggle-toolbar-grp">
+        <button-group>
+
+          <mat-button-toggle-group id="StepValidacaoValidacao" name="StepValidacaoValidacao" [(ngModel)]="selectedValidacao" (change)="selectedStepValidacaoProcessoRecordNgModel = undefined;selectedStepValidacaoListaTitularesRecordNgModel = undefined;">
+            <mat-button-toggle [value]="true" btnToggle>
+
+              <i id="ProcessoIcon" class="mdi mdi-format-list-checks"></i>
+              <span id="ProcessoText">{{ 'AberturaContaPresencial.Processos.CriarProcesso.StepValidacao.ContainerEscolhaEntidade.EntidadeValidacao.ValidacaoText' | translate }}</span>
+
+              <state-erros-processo [errosProcesso]="errosProcesso?.errosProcesso?.errosMessageList"></state-erros-processo>
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+
+        </button-group>
+      </results-container>
+      <results-container class="projStyles-btn-toggle-toolbar-grp">
+        <button-group>
+      
+          <mat-button-toggle-group id="StepValidacaoProcesso" name="StepValidacaoProcesso" [(ngModel)]="selectedStepValidacaoProcessoRecordNgModel" (change)="selectedValidacao = false; selectedStepValidacaoListaTitularesRecordNgModel = undefined">
+            <mat-button-toggle *ngFor="let item of details.stepValidacaoProcesso; let i = index" [value]="item" btnToggle>
+        
+              <i id="ProcessoIcon" class="mdi mdi-folder"></i>
+              <span id="ProcessoText">{{ 'AberturaContaPresencial.Processos.CriarProcesso.StepValidacao.ContainerEscolhaEntidade.StepValidacaoProcesso.ProcessoText' | translate }}</span>
+        
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+      
+        </button-group>
+      </results-container>
+      
+      <results-container class="projStyles-btn-toggle-toolbar-grp">
+        <button-group>
+      
+          <mat-button-toggle-group id="StepValidacaoListaTitulares" name="StepValidacaoListaTitulares" [(ngModel)]="selectedStepValidacaoListaTitularesRecordNgModel" (change)="selectedValidacao = false; selectedStepValidacaoProcessoRecordNgModel = undefined">
+            <mat-button-toggle *ngFor="let item of details.stepValidacaoListaTitulares; let i = index" [value]="item" btnToggle>
+        
+              <i id="TitularIcon" class="mdi mdi-account"></i>
+              <span id="TitularText">{{ 'AberturaContaPresencial.Processos.CriarProcesso.StepValidacao.ContainerEscolhaEntidade.StepValidacaoListaTitulares.TitularText' | translate: { numTitular: item.numTitular } }}</span>
+              <state-erros-processo [errosProcesso]="getErrosTexts(item.idTitular)"></state-erros-processo>
+        
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+      
+        </button-group>
+      </results-container>
+      
+    
+    
+
+      <div class="projStyles-btn-toggle-toolbar-more-actions">
+        <button mat-button [btnLabel]="'AberturaContaPresencial.Processos.Observacoes' | translate" btnIconClass="mdi mdi-message-bulleted" (click)="parent.OpenObservacoes()">
+        </button>
+      </div>
+      
+    
+    </div>
+    
+    <div id="ContainerDadosValidacao" fxLayout="row nowrap" class="projStyles-content-frame-1">
+    
+    
+
+
+
+      <mat-drawer-container class="projStyles-drawer-container-doc-viewer" id="CurrentStepDocViewerDrawer" autosize>
+        <ng-container *ngIf="selectedStepValidacaoListaTitularesRecord">
+          
+          <div id="ContainerEntidadeTitular" class="projStyles-content-frame-1">
+      
+            
+            <abertura-conta-presencial-page-block-titular id="TitularViewer" fxFlex="100%" [idProcesso]="selectedStepValidacaoListaTitularesRecord.idProcesso" [idTitular]="selectedStepValidacaoListaTitularesRecord.idTitular" fxFill></abertura-conta-presencial-page-block-titular>
+          
+          </div>
+        </ng-container>
+        <ng-container *ngIf="selectedStepValidacaoProcessoRecord">
+          
+          <layout-container id="ContainerEntidadeProcesso">
+      
+            
+            <abertura-conta-presencial-page-block-processo id="ProcessoViewer" fxFlex="100%" [idProcesso]="selectedStepValidacaoProcessoRecord.idProcesso"></abertura-conta-presencial-page-block-processo>
+          
+          </layout-container>
+        </ng-container>
+    
+        
+        <layout-container id="ContainerEntidadeValidacao" *ngIf="selectedValidacao">
+      
+          <form fxFlex="100%" fxLayout="row wrap" isolatedSubmit [dataSourceContext]="detailDataSourceContextCardSegmento" (ngSubmit)="OnSaveCardSegmentoData()">
+        
+            <card id="CardSegmento" fxFlex="100%" editable (beginEdit)="OnBeginEditCardSegmento()" (cancelEdit)="OnCancelEditCardSegmento($event)">
+              <card-header>
+                <card-header-title-container>
+                  <card-header-title>{{ 'AberturaContaPresencial.Processos.CriarProcesso.StepValidacao.ContainerDadosValidacao.ContainerEntidadeValidacao.CardSegmento._Description' | translate }}</card-header-title>
+                </card-header-title-container> 
+                <card-header-actions>
+                  <list-counter formErrorsCounter></list-counter>
+                  
+                  <ng-container *ngIf="detailsCardSegmento.canBeEdited">
+                    <button mat-button *hasEveryPermission="PermissionConstants.AberturaContaPresencial.Processos.CriarProcesso.StepValidacao.edit" enterEditButton>
+                    </button>
+                  </ng-container>
+                  
+                  <button mat-button *hasEveryPermission="PermissionConstants.AberturaContaPresencial.Processos.CriarProcesso.StepValidacao.edit" cancelEditButton>
+                  </button>
+                  
+                  <button mat-button *hasEveryPermission="PermissionConstants.AberturaContaPresencial.Processos.CriarProcesso.StepValidacao.edit" type="submit" confirmEditButton [disabled]="isEditingComprovativo">
+                  </button>
+                  
+                  <refresh-button></refresh-button>
+                </card-header-actions>
+              </card-header>
+              <data-group id="GroupSegmentoData">
+                <mat-form-field fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+                  <mat-label>
+                    <span>{{ 'AberturaContaPresencial._Tables.Processos._Fields.Segmento' | translate }}</span>
+                  </mat-label>
+                  <mat-select name="segmentoId" required [(ngModel)]="detailsCardSegmento.segmentoId">
+                    <mat-option *ngFor="let dimension of segmentos$ | async | activeDimensionsOnly" [value]="dimension.dimensionId">
+                        {{ dimension.description }}
+                    </mat-option>
+                  </mat-select>
+              
+                  <span readOnlyValue>{{ detailsCardSegmento.segmentoId | commonData:segmentos$:'id':'desc' }}</span>
+              
+                  <field-error-alert matSuffix></field-error-alert>
+                  <mat-error></mat-error>
+                </mat-form-field>
+              </data-group>
+              <results-container>
+                <table-content>
+                  <table id="CodigoSectorialTitularGrid" [attr.aria-label]="'AberturaContaPresencial._Tables.ProcessosTitulares._Description' | translate" tableRowsExpandable>
+                    <thead>
+                      <tr>
+                        <th id="numTitular" textAlign="left">{{ 'AberturaContaPresencial._Tables.ProcessosTitulares._Fields.NumTitular' | translate }}</th>
+                        <th id="codigoSectorialId" textAlign="left">{{ 'AberturaContaPresencial._Tables.ProcessosTitulares._Fields.CodigoSectorial' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngFor="let item of detailsCardSegmento.codigoSectorialTitularGrid; let i = index">               
+                        <tr>
+                          <td headers="numTitular" textAlign="left">
+                            {{ item.numTitular }}
+                          </td>
+                          <td headers="codigoSectorialId" textAlign="left">
+                            <mat-form-field fxFlex="100%">
+                              <mat-select name="codigoSectorialTitularGrid[{{ i }}].codigoSectorialId" required [(ngModel)]="item.codigoSectorialId" *ngIf="!item.residenteFiscalPortugal">
+                                <mat-option *ngFor="let dimension of codigosSectoriais$ | async | activeDimensionsOnly | filter:{'value':'0'}" [value]="dimension.dimensionId">
+                                  {{ dimension.description }}
+                                </mat-option>
+                              </mat-select>
+                          
+                              <span readOnlyValue>{{ item.codigoSectorialId | commonData:codigosSectoriais$:'id':'desc' }}</span>
+                          
+                              <field-error-alert matSuffix></field-error-alert>
+                              <mat-error></mat-error>
+                          
+                              <mat-select name="codigoSectorialTitularGrid[{{ i }}].codigoSectorialId" required [(ngModel)]="item.codigoSectorialId" *ngIf="item.residenteFiscalPortugal">
+                                <mat-option *ngFor="let dimension of codigosSectoriais$ | async | activeDimensionsOnly | filterNot:{'code':'510000'} | filterNot:{'code':'411000'}" [value]="dimension.dimensionId">
+                                  {{ dimension.description }}
+                                </mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </td>
+                        </tr>
+                        <tr tableRowExpansion>
+                          
+                          <abertura-conta-presencial-comprovativos-titular id="ComprovativosTitularGrid" fxFlex="100%" [idProcesso]="item.idProcesso" [idTitular]="item.idTitular" [canEdit]="true" (idDocumentoVisualizadoChanged)="RefreshImageViewer($event);" [closedViewer]="idDocumentoVisualizado == null" (toggleDocViewerSidenavEvent)="openDocViewerSidenav()" [errosProcesso]="getTitularErrosList(item.idTitular)" (atualizarErrosProcesso)="LoadErrosProcesso()" (isEditingComprovativo)="IsEditingComprovativo($event)" [filterCode]="DimensionCodes.AberturaContaPresencial.TiposComprovativo.comprovativoProtocolo"></abertura-conta-presencial-comprovativos-titular>
+                        </tr>
+                      </ng-container>
+                    </tbody>
+                  </table>
+                </table-content>
+              </results-container>
+              
+            </card>
+          
+          </form>
+          
+          <notes-badge id="ListaValidacoes" fxFlex="100%">
+        
+            <heading paddingLeft="10" paddingRight="10" paddingTop="0">
+              <heading-title-container>
+                <heading-title>
+                  <strong id="ValidacoesTitle1">{{ 'AberturaContaPresencial.Processos.CriarProcesso.StepValidacao.ContainerDadosValidacao.ContainerEntidadeValidacao.ListaValidacoes.TituloListaValidacoes.ValidacoesTitle1' | translate }}</strong>
+                </heading-title>
+              </heading-title-container>
+            </heading>
+            <data-group id="GroupValidacoes" paddingLeft="10" paddingRight="10">
+              
+              <checkbox-group id="GroupValidacoesCheckbox" groupType="list" [groupRequired]="true" paddingTop="10" paddingBottom="0">
+                <heading>
+                  <heading-title-container>
+                    <heading-title>
+                      <strong>{{ 'AberturaContaPresencial.Processos.CriarProcesso.StepValidacao.ContainerDadosValidacao.ContainerEntidadeValidacao.ListaValidacoes.GroupValidacoesCheckbox._Description' | translate }}</strong>
+                    </heading-title>
+                  </heading-title-container>
+                </heading>
+            
+                <mat-checkbox name="validaProcesso1" [(ngModel)]="details.validaProcesso1" alwaysEditable required (click)="LoadErrosProcesso()">
+                  	{{ 'AberturaContaPresencial.Processos.CriarProcesso.StepValidacao.ContainerDadosValidacao.ContainerEntidadeValidacao.ListaValidacoes.GroupValidacoesCheckbox.ValidaProcesso1' | translate }}
+                </mat-checkbox>
+                <mat-checkbox name="validaIdentificacao" [(ngModel)]="details.validaIdentificacao" alwaysEditable required (click)="LoadErrosProcesso()" style="margin-left: 10%;">
+                  	{{ 'AberturaContaPresencial._Tables.Processos._Fields.ValidaIdentificacao' | translate }}
+                </mat-checkbox>
+                <mat-checkbox name="validaFiscal" [(ngModel)]="details.validaFiscal" alwaysEditable required (click)="LoadErrosProcesso()" style="margin-left: 10%;">
+                  	{{ 'AberturaContaPresencial._Tables.Processos._Fields.ValidaFiscal' | translate }}
+                </mat-checkbox>
+                <mat-checkbox name="validaMorada" [(ngModel)]="details.validaMorada" alwaysEditable required (click)="LoadErrosProcesso()" style="margin-left: 10%;">
+                  	{{ 'AberturaContaPresencial._Tables.Processos._Fields.ValidaMorada' | translate }}
+                </mat-checkbox>
+                <mat-checkbox name="validaProfissional" [(ngModel)]="details.validaProfissional" alwaysEditable required (click)="LoadErrosProcesso()" style="margin-left: 10%;">
+                  	{{ 'AberturaContaPresencial._Tables.Processos._Fields.ValidaProfissional' | translate }}
+                </mat-checkbox>
+                <mat-checkbox name="validaRendimentos" [(ngModel)]="details.validaRendimentos" alwaysEditable required (click)="LoadErrosProcesso()" style="margin-left: 10%;">
+                  	{{ 'AberturaContaPresencial._Tables.Processos._Fields.ValidaRendimentos' | translate }}
+                </mat-checkbox>
+                <mat-checkbox name="validaPatrimonio" [(ngModel)]="details.validaPatrimonio" alwaysEditable required (click)="LoadErrosProcesso()" style="margin-left: 10%;">
+                  	{{ 'AberturaContaPresencial._Tables.Processos._Fields.ValidaPatrimonio' | translate }}
+                </mat-checkbox>
+                <mat-checkbox name="validaW9" [(ngModel)]="details.validaW9" alwaysEditable required (click)="LoadErrosProcesso()" style="margin-left: 10%;">
+                  	{{ 'AberturaContaPresencial._Tables.Processos._Fields.ValidaW9' | translate }}
+                </mat-checkbox>
+                <mat-checkbox name="validaProcesso2" [(ngModel)]="details.validaProcesso2" alwaysEditable required (click)="LoadErrosProcesso()">
+                  	{{ 'AberturaContaPresencial.Processos.CriarProcesso.StepValidacao.ContainerDadosValidacao.ContainerEntidadeValidacao.ListaValidacoes.GroupValidacoesCheckbox.ValidaProcesso2' | translate }}
+                </mat-checkbox>
+              
+              </checkbox-group>
+            </data-group>
+          
+          </notes-badge>
+        
+        </layout-container>
+
+        <mat-drawer #docViewerDrawer mode="side" position="end">
+          
+          <layout-container id="LayoutImageViewer" fxFlex="580px" backgroundColor="var(--theme_color_gray_lightest)" class="projStyles-docviewer-wrap">
+            <layout-container-header>
+              <heading class="projStyles-docviewer-heading">
+                <heading-title-container>
+                  <heading-title>
+                    <span>{{ 'AberturaContaPresencial.Processos.CriarProcesso.StepInfoAdicional.ContainerDados.ContainerImageViewer._Description' | translate }}</span>
+                  </heading-title>
+                </heading-title-container>
+                <heading-actions>
+
+                  <button mat-button btnType="link" [btnLabel]="'Global.Actions.Close' | translate" btnIconClass="mdi mdi-close" (click)="closeDocViewerSidenav()"></button>
+
+                </heading-actions>
+              </heading>
+            </layout-container-header>
+      
+            <card fxFill>
+              
+              <results-container id="ResultsContainerViewer" [totalRecords]="idDocumentoVisualizado != undefined ? 1 : 0" noResultsFoundIcon="mdi mdi-folder-eye-outline" noResultsFoundTitle="Seleccione um documento" fxFill>
+          
+                
+                <div id="DivViewer" *ngIf="idDocumentoVisualizado" class="projStyles-selection-list-documents-item-image-frame">
+            
+                  
+                  <image-viewer id="ContainerImageViewer" [idProcesso]="keys.idProcesso" [idDocumento]="idDocumentoVisualizado">
+                  
+                  
+                  </image-viewer>
+                
+                </div>
+              
+              </results-container>
+            </card>
+          
+          </layout-container></mat-drawer>
+
+      </mat-drawer-container>
+    
+    </div>
+  </results-container>
+
+
+  <input style="display:none" type="number" max="0" [ngModel]="errosSimulacaoEntidade.length" name="totalErrors" />
+
+  <input style="display:none" type="number" max="0" [ngModel]="isEditing" name="isEditing" />
+
+  <input style="display:none" type="number" max="0" [ngModel]="totalProcessErrors" name="totalProcessErrors" />
+</form>

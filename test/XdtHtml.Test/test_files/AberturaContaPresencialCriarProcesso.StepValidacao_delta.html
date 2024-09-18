@@ -1,0 +1,187 @@
+<form xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform" xdt:Transform="SetAttributes(*[not(contains(local-name(.), 'xmlns'))])" fxFill fxLayout="column nowrap">
+  <remove xdt:Locator="XPath(.//remove)" xdt:Transform="RemoveAll"></remove>
+
+  <input xdt:Transform="Insert" style="display:none" type="number" max="0" [ngModel]="errosSimulacaoEntidade.length" name="totalErrors" />
+  <input xdt:Transform="Insert" style="display:none" type="number" max="0" [ngModel]="isEditing" name="isEditing" />
+  <input xdt:Transform="Insert" style="display:none" type="number" max="0" [ngModel]="totalProcessErrors" name="totalProcessErrors" />
+  <results-container xdt:Transform="SetAttributes" fxFill fxLayout="column nowrap">
+    <div xdt:Locator="XPath(.//div[@id='ContainerEscolhaEntidade'])" xdt:Transform="SetAttributes" class="projStyles-btn-toggle-toolbar">
+
+      <results-container class="projStyles-btn-toggle-toolbar-grp" xdt:Transform="InsertBefore(./results-container)">
+        <button-group>
+
+          <mat-button-toggle-group id="StepValidacaoValidacao" name="StepValidacaoValidacao" [(ngModel)]="selectedValidacao" (change)="selectedStepValidacaoProcessoRecordNgModel = undefined;selectedStepValidacaoListaTitularesRecordNgModel = undefined;">
+            <mat-button-toggle [value]="true" btnToggle>
+
+              <i id="ProcessoIcon" class="mdi mdi-format-list-checks"></i>
+              <span id="ProcessoText">{{ 'AberturaContaPresencial.Processos.CriarProcesso.StepValidacao.ContainerEscolhaEntidade.EntidadeValidacao.ValidacaoText' | translate }}</span>
+
+              <state-erros-processo [errosProcesso]="errosProcesso?.errosProcesso?.errosMessageList"></state-erros-processo>
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+
+        </button-group>
+      </results-container>
+
+
+      <results-container xdt:Locator="XPath(.//results-container)" xdt:Transform="SetAttributes" class="projStyles-btn-toggle-toolbar-grp">
+        <button-group xdt:Locator="XPath(.//button-group)">
+
+          <mat-button-toggle-group xdt:Locator="XPath(.//mat-button-toggle-group[@id='StepValidacaoProcesso'][@name='StepValidacaoProcesso'])" xdt:Transform="SetAttributes" (change)="selectedValidacao = false; selectedStepValidacaoListaTitularesRecordNgModel = undefined"></mat-button-toggle-group>
+
+          <mat-button-toggle-group xdt:Locator="XPath(.//mat-button-toggle-group[@id='StepValidacaoListaTitulares'][@name='StepValidacaoListaTitulares'])" xdt:Transform="SetAttributes" (change)="selectedValidacao = false; selectedStepValidacaoProcessoRecordNgModel = undefined">
+            <span xdt:Locator="XPath(.//span[@id='TitularText'])" xdt:Transform="Replace" id="TitularText">{{ 'AberturaContaPresencial.Processos.CriarProcesso.StepValidacao.ContainerEscolhaEntidade.StepValidacaoListaTitulares.TitularText' | translate: { numTitular: item.numTitular } }}</span>
+            <state-erros-processo xdt:Transform="InsertAfter(.//span[@id='TitularText'])" [errosProcesso]="getErrosTexts(item.idTitular)"></state-erros-processo>
+
+          </mat-button-toggle-group>
+
+          <mat-button-toggle xdt:Locator="XPath(.//mat-button-toggle[@btnToggleSize])" xdt:Transform="RemoveAttributes(btnToggleSize)"></mat-button-toggle>
+
+        </button-group>
+      </results-container>
+
+      <div class="projStyles-btn-toggle-toolbar-more-actions" xdt:Transform="Insert">
+        <button mat-button [btnLabel]="'AberturaContaPresencial.Processos.Observacoes' | translate" btnIconClass="mdi mdi-message-bulleted" (click)="parent.OpenObservacoes()">
+        </button>
+      </div>
+    </div>
+
+    <div xdt:Locator="XPath(.//div[@id='ContainerEntidadeTitular'])" xdt:Transform="SetAttributes" class="projStyles-content-frame-1">
+      <abertura-conta-presencial-page-block-titular xdt:Locator="XPath(.//abertura-conta-presencial-page-block-titular[@id='TitularViewer'])" xdt:Transform="SetAttributes" fxFill></abertura-conta-presencial-page-block-titular>
+    </div>
+
+  </results-container>
+
+  <layout-container xdt:Locator="XPath(.//layout-container[@id='ContainerEntidadeValidacao'])" xdt:Transform="SetAttributes" *ngIf="selectedValidacao">
+
+    <notes-badge xdt:Locator="XPath(.//notes-badge[@id='ListaValidacoes'])" xdt:Transform="SetAttributes" fxFlex="100%">
+      <heading xdt:Transform="SetAttributes" paddingLeft="10" paddingRight="10" paddingTop="0"></heading>
+      <data-group xdt:Locator="XPath(.//data-group[@id='GroupValidacoes'])" xdt:Transform="SetAttributes" paddingLeft="10" paddingRight="10">
+
+        <checkbox-group xdt:Locator="XPath(.//checkbox-group[@id='GroupValidacoesCheckbox'])" xdt:Transform="SetAttributes" groupType="list" [groupRequired]="true" paddingTop="10" paddingBottom="0">
+
+          <mat-checkbox xdt:Locator="XPath(.//mat-checkbox)" xdt:Transform="RemoveAttributes(*[(contains(local-name(.), 'fxFlex'))])">
+          </mat-checkbox>
+
+          <mat-checkbox xdt:Locator="XPath(.//mat-checkbox)" xdt:Transform="SetAttributes" alwaysEditable required (click)="LoadErrosProcesso()">
+          </mat-checkbox>
+
+          <mat-checkbox xdt:Locator="XPath(.//mat-checkbox[@name='validaIdentificacao'])" xdt:Transform="SetAttributes" style="margin-left: 10%;">
+          </mat-checkbox>
+          <mat-checkbox xdt:Locator="XPath(.//mat-checkbox[@name='validaFiscal'])" xdt:Transform="SetAttributes" style="margin-left: 10%;">
+          </mat-checkbox>
+          <mat-checkbox xdt:Locator="XPath(.//mat-checkbox[@name='validaMorada'])" xdt:Transform="SetAttributes" style="margin-left: 10%;">
+          </mat-checkbox>
+          <mat-checkbox xdt:Locator="XPath(.//mat-checkbox[@name='validaProfissional'])" xdt:Transform="SetAttributes" style="margin-left: 10%;">
+          </mat-checkbox>
+          <mat-checkbox xdt:Locator="XPath(.//mat-checkbox[@name='validaRendimentos'])" xdt:Transform="SetAttributes" style="margin-left: 10%;">
+          </mat-checkbox>
+          <mat-checkbox xdt:Locator="XPath(.//mat-checkbox[@name='validaPatrimonio'])" xdt:Transform="SetAttributes" style="margin-left: 10%;">
+          </mat-checkbox>
+          <mat-checkbox xdt:Locator="XPath(.//mat-checkbox[@name='validaW9'])" xdt:Transform="SetAttributes" style="margin-left: 10%;">
+          </mat-checkbox>
+
+        </checkbox-group>
+      </data-group>
+
+    </notes-badge>
+    <form xdt:Locator="XPath(.//form)">
+
+      <card xdt:Locator="XPath(.//card[@id='CardSegmento'])">
+        <table xdt:Locator="XPath(.//table[@id='CodigoSectorialTitularGrid'])">
+          <thead xdt:Locator="XPath(.//thead)">
+            <tr xdt:Locator="XPath(.//tr)">
+              <th xdt:Locator="XPath(.//th[@id='residenteFiscalPortugal'])" xdt:Transform="Remove"></th>
+            </tr>
+          </thead>
+          <tbody xdt:Locator="XPath(.//tbody)">
+            <tr xdt:Locator="XPath(.//tr)">
+              <td xdt:Locator="XPath(.//td[@headers='residenteFiscalPortugal'])" xdt:Transform="Remove">
+              </td>
+              <td xdt:Locator="XPath(.//td[@headers='codigoSectorialId'])">
+                <mat-form-field xdt:Locator="XPath(.//mat-form-field[.//*[@name='codigoSectorialTitularGrid[{{ i }}].codigoSectorialId']])">
+                  <mat-select xdt:Locator="XPath(.//mat-select[@name='codigoSectorialTitularGrid[{{ i }}].codigoSectorialId'])" xdt:Transform="Replace" name="codigoSectorialTitularGrid[{{ i }}].codigoSectorialId" required [(ngModel)]="item.codigoSectorialId" *ngIf="!item.residenteFiscalPortugal">
+                    <mat-option *ngFor="let dimension of codigosSectoriais$ | async | activeDimensionsOnly | filter:{'value':'0'}" [value]="dimension.dimensionId">
+                      {{ dimension.description }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-select xdt:Transform="Insert" name="codigoSectorialTitularGrid[{{ i }}].codigoSectorialId" required [(ngModel)]="item.codigoSectorialId" *ngIf="item.residenteFiscalPortugal">
+                    <mat-option *ngFor="let dimension of codigosSectoriais$ | async | activeDimensionsOnly | filterNot:{'code':'510000'} | filterNot:{'code':'411000'}" [value]="dimension.dimensionId">
+                      {{ dimension.description }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </td>
+
+              <abertura-conta-presencial-comprovativos-titular xdt:Locator="XPath(.//abertura-conta-presencial-comprovativos-titular[@id='ComprovativosTitularGrid'])" xdt:Transform="SetAttributes" id="ComprovativosTitularGrid" fxFlex="100%" [idProcesso]="item.idProcesso" [idTitular]="item.idTitular" [canEdit]="true" (idDocumentoVisualizadoChanged)="RefreshImageViewer($event);" [closedViewer]="idDocumentoVisualizado == null" (toggleDocViewerSidenavEvent)="openDocViewerSidenav()" [errosProcesso]="getTitularErrosList(item.idTitular)" (atualizarErrosProcesso)="LoadErrosProcesso()" (isEditingComprovativo)="IsEditingComprovativo($event)" [filterCode]="DimensionCodes.AberturaContaPresencial.TiposComprovativo.comprovativoProtocolo"></abertura-conta-presencial-comprovativos-titular>
+            </tr>
+          </tbody>
+        </table>
+        
+        <button xdt:Locator="XPath(.//card-header/card-header-actions/button[@type='submit'])" xdt:Transform="SetAttributes" [disabled]="isEditingComprovativo">
+        </button> 
+
+        
+      </card>
+
+    </form>
+
+  </layout-container>
+
+  <div xdt:Locator="XPath(.//div[@id='ContainerDadosValidacao'])" xdt:Transform="SetAttributes" fxLayout="row nowrap" class="projStyles-content-frame-1">
+
+
+    <layout-container xdt:Locator="XPath(.//layout-container[@id='LayoutImageViewer'])" xdt:Transform="SetAttributes" backgroundColor="var(--theme_color_gray_lightest)" class="projStyles-docviewer-wrap">
+
+      <layout-container-header xdt:Locator="XPath(./layout-container-header)" xdt:Transform="Replace">
+        <heading class="projStyles-docviewer-heading">
+          <heading-title-container>
+            <heading-title>
+              <span>{{ 'AberturaContaPresencial.Processos.CriarProcesso.StepInfoAdicional.ContainerDados.ContainerImageViewer._Description' | translate }}</span>
+            </heading-title>
+          </heading-title-container>
+          <heading-actions>
+
+            <button mat-button btnType="link" [btnLabel]="'Global.Actions.Close' | translate" btnIconClass="mdi mdi-close" (click)="closeDocViewerSidenav()"></button>
+
+          </heading-actions>
+        </heading>
+      </layout-container-header>
+
+      <card xdt:Transform="RemoveAttributes">
+
+        <card-header xdt:Transform="Remove"></card-header>
+
+        <results-container xdt:Locator="XPath(.//results-container[@id='ResultsContainerViewer'])" xdt:Transform="SetAttributes" [totalRecords]="idDocumentoVisualizado != undefined ? 1 : 0" noResultsFoundIcon="mdi mdi-folder-eye-outline" noResultsFoundTitle="Seleccione um documento" fxFill>
+          <div xdt:Transform="SetAttributes" *ngIf="idDocumentoVisualizado" class="projStyles-selection-list-documents-item-image-frame">
+            <image-viewer xdt:Transform="SetAttributes" [idProcesso]="keys.idProcesso" [idDocumento]="idDocumentoVisualizado">
+            </image-viewer>
+          </div>
+        </results-container>
+
+      </card>
+
+      <card xdt:Transform="SetAttributes" fxFill></card>
+
+    </layout-container>
+
+
+
+    <mat-drawer-container xdt:Transform="Insert" class="projStyles-drawer-container-doc-viewer" id="CurrentStepDocViewerDrawer" autosize>
+
+      <mat-drawer #docViewerDrawer mode="side" position="end"></mat-drawer>
+
+    </mat-drawer-container>
+
+    <layout-container xdt:Locator="XPath(.//layout-container[@id='ContainerEntidadeValidacao'])" xdt:Transform="MoveIntoBegining(./mat-drawer-container[@id='CurrentStepDocViewerDrawer'])"></layout-container>
+
+    <layout-container xdt:Locator="XPath(.//layout-container[@id='LayoutImageViewer'])" xdt:Transform="MoveIntoBegining(./mat-drawer-container[@id='CurrentStepDocViewerDrawer']/mat-drawer)"></layout-container>
+
+
+  </div>
+  <results-container>
+    <ng-container xdt:Locator="XPath(./ng-container[layout-container[@id='ContainerEntidadeProcesso']])" xdt:Transform="MoveIntoBegining(./div[@id='ContainerDadosValidacao']/mat-drawer-container[@id='CurrentStepDocViewerDrawer'])"></ng-container>
+    <ng-container xdt:Locator="XPath(./ng-container[div[@id='ContainerEntidadeTitular']])" xdt:Transform="MoveIntoBegining(./div[@id='ContainerDadosValidacao']/mat-drawer-container[@id='CurrentStepDocViewerDrawer'])"></ng-container>
+
+  </results-container>
+</form>

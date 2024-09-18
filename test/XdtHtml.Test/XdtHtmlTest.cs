@@ -154,6 +154,12 @@ namespace XdtHtml.Test
             ApplyTransform("content_textnode_input", "content_textnode");
         }
 
+        [TestMethod]
+        public void TestRemoveAttributes()
+        {
+            ApplyTransform("AberturaContaPresencialCriarProcesso.StepValidacao", "AberturaContaPresencialCriarProcesso.StepValidacao_delta", "AberturaContaPresencialCriarProcesso.StepValidacao_expected");
+        }
+
         protected void ApplyTransform(string contentFileName, string transformFileName, string resultFileName = null)
         {
             resultFileName ??= transformFileName + "_result";
