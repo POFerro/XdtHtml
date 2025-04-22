@@ -1,0 +1,98 @@
+<page xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  
+  <page-body xdt:Locator="XPath(.//page-body)">
+
+    <card xdt:Locator="XPath(.//card[@id='Neo4JCogCard'])">
+
+      <highcharts-chart xdt:Locator="XPath(./results-container)"
+                        xdt:Transform="Replace"
+                        id="networkChart"
+                        [Highcharts]="highcharts"
+                        [options]="networkChart"
+                        [oneToOne]="true"
+                        [(update)]="networkChartUpdate"
+                        style="min-width:100%; height:300px; display: block;">
+      </highcharts-chart>
+
+    </card>
+
+    <card xdt:Locator="XPath(.//card[@id='AlarmMapCard'])">
+
+      <div xdt:Locator="XPath(.//results-container)"
+           xdt:Transform="Replace"
+           leaflet [leafletOptions]="alarmMapOptions" [leafletLayers]="alarmMapMarkers" style="height: 300px; width: 100%; padding: 0">
+      </div>
+
+    </card>
+
+
+    <div xdt:Locator="XPath(.//div[@id='CsvTableContainer'])">
+
+      <card xdt:Locator="XPath(.//card[@id='RawAlarmsCard'])">
+
+        <card-header-actions xdt:Locator="XPath(.//card-header-actions)">
+
+          <button mat-button xdt:Transform="InsertBefore(./refresh-button)"
+                  [btnLabel]="'Global.System.Filters' | translate"
+                  btnIconClass="mdi mdi-filter-variant"
+                  [matMenuTriggerFor]="rawAlarmsFilters">
+          </button>
+          <mat-menu #rawAlarmsFilters="matMenu" yPosition="below" xdt:Transform="InsertBefore(./refresh-button)">
+            <form>
+              <data-group stopClickPropagation>
+                <heading>
+                  <heading-title-container>
+                    <heading-title>
+                      <strong>{{'Global.System.Filters' | translate}}</strong>
+                    </heading-title>
+                  </heading-title-container>
+                </heading>
+
+              </data-group>
+            </form>
+          </mat-menu>
+          <mat-select xdt:Locator="XPath(//filters[@id='RawAlarmsFilter']//mat-form-field/mat-select)" xdt:Transform="SetAttributes()" (ngModelChange)="OnSearchRawAlarmsGrid()"></mat-select>
+          <mat-form-field xdt:Locator="XPath(//filters[@id='RawAlarmsFilter']//mat-form-field)" xdt:Transform="MoveIntoEnd(//card[@id='RawAlarmsCard']//card-header-actions/mat-menu/form/data-group)"></mat-form-field>
+
+        </card-header-actions>
+
+      </card>
+      <form xdt:Locator="XPath(//form[.//filters[@id='RawAlarmsFilter']])" xdt:Transform="Remove"></form>
+
+      <card xdt:Locator="XPath(.//card[@id='InterDomainDiagnosisCard'])">
+
+        <card-header-actions xdt:Locator="XPath(.//card-header-actions)">
+
+          <button xdt:Transform="InsertBefore(./refresh-button)"
+                  mat-button [btnLabel]="'Global.System.Filters' | translate"
+                  btnIconClass="mdi mdi-filter-variant"
+                  [matMenuTriggerFor]="interDomainDiagnosisFilters">
+          </button>
+          <mat-menu xdt:Transform="InsertBefore(./refresh-button)"
+                    #interDomainDiagnosisFilters="matMenu" yPosition="below">
+            <form>
+              <data-group stopClickPropagation>
+                <heading>
+                  <heading-title-container>
+                    <heading-title>
+                      <strong>{{'Global.System.Filters' | translate}}</strong>
+                    </heading-title>
+                  </heading-title-container>
+                </heading>
+
+              </data-group>
+            </form>
+          </mat-menu>
+          <mat-select xdt:Locator="XPath(//filters[@id='InterDomainDiagnosisSearchFilter']//mat-form-field/mat-select)" xdt:Transform="SetAttributes()" (ngModelChange)="OnSearchInterDomainDiagnosisGrid()"></mat-select>
+          <mat-form-field xdt:Locator="XPath(//filters[@id='InterDomainDiagnosisSearchFilter']//mat-form-field)" xdt:Transform="MoveIntoEnd(//card[@id='InterDomainDiagnosisCard']//card-header-actions/mat-menu/form/data-group)"></mat-form-field>
+
+        </card-header-actions>
+
+      </card>
+      <form xdt:Locator="XPath(//form[.//filters[@id='InterDomainDiagnosisSearchFilter']])" xdt:Transform="Remove"></form>
+
+    </div>
+
+  </page-body>
+  
+</page>

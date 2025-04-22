@@ -160,6 +160,12 @@ namespace XdtHtml.Test
             ApplyTransform("AberturaContaPresencialCriarProcesso.StepValidacao", "AberturaContaPresencialCriarProcesso.StepValidacao_delta", "AberturaContaPresencialCriarProcesso.StepValidacao_expected");
         }
 
+        [TestMethod]
+        public void TestMoveIntoNewElement()
+        {
+            ApplyTransform("sample_move_into_new_element_original", "sample_move_into_new_element_input", "sample_move_into_new_element_result");
+        }
+
         protected void ApplyTransform(string contentFileName, string transformFileName, string resultFileName = null)
         {
             resultFileName ??= transformFileName + "_result";

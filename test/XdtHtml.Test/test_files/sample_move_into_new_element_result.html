@@ -1,0 +1,277 @@
+<page>
+  <page-header pageHeaderIcon="mdi mdi-lan">
+    <page-header-title title="{{ 'CogAI.CognitiveNetwork._Description' | translate }}"></page-header-title>
+  
+    <page-header-actions>
+    </page-header-actions>
+  
+    <page-header-aditional-options>
+    </page-header-aditional-options>
+  
+  </page-header>
+  
+  <page-body>
+    <card id="AlarmMapCard" fxFlex="50%" expandable [dataSourceContext]="dataSourceContextAlarmMap">
+      <card-header>
+        <card-header-title-container>
+          <card-header-title>{{ 'CogAI.CognitiveNetwork.AlarmMapCard._Description' | translate }}</card-header-title>
+        </card-header-title-container> 
+        <card-header-actions>
+          <refresh-button id="RefreshAlarmMap"></refresh-button>
+          
+        </card-header-actions>
+      </card-header>
+      <div leaflet [leafletOptions]="alarmMapOptions" [leafletLayers]="alarmMapMarkers" style="height: 300px; width: 100%; padding: 0">
+      </div>
+      
+    </card>
+    <card id="Neo4JCogCard" fxFlex="50%" expandable [dataSourceContext]="dataSourceContextNeo4JCog">
+      <card-header>
+        <card-header-title-container>
+          <card-header-title>{{ 'CogAI.CognitiveNetwork.Neo4JCogCard._Description' | translate }}</card-header-title>
+        </card-header-title-container> 
+        <card-header-actions>
+          <refresh-button id="RefreshNeo4JCog"></refresh-button>
+          
+        </card-header-actions>
+      </card-header>
+      <highcharts-chart id="networkChart" [Highcharts]="highcharts" [options]="networkChart" [oneToOne]="true" [(update)]="networkChartUpdate" style="min-width:100%; height:300px; display: block;">
+      </highcharts-chart>
+      
+    </card>
+    
+    <div id="CsvTableContainer" fxFlex="100%">
+      <card id="RawAlarmsCard" fxFlex="25%" expandable [dataSourceContext]="dataSourceContextRawAlarmsGrid">
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'Global.Results' | translate }}</card-header-title>
+          </card-header-title-container> 
+          <card-header-actions>
+            <button mat-button [btnLabel]="'Global.System.Filters' | translate" btnIconClass="mdi mdi-filter-variant" [matMenuTriggerFor]="rawAlarmsFilters">
+            </button>
+            <mat-menu #rawAlarmsFilters="matMenu" yPosition="below">
+              <form>
+                <data-group stopClickPropagation>
+                  <heading>
+                    <heading-title-container>
+                      <heading-title>
+                        <strong>{{'Global.System.Filters' | translate}}</strong>
+                      </heading-title>
+                    </heading-title-container>
+                  </heading>
+
+
+                  <mat-form-field fxFlex="230px">
+                    <mat-label>
+                      <span>{{ 'Global.System.State' | translate }}</span>
+                    </mat-label>
+                    <mat-select name="stateId" [(ngModel)]="filterRawAlarmsFilter.stateId" (ngModelChange)="OnSearchRawAlarmsGrid()">
+                      <mat-option></mat-option>
+                      <mat-option *ngFor="let dimension of alarmStates$ | async" [value]="dimension.dimensionId">
+                          {{ dimension.code }} - {{ dimension.description }}
+                      </mat-option>
+                    </mat-select>
+              
+                    <field-error-alert matSuffix></field-error-alert>
+                    <mat-error></mat-error>
+                  </mat-form-field>
+
+                </data-group>
+              </form>
+            </mat-menu>
+            <refresh-button id="RefreshRawAlarmsGrid"></refresh-button>
+            
+          </card-header-actions>
+        </card-header>
+        <results-container>
+          <table-content>
+            <table id="RawAlarmsGrid" [attr.aria-label]="'Global.Results' | translate" matSort tableRowsZebra>
+              <thead>
+                <tr>
+                  <th id="id" mat-sort-header="id" textAlign="left">{{ 'CogAI._Tables.RawAlarms._Fields.Id' | translate }}</th>
+                  <th id="shortAt" mat-sort-header="shortAt" textAlign="left">{{ 'CogAI._Tables.RawAlarms._Fields.ShortAt' | translate }}</th>
+                  <th id="stateId" mat-sort-header="stateId" textAlign="left">{{ 'Global.System.State' | translate }}</th>
+                  <th id="fiSiteCode" mat-sort-header="fiSiteCode" textAlign="left">{{ 'CogAI._Tables.RawAlarms._Fields.FISiteCode' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of resultRawAlarmsGrid; let i = index">
+                  <tr>
+                    <td headers="id" textAlign="left">
+                      {{ item.id }}
+                    </td>
+                    <td headers="shortAt" textAlign="left">
+                      {{ item.shortAt }}
+                    </td>
+                    <td headers="stateId" textAlign="left">
+                      <state-chip [stateId]="item.stateId" [domainCode]="DomainCodes.CogAI.alarmStates"></state-chip>
+                    </td>
+                    <td headers="fiSiteCode" textAlign="left">
+                      {{ item.fiSiteCode }}
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </table-content>
+          <mat-paginator></mat-paginator>
+        </results-container>
+        
+      </card>
+      <card id="GroupedAlarmsCard" fxFlex="25%" expandable [dataSourceContext]="dataSourceContextGroupedAlarmsGrid">
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'CogAI._Tables.GroupedAlarms._Description' | translate }}</card-header-title>
+          </card-header-title-container> 
+          <card-header-actions>
+            <refresh-button id="RefreshGroupedAlarmsGrid"></refresh-button>
+            
+          </card-header-actions>
+        </card-header>
+        <results-container>
+          <table-content>
+            <table id="GroupedAlarmsGrid" [attr.aria-label]="'CogAI._Tables.GroupedAlarms._Description' | translate" matSort tableRowsZebra>
+              <thead>
+                <tr>
+                  <th id="aggregationId" mat-sort-header="aggregationId" textAlign="left">{{ 'CogAI._Tables.GroupedAlarms._Fields.AggregationId' | translate }}</th>
+                  <th id="bucketId" mat-sort-header="bucketId" textAlign="left">{{ 'CogAI._Tables.GroupedAlarms._Fields.BucketId' | translate }}</th>
+                  <th id="aggregationTypeId" mat-sort-header="aggregationTypeId" textAlign="left">{{ 'CogAI._Tables.GroupedAlarms._Fields.AggregationType' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of resultsGroupedAlarmsGrid; let i = index">
+                  <tr>
+                    <td headers="aggregationId" textAlign="left">
+                      {{ item.aggregationId }}
+                    </td>
+                    <td headers="bucketId" textAlign="left">
+                      {{ item.bucketId }}
+                    </td>
+                    <td headers="aggregationTypeId" textAlign="left">
+                      {{ item.aggregationTypeId | commonData:aggregationTypes$:'id':'code-desc' }}
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </table-content>
+          <mat-paginator></mat-paginator>
+        </results-container>
+        
+      </card>
+      <card id="IntraDomainCorrelationCard" fxFlex="25%" expandable [dataSourceContext]="dataSourceContextIntraDomainCorrelationsGrid">
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'CogAI._Tables.IntraDomainCorrelations._Description' | translate }}</card-header-title>
+          </card-header-title-container> 
+          <card-header-actions>
+            <refresh-button id="RefreshIntraDomainCorrelationsGrid"></refresh-button>
+            
+          </card-header-actions>
+        </card-header>
+        <results-container>
+          <table-content>
+            <table id="IntraDomainCorrelationsGrid" [attr.aria-label]="'CogAI._Tables.IntraDomainCorrelations._Description' | translate" matSort tableRowsZebra>
+              <thead>
+                <tr>
+                  <th id="aggregationId" mat-sort-header="aggregationId" textAlign="left">{{ 'CogAI._Tables.IntraDomainCorrelations._Fields.AggregationId' | translate }}</th>
+                  <th id="possibleJourneys" mat-sort-header="possibleJourneys" textAlign="left">{{ 'CogAI._Tables.IntraDomainCorrelations._Fields.PossibleJourneys' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of resultsIntraDomainCorrelationsGrid; let i = index">
+                  <tr>
+                    <td headers="aggregationId" textAlign="left">
+                      {{ item.aggregationId }}
+                    </td>
+                    <td headers="possibleJourneys" textAlign="left">
+                      {{ item.possibleJourneys }}
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </table-content>
+          <mat-paginator></mat-paginator>
+        </results-container>
+        
+      </card>
+      <card id="InterDomainDiagnosisCard" fxFlex="25%" expandable [dataSourceContext]="dataSourceContextInterDomainDiagnosisGrid">
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'Global.Results' | translate }}</card-header-title>
+          </card-header-title-container> 
+          <card-header-actions>
+            <button mat-button [btnLabel]="'Global.System.Filters' | translate" btnIconClass="mdi mdi-filter-variant" [matMenuTriggerFor]="interDomainDiagnosisFilters">
+            </button>
+            <mat-menu #interDomainDiagnosisFilters="matMenu" yPosition="below">
+              <form>
+                <data-group stopClickPropagation>
+                  <heading>
+                    <heading-title-container>
+                      <heading-title>
+                        <strong>{{'Global.System.Filters' | translate}}</strong>
+                      </heading-title>
+                    </heading-title-container>
+                  </heading>
+
+
+                  <mat-form-field fxFlex="230px">
+                    <mat-label>
+                      <span>{{ 'Global.System.State' | translate }}</span>
+                    </mat-label>
+                    <mat-select name="actionStatusId" [(ngModel)]="filterInterDomainDiagnosisSearchFilter.actionStatusId" (ngModelChange)="OnSearchInterDomainDiagnosisGrid()">
+                      <mat-option></mat-option>
+                      <mat-option *ngFor="let dimension of actionStatus$ | async" [value]="dimension.dimensionId">
+                          {{ dimension.code }} - {{ dimension.description }}
+                      </mat-option>
+                    </mat-select>
+              
+                    <field-error-alert matSuffix></field-error-alert>
+                    <mat-error></mat-error>
+                  </mat-form-field>
+
+                </data-group>
+              </form>
+            </mat-menu>
+            <refresh-button id="RefreshInterDomainDiagnosisGrid"></refresh-button>
+            
+          </card-header-actions>
+        </card-header>
+        <results-container>
+          <table-content>
+            <table id="InterDomainDiagnosisGrid" [attr.aria-label]="'Global.Results' | translate" matSort tableRowsZebra>
+              <thead>
+                <tr>
+                  <th id="ticketJourneyId" mat-sort-header="ticketJourneyId" textAlign="left">{{ 'CogAI._Tables.InterDomainDiagnosis._Fields.TicketJourneyId' | translate }}</th>
+                  <th id="ticketJourneyTypeId" mat-sort-header="ticketJourneyTypeId" textAlign="left">{{ 'CogAI._Tables.InterDomainDiagnosis._Fields.TicketJourneyType' | translate }}</th>
+                  <th id="actionStatusId" mat-sort-header="actionStatusId" textAlign="left">{{ 'Global.System.State' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of resultInterDomainDiagnosisGrid; let i = index">
+                  <tr>
+                    <td headers="ticketJourneyId" textAlign="left">
+                      {{ item.ticketJourneyId }}
+                    </td>
+                    <td headers="ticketJourneyTypeId" textAlign="left">
+                      {{ item.ticketJourneyTypeId | commonData:ticketJourneyTypes$:'id':'code-desc' }}
+                    </td>
+                    <td headers="actionStatusId" textAlign="left">
+                      <state-chip [stateId]="item.actionStatusId" [domainCode]="DomainCodes.CogAI.actionStatus"></state-chip>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </table-content>
+          <mat-paginator></mat-paginator>
+        </results-container>
+        
+      </card>
+    
+    </div>
+  
+  </page-body>
+  
+</page>
