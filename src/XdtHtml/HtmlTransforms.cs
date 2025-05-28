@@ -101,13 +101,15 @@ namespace XdtHtml
 
     internal class Remove : Transform
     {
-        protected override void Apply() {
+        protected override void Apply()
+        {
             CommonErrors.WarnIfMultipleTargets(Log, TransformNameShort, TargetNodes, ApplyTransformToAllTargetNodes);
 
             RemoveNode();
         }
 
-        protected void RemoveNode() {
+        protected void RemoveNode()
+        {
             CommonErrors.ExpectNoArguments(Log, TransformNameShort, ArgumentString);
 
             foreach (var node in TargetNode.GetNodeWithPreamble().ToList())
@@ -119,6 +121,14 @@ namespace XdtHtml
         }
     }
 
+    internal class RemoveIfExists : Remove
+    {
+        public RemoveIfExists()
+        {
+            this.MissingTargetMessage = MissingTargetMessage.None;
+        }
+    }
+
     internal class RemoveAll : Remove
     {
         public RemoveAll() {
@@ -127,6 +137,13 @@ namespace XdtHtml
 
         protected override void Apply() {
             RemoveNode();
+        }
+    }
+    internal class RemoveAllIfExists : RemoveAll
+    {
+        public RemoveAllIfExists()
+        {
+            this.MissingTargetMessage = MissingTargetMessage.None;
         }
     }
 
@@ -212,6 +229,16 @@ namespace XdtHtml
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
         }
     }
+    internal class InsertAfterIfMissing : InsertAfter
+    {
+        protected override void Apply()
+        {
+            if (this.TargetChildNodes == null || this.TargetChildNodes.Count == 0)
+            {
+                base.Apply();
+            }
+        }
+    }
 
     internal class InsertBefore : InsertBase
     {
@@ -219,6 +246,16 @@ namespace XdtHtml
             SiblingElement.ParentNode.InsertBefore(new[] { TransformNode.AdjustIndent(SiblingElement.GetIndentationWithNewline(), TransformNodeIndentationWithNewline) }.Concat(SiblingElement.GetNodePreamble()).Select(n => n.CloneNode(true)).ToList(), SiblingElement);
 
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+        }
+    }
+    internal class InsertBeforeIfMissing : InsertBefore
+    {
+        protected override void Apply()
+        {
+            if (this.TargetChildNodes == null || this.TargetChildNodes.Count == 0)
+            {
+                base.Apply();
+            }
         }
     }
 
@@ -243,6 +280,16 @@ namespace XdtHtml
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
         }
     }
+    internal class InsertIntoBeginingIfMissing : InsertIntoBegining
+    {
+        protected override void Apply()
+        {
+            if (this.TargetChildNodes == null || this.TargetChildNodes.Count == 0)
+            {
+                base.Apply();
+            }
+        }
+    }
 
     internal class InsertIntoEnd : InsertBase
     {
@@ -262,6 +309,16 @@ namespace XdtHtml
             SiblingElement.AppendChild(indentedNodes);
 
             Log.LogMessage(MessageType.Verbose, string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_TransformMessageInsert, TransformNode.Name));
+        }
+    }
+    internal class InsertIntoEndIfMissing : InsertIntoEnd
+    {
+        protected override void Apply()
+        {
+            if (this.TargetChildNodes == null || this.TargetChildNodes.Count == 0)
+            {
+                base.Apply();
+            }
         }
     }
 
@@ -878,20 +935,44 @@ namespace XdtHtml
 
     }
 
-    public class RemoveAttributes : AttributeTransform
+    public class RemoveAttributes : RemoveAttributesIfExists
     {
-        protected override void Apply() {
-            foreach (HtmlAttribute attribute in TargetAttributes) {
+        protected override void ReportTransformFinish()
+        {
+            if (TargetAttributes.Count > 0)
+            {
+                Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageRemoveAttributes, TargetAttributes.Count);
+            }
+            else
+            {
+                Log.LogWarning(TargetNode, Resources.XMLTRANSFORMATION_TransformMessageNoRemoveAttributes);
+            }
+        }
+    }
+
+    public class RemoveAttributesIfExists : AttributeTransform
+    {
+        protected override void Apply()
+        {
+            foreach (HtmlAttribute attribute in TargetAttributes)
+            {
                 TargetNode.Attributes.Remove(attribute);
 
                 Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageRemoveAttribute, attribute.Name);
             }
 
-            if (TargetAttributes.Count > 0) {
+            ReportTransformFinish();
+        }
+
+        protected virtual void ReportTransformFinish()
+        {
+            if (TargetAttributes.Count > 0)
+            {
                 Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageRemoveAttributes, TargetAttributes.Count);
             }
-            else {
-                Log.LogWarning(TargetNode, Resources.XMLTRANSFORMATION_TransformMessageNoRemoveAttributes);
+            else
+            {
+                Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageNoRemoveAttributes);
             }
         }
     }
