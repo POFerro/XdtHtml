@@ -119,6 +119,18 @@ namespace XdtHtml.Test
         }
 
         [TestMethod]
+        public void TestInsertIntoBeginingIfMissing()
+        {
+            ApplyTransform("insert_into_beginning_if_exists_original", "insert_into_beginning_if_exists_input", "insert_into_beginning_if_exists_result");
+        }
+
+        [TestMethod]
+        public void TestInsertIntoBeginingIfMissing_WithProbe()
+        {
+            ApplyTransform("insert_into_beginning_if_exists_original", "insert_into_beginning_if_exists_with_probe_input", "insert_into_beginning_if_exists_with_probe_result");
+        }
+
+        [TestMethod]
         public void TestInsertElementsIntoEnd()
         {
             ApplyTransform("sample_page", "insert_into_end_element");

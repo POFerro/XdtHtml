@@ -191,6 +191,7 @@ namespace XdtHtml
         }
 
         private HtmlNode siblingElement = null;
+        private HtmlNodeCollection probeTargetElements = null;
 
         protected HtmlNode SiblingElement {
             get {
@@ -198,7 +199,7 @@ namespace XdtHtml
                     if (Arguments == null || Arguments.Count == 0) {
                         throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_InsertMissingArgument, GetType().Name));
                     }
-                    else if (Arguments.Count > 1) {
+                    else if (Arguments.Count > 2) {
                         throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.XMLTRANSFORMATION_InsertTooManyArguments, GetType().Name));
                     }
                     else {
@@ -219,6 +220,35 @@ namespace XdtHtml
                 return siblingElement;
             }
         }
+
+        protected HtmlNodeCollection ProbeTargetElements
+        {
+            get
+            {
+                if (probeTargetElements == null)
+                {
+                    if (Arguments == null || Arguments.Count == 0)
+                    {
+                        throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertMissingArgument, GetType().Name));
+                    }
+                    else if (Arguments.Count > 2)
+                    {
+                        throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertTooManyArguments, GetType().Name));
+                    }
+                    else if (Arguments.Count > 1)
+                    {
+                        string xpath = Arguments[1];
+                        probeTargetElements = TargetNode.SelectNodes(xpath);
+                    }
+                    else
+                    {
+                        probeTargetElements = TargetChildNodes;
+                    }
+                }
+
+                return probeTargetElements;
+            }
+        }
     }
 
     internal class InsertAfter : InsertBase
@@ -233,7 +263,7 @@ namespace XdtHtml
     {
         protected override void Apply()
         {
-            if (this.TargetChildNodes == null || this.TargetChildNodes.Count == 0)
+            if (this.ProbeTargetElements == null || this.ProbeTargetElements.Count == 0)
             {
                 base.Apply();
             }
@@ -252,7 +282,7 @@ namespace XdtHtml
     {
         protected override void Apply()
         {
-            if (this.TargetChildNodes == null || this.TargetChildNodes.Count == 0)
+            if (this.ProbeTargetElements == null || this.ProbeTargetElements.Count == 0)
             {
                 base.Apply();
             }
@@ -284,7 +314,7 @@ namespace XdtHtml
     {
         protected override void Apply()
         {
-            if (this.TargetChildNodes == null || this.TargetChildNodes.Count == 0)
+            if (this.ProbeTargetElements == null || this.ProbeTargetElements.Count == 0)
             {
                 base.Apply();
             }
@@ -315,7 +345,7 @@ namespace XdtHtml
     {
         protected override void Apply()
         {
-            if (this.TargetChildNodes == null || this.TargetChildNodes.Count == 0)
+            if (this.ProbeTargetElements == null || this.ProbeTargetElements.Count == 0)
             {
                 base.Apply();
             }

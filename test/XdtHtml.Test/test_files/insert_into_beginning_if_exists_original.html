@@ -1,0 +1,45 @@
+﻿<div class="nbtpl-main-header-wrap">
+  <div class="nbtpl-main-header-nav">
+    <button btnType="neutral" mat-button matTooltip="{{ 'Shell.MainHeader.MainMenu' | translate}}" btnIconClass="mdi mdi-menu" btnIconPosition="icon-solo" (click)="drawerService.toggle('primary')">
+    </button>
+  </div>
+  <div class="nbtpl-main-header-apps">
+    <div class="nbtpl-main-header-apps-nav">
+      <button btnType="regular" mat-button matTooltip="{{ 'Shell.MainHeader.Back' | translate}}" btnIconClass="mdi mdi-arrow-left" btnIconPosition="icon-solo" (click)="onBack()">
+      </button>
+    </div>
+    <div class="nbtpl-main-header-apps-brand">
+      <a routerLink="/">
+        <img src="assets/img/logo-celfocus-full-white.svg" alt="Application logo" style="max-width: 11rem;" />
+      </a>
+    </div>
+    <div class="nbtpl-main-header-apps-commuter">
+
+      <button btnType="regular" mat-button btnLabel="Core App" btnIconClass="mdi mdi-chevron-down" btnIconPosition="right" [matMenuTriggerFor]="demoDDMenuHeaderApps">
+      </button>
+      <mat-menu #demoDDMenuHeaderApps="matMenu" yPosition="below">
+        <button mat-menu-item>
+          <span>Core App</span>
+        </button>
+        <button mat-menu-item>
+          <span>Bloomberg</span>
+        </button>
+        <mat-divider></mat-divider>
+      </mat-menu>
+
+    </div>
+  </div>
+  <div class="nbtpl-main-header-functions">
+    <button btnType="neutral" *hasSomePermission="[PermissionConstants.Configurations.AccessControl.access, PermissionConstants.Configurations.Dimensions.access, PermissionConstants.Configurations.SystemConfigurations.access]" mat-button matTooltip="{{ 'Configurations.ToolsControl._Description' | translate}}" btnIconClass="mdi mdi-cogs" btnIconPosition="icon-solo" routerLink="/Configurations">
+    </button>
+    <button btnType="neutral" mat-button matTooltip="{{ 'Shell.MainHeader.UserAccount' | translate}}" [btnIconClass]="!securityService.userDetails?.avatar ? 'mdi mdi-account' : undefined" btnIconPosition="right" class="nbtpl-main-header-function-useracc-btn" (click)="drawerService.toggle('secondary', ShellDrawers.UserAccount)">
+      <span class="nbtpl-btn-user-info">
+        <strong>{{securityService.userDetails?.displayName}}</strong>
+        <em>{{securityService.userDetails?.userNameWithoutDomain}}</em>
+      </span>
+      <span class="nbtpl-btn-user-pic" *ngIf="securityService.userDetails?.avatar">
+        <img [src]="securityService.userDetails.avatar" />
+      </span>
+    </button>
+  </div>
+</div>
