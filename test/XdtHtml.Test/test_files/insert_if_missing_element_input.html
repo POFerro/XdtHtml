@@ -1,0 +1,8 @@
+<mat-sidenav-container xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform" xdt:Locator="XPath(//mat-sidenav-container)">
+  <mat-sidenav xdt:Locator="XPath(.//mat-sidenav[@shell-drawer='primary'])">
+    <ng-container *ngIf="!routeShellConfiguration.hide_main_menu" xdt:Transform="InsertIfMissing(./ng-container[app-main-menu])">
+      <app-main-menu menuHeaderName="CELFOCUS" menuHeaderVersion="v{{ appVersion }}" menuHeaderLogoImgUrl="assets/img/logo-celfocus-full-white.svg" menuHeaderLogoImgWidth="90" menuHeaderLogoImgHeight="18">
+      </app-main-menu>
+    </ng-container>
+  </mat-sidenav>
+</mat-sidenav-container>

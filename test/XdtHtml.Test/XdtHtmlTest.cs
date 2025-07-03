@@ -95,6 +95,24 @@ namespace XdtHtml.Test
         }
 
         [TestMethod]
+        public void TestInsertElement()
+        {
+            ApplyTransform("sample_page", "insert_element");
+        }
+
+        [TestMethod]
+        public void TestInsertIfMissingElementWhenMissing()
+        {
+            ApplyTransform("insert_if_missing_element_missing_original", "insert_if_missing_element_input", "insert_if_missing_element_result");
+        }
+
+        [TestMethod]
+        public void TestInsertIfMissingElementWhenExisting()
+        {
+            ApplyTransform("insert_if_missing_element_existing_original", "insert_if_missing_element_input", "insert_if_missing_element_result");
+        }
+
+        [TestMethod]
         public void TestInsertAfterElement()
         {
             ApplyTransform("sample_page", "insert_after_element");

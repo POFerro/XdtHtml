@@ -1,0 +1,82 @@
+﻿<app-loading-global></app-loading-global>
+
+<mat-sidenav-container shell fullscreen autosize>
+  <mat-sidenav shell-drawer="primary" position="start">
+  </mat-sidenav>
+  <mat-sidenav shell-drawer="secondary" position="end">
+
+    <ng-container *ngIf="!routeShellConfiguration.hide_secondary_drawers">
+
+      <notifications-sidebar *drawer-content="ShellDrawers.Notifications">
+      </notifications-sidebar>
+
+      <app-shell-sidebar-user-account *drawer-content="ShellDrawers.UserAccount">
+      </app-shell-sidebar-user-account>
+
+
+      <bookmarks-sidebar *drawer-content="ShellDrawers.Bookmarks">
+      </bookmarks-sidebar>
+
+    </ng-container>
+
+  </mat-sidenav>
+  <mat-sidenav-content shellMainContent>
+
+    <app-shell-main-header *ngIf="!routeShellConfiguration.hide_main_header">
+    </app-shell-main-header>
+
+    <div class="nbtpl-layout-main-body">
+
+      <div class="nbtpl-layout-main-body-static-sidebar" *ngIf="!routeShellConfiguration.hide_main_menu_static_sidebar">
+        <app-shell-sidebar-main-menu-static></app-shell-sidebar-main-menu-static>
+      </div>
+
+      <div class="nbtpl-layout-main-body-dynamic-content">
+
+        <main class="nbtpl-layout-main-page-render" stickyAncestorRefElm>
+          <outlet-container>
+            <router-outlet></router-outlet>
+          </outlet-container>
+        </main>
+
+      </div>
+
+    </div>
+
+    <ng-container *ngIf="!routeShellConfiguration.hide_main_footer">
+
+      <app-main-footer>
+
+        <div class="nbtpl-footer-type-basic">
+
+          <div class="nbtpl-footer-type-basic-column">
+
+            <span class="nbtpl-badge-simple">
+              <span>Example</span>
+              <span>
+                <em>v{{ appVersion }}</em>
+              </span>
+              <a routerLink="/">FAQs</a>
+              <a routerLink="/">Contactos</a>
+            </span>
+
+          </div>
+
+          <div class="nbtpl-footer-type-basic-column">
+
+            <span class="nbtpl-badge-simple">
+              <a routerLink="/">
+                <img src="assets/img/logo-celfocus-full.svg" alt="Celfocus logo" class="nbtpl-elm-opacity-30" />
+              </a>
+            </span>
+
+          </div>
+        </div>
+
+      </app-main-footer>
+
+    </ng-container>
+
+
+  </mat-sidenav-content>
+</mat-sidenav-container>

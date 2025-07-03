@@ -172,10 +172,35 @@ namespace XdtHtml
 
     internal class InsertIfMissing : Insert
     {
+        private HtmlNodeCollection probeTargetElements = null;
+        protected HtmlNodeCollection ProbeTargetElements
+        {
+            get
+            {
+                if (probeTargetElements == null)
+                {
+                    if (Arguments?.Count > 1)
+                    {
+                        throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertTooManyArguments, GetType().Name));
+                    }
+                    else if (Arguments?.Count > 0)
+                    {
+                        string xpath = Arguments[0];
+                        probeTargetElements = TargetNode.SelectNodes(xpath);
+                    }
+                    else
+                    {
+                        probeTargetElements = TargetChildNodes;
+                    }
+                }
+
+                return probeTargetElements;
+            }
+        }
+
         protected override void Apply()
         {
-            CommonErrors.ExpectNoArguments(Log, TransformNameShort, ArgumentString);
-            if (this.TargetChildNodes == null || this.TargetChildNodes.Count == 0)
+            if (this.ProbeTargetElements == null || this.ProbeTargetElements.Count == 0)
             {
                 base.Apply();
             }
