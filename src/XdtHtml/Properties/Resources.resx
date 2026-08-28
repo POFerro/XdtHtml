@@ -144,10 +144,19 @@
   <data name="XMLTRANSFORMATION_InsertBadXPath" xml:space="preserve">
     <value>No element in the source document matches '{0}'</value>
   </data>
+  <data name="XMLTRANSFORMATION_CopyAttributesFromBadXPath" xml:space="preserve">
+    <value>No element in the source document matches '{0}'</value>
+  </data>
   <data name="XMLTRANSFORMATION_InsertBadXPathResult" xml:space="preserve">
     <value>'{0}' does not evaluate to an element</value>
   </data>
+  <data name="XMLTRANSFORMATION_CopyAttributesFromBadXPathResult" xml:space="preserve">
+    <value>'{0}' does not evaluate to an element</value>
+  </data>
   <data name="XMLTRANSFORMATION_InsertMissingArgument" xml:space="preserve">
+    <value>{0} requires an XPath argument</value>
+  </data>
+  <data name="XMLTRANSFORMATION_CopyAttributesFromMissingArgument" xml:space="preserve">
     <value>{0} requires an XPath argument</value>
   </data>
   <data name="XMLTRANSFORMATION_InsertTooManyArguments" xml:space="preserve">
@@ -248,5 +257,8 @@
   </data>
   <data name="XMLTRANSFORMATION_TransformMessageCommentOut" xml:space="preserve">
     <value>Commented out '{0}' element</value>
+  </data>
+  <data name="XMLTRANSFORMATION_TransformMessageSetElementTag" xml:space="preserve">
+    <value>'{0}' element tag replaced to '{1}'</value>
   </data>
 </root>

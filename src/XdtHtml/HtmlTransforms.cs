@@ -99,6 +99,53 @@ namespace XdtHtml
         }
     }
 
+    internal class SetElementTag : Transform
+    {
+        public SetElementTag()
+        {
+            this.UseParentAsTargetNode = false;
+            this.ApplyTransformToAllTargetNodes = true;
+        }
+
+        private string newTagName = null;
+
+        protected string NewTagName
+        {
+            get
+            {
+                if (newTagName == null)
+                {
+                    if (Arguments == null || Arguments.Count == 0)
+                    {
+                        throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertMissingArgument, GetType().Name));
+                    }
+                    else if (Arguments.Count > 1)
+                    {
+                        throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_InsertTooManyArguments, GetType().Name));
+                    }
+                    else
+                    {
+                        newTagName = Arguments[0];
+                    }
+                }
+
+                return newTagName;
+            }
+        }
+
+        protected override void Apply()
+        {
+            //CommonErrors.WarnIfMultipleTargets(Log, TransformNameShort, TargetNodes, ApplyTransformToAllTargetNodes);
+            var oldTag = TargetNode.Name;
+
+            TargetNode.ParentNode.ReplaceChild(
+                TargetNode.CloneNode(this.NewTagName, true),
+                TargetNode);
+
+            Log.LogMessage(MessageType.Verbose, Resources.XMLTRANSFORMATION_TransformMessageSetElementTag, oldTag, this.NewTagName);
+        }
+    }
+
     internal class Remove : Transform
     {
         protected override void Apply()
@@ -546,6 +593,46 @@ namespace XdtHtml
                 Log.LogWarning(Resources.XMLTRANSFORMATION_TransformMessageNoSetAttributes);
             }
         }
+    }
+
+    public class CopyAttributesFrom : SetAttributes
+    {
+        private HtmlNode transformAttributeSource = null;
+        protected override HtmlNode TransformAttributeSource
+        {
+            get
+            {
+                if (transformAttributeSource == null)
+                {
+                    if (Arguments == null || Arguments.Count == 0)
+                    {
+                        throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_CopyAttributesFromMissingArgument, GetType().Name));
+                    }
+                    else
+                    {
+                        string xpath = Arguments[0];
+                        HtmlNodeCollection siblings = TargetNode.ParentNode.SelectNodes(xpath);
+                        if (siblings.Count == 0)
+                        {
+                            throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_CopyAttributesFromBadXPath, xpath));
+                        }
+                        else
+                        {
+                            transformAttributeSource = siblings[0] as HtmlNode;
+                            if (transformAttributeSource == null)
+                            {
+                                throw new HtmlTransformationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.XMLTRANSFORMATION_CopyAttributesFromBadXPathResult, xpath));
+                            }
+                        }
+                    }
+                }
+
+                return transformAttributeSource;
+            }
+        }
+
+        protected override IList<string> AttributeNamesArguments
+            => base.AttributeNamesArguments.Skip(1).ToList();
     }
 
     public class CommentOut : Transform

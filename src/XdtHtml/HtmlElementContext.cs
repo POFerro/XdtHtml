@@ -239,10 +239,11 @@ namespace XdtHtml
         }
 
         private HtmlNode CreateCloneInTargetDocument(HtmlNode sourceNode) {
-            
-            HtmlNode clonedNode = HtmlNode.CreateNode(sourceNode.OuterHtml, (doc) => {
-                doc.WithDefaultOptions();
-            });
+
+            var clonedNode = sourceNode.CloneNodeInDocument(this.TargetDocument, true);
+            //HtmlNode clonedNode = HtmlNode.CreateNode(sourceNode.OuterHtml, (doc) => {
+            //    doc.WithDefaultOptions();
+            //});
 
             ScrubTransformAttributesAndNamespaces(clonedNode);
 

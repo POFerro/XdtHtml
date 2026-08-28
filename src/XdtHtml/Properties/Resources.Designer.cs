@@ -19,7 +19,7 @@ namespace XdtHtml.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -75,6 +75,33 @@ namespace XdtHtml.Properties {
         internal static string XMLTRANSFORMATION_BadAttributeValue {
             get {
                 return ResourceManager.GetString("XMLTRANSFORMATION_BadAttributeValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No element in the source document matches &apos;{0}&apos;.
+        /// </summary>
+        internal static string XMLTRANSFORMATION_CopyAttributesFromBadXPath {
+            get {
+                return ResourceManager.GetString("XMLTRANSFORMATION_CopyAttributesFromBadXPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; does not evaluate to an element.
+        /// </summary>
+        internal static string XMLTRANSFORMATION_CopyAttributesFromBadXPathResult {
+            get {
+                return ResourceManager.GetString("XMLTRANSFORMATION_CopyAttributesFromBadXPathResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} requires an XPath argument.
+        /// </summary>
+        internal static string XMLTRANSFORMATION_CopyAttributesFromMissingArgument {
+            get {
+                return ResourceManager.GetString("XMLTRANSFORMATION_CopyAttributesFromMissingArgument", resourceCulture);
             }
         }
         
@@ -354,6 +381,15 @@ namespace XdtHtml.Properties {
         internal static string XMLTRANSFORMATION_TransformMessageSetAttributes {
             get {
                 return ResourceManager.GetString("XMLTRANSFORMATION_TransformMessageSetAttributes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; element tag replaced to &apos;{1}&apos;.
+        /// </summary>
+        internal static string XMLTRANSFORMATION_TransformMessageSetElementTag {
+            get {
+                return ResourceManager.GetString("XMLTRANSFORMATION_TransformMessageSetElementTag", resourceCulture);
             }
         }
         

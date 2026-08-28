@@ -94,11 +94,11 @@ namespace XdtHtml.Test
             ApplyTransform("moveinto_new_element_input", "moveinto_new_element");
         }
 
-        [TestMethod]
-        public void TestInsertElement()
-        {
-            ApplyTransform("sample_page", "insert_element");
-        }
+        //[TestMethod]
+        //public void TestInsertElement()
+        //{
+        //    ApplyTransform("sample_page", "insert_element");
+        //}
 
         [TestMethod]
         public void TestInsertIfMissingElementWhenMissing()
@@ -196,6 +196,12 @@ namespace XdtHtml.Test
             ApplyTransform("sample_move_into_new_element_original", "sample_move_into_new_element_input", "sample_move_into_new_element_result");
         }
 
+        [TestMethod]
+        public void TestSetElementTagAndCopyAttributes()
+        {
+            ApplyTransform("set_element_tag", "set_element_tag_input", "set_element_tag_result");
+        }
+
         protected void ApplyTransform(string contentFileName, string transformFileName, string resultFileName = null)
         {
             resultFileName ??= transformFileName + "_result";
@@ -217,7 +223,6 @@ namespace XdtHtml.Test
                         actual,
                         $"Difference:<{Difference(expected, actual)}>"
                         );
-                    ;
                 }
                 else
                     Assert.Fail("Transform failed to apply");

@@ -308,5 +308,72 @@ namespace XdtHtml
         {
             return newChildren.Reverse().Select(child => parentNode.InsertAfter(child, refChild)).Reverse().ToList();
         }
+
+
+        /// <summary>
+        /// Creates a duplicate of the node, ensuring the correct OwnerDocument is set.
+        /// </summary>
+        /// <param name="doc">The HtmlDocument to which the cloned node will belong.</param>
+        /// <param name="deep">true to recursively clone the subtree under the specified node; false to clone only the node itself.</param>
+        /// <returns>The cloned node.</returns>
+        public static HtmlNode CloneNodeInDocument(this HtmlNode node, HtmlDocument doc, bool deep)
+        {
+            HtmlNode newNode;
+            switch (node.NodeType)
+            {
+                case HtmlNodeType.Element:
+                    newNode = doc.CreateElement(node.Name);
+                    break;
+                case HtmlNodeType.Comment:
+                    newNode = doc.CreateComment(((HtmlCommentNode)node).Comment);
+                    break;
+                case HtmlNodeType.Text:
+                    newNode = doc.CreateTextNode(((HtmlTextNode)node).Text);
+                    break;
+                default:
+                    throw new NotImplementedException($"CloneNodeInDocument not implemented for node type {node.NodeType}");
+            }
+
+            // attributes
+            if (node.HasAttributes)
+            {
+                foreach (HtmlAttribute att in node.Attributes)
+                {
+                    HtmlAttribute newatt = att.Clone();
+                    newNode.Attributes.Append(newatt);
+                }
+            }
+
+            // closing attributes
+            //if (node.HasClosingAttributes)
+            //{
+            //    newNode._endnode = node._endnode.CloneNode(false);
+            //    foreach (HtmlAttribute att in node._endnode._attributes)
+            //    {
+            //        HtmlAttribute newatt = att.Clone();
+            //        newNode._endnode._attributes.Append(newatt);
+            //    }
+            //}
+
+            if (!deep)
+            {
+                return newNode;
+            }
+
+            if (!node.HasChildNodes)
+            {
+                return newNode;
+            }
+
+            // child nodes
+            foreach (HtmlNode child in node.ChildNodes)
+            {
+                HtmlNode newchild = child.CloneNodeInDocument(doc, deep);
+                newNode.AppendChild(newchild);
+            }
+
+            return newNode;
+        }
+
     }
 }

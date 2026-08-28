@@ -1,0 +1,74 @@
+<results-container xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+
+  <mat-sidenav-container xdt:Locator="XPath(.//mat-sidenav-container)">
+
+    <mat-sidenav-content xdt:Locator="XPath(./mat-sidenav-content)">
+
+      <card xdt:Locator="XPath(.//card[@id='ResumoProcessoCardPedidos'])">
+
+        <table xdt:Locator="XPath(.//table[@id='ResumoProcessoListaPedidos'])">
+
+          <thead xdt:Locator="XPath(.//thead)">
+            <tr xdt:Locator="XPath(.//tr)">
+
+              <th id="RetomarPedidoButtonContainer" xdt:Transform="Insert" tableCellActions></th>
+              <th xdt:Locator="XPath(.//th[@id='RetomarPedidoButtonContainer'])" xdt:Transform="CopyAttributesFrom(//table[@id='ResumoProcessoListaPedidos']//tbody//tr[not(@tableRowExpansion)]//td[@tableCellActions]//ng-container[.//button[@id='RetomarPedidoButton']])">
+              </th>
+
+              <ng-container xdt:Transform="Insert" *ngIf="details.bancoDoProcessoF6AplicaPrioridadeTratamentoERB">
+                <th id="AlterarPrioridadeTratamentoPedidoButtonContainer" tableCellActions></th>
+              </ng-container>
+              <th xdt:Locator="XPath(.//th[@id='AlterarPrioridadeTratamentoPedidoButtonContainer'])" xdt:Transform="CopyAttributesFrom(//table[@id='ResumoProcessoListaPedidos']//tbody//tr[not(@tableRowExpansion)]//td[@tableCellActions]//ng-container[.//button[@id='AlterarPrioridadeTratamentoPedidoButton']])">
+              </th>
+
+              <th id="CancelarPedidoButtonContainer" xdt:Transform="Insert" tableCellActions></th>
+              <th xdt:Locator="XPath(.//th[@id='CancelarPedidoButtonContainer'])" xdt:Transform="CopyAttributesFrom(//table[@id='ResumoProcessoListaPedidos']//tbody//tr[not(@tableRowExpansion)]//td[@tableCellActions]//ng-container[.//button[@id='CancelarPedidoButton']])">
+              </th>
+            </tr>
+          </thead>
+          <!--<th xdt:Locator="XPath(.//th[@id='RetomarPedidoButtonContainer'])" xdt:Transform="CopyAttributesFrom(//table[@id='ResumoProcessoListaPedidos']//tbody//tr[not(@tableRowExpansion)]//td[@tableCellActions]//ng-container[.//button[@id='RetomarPedidoButton']])">
+          </th>
+          <th xdt:Locator="XPath(.//th[@id='AlterarPrioridadeTratamentoPedidoButtonContainer'])" xdt:Transform="CopyAttributesFrom(//table[@id='ResumoProcessoListaPedidos']//tbody//tr[not(@tableRowExpansion)]//td[@tableCellActions]//ng-container[.//button[@id='AlterarPrioridadeTratamentoPedidoButton']])">
+          </th>
+          <th xdt:Locator="XPath(.//th[@id='CancelarPedidoButtonContainer'])" xdt:Transform="CopyAttributesFrom(//table[@id='ResumoProcessoListaPedidos']//tbody//tr[not(@tableRowExpansion)]//td[@tableCellActions]//ng-container[.//button[@id='CancelarPedidoButton']])">
+          </th>-->
+
+          <tbody xdt:Locator="XPath(.//tbody)">
+
+            <tr xdt:Locator="XPath(.//tr[not(@tableRowExpansion)])">
+
+              <button xdt:Locator="XPath(.//button[@id='RetomarPedidoButton'])" xdt:Transform="SetAttributes"
+                      *ngIf="(item.estadoId | commonData:estadoPedido$:'id':'code') == DimensionCodes.HabHerdeiros.EstadoPedido.emCriacao">
+              </button>
+              <ng-container xdt:Locator="XPath(.//ng-container[button[@id='RetomarPedidoButton']])" xdt:Transform="SetElementTag(td)">
+              </ng-container>
+
+              <button xdt:Locator="XPath(.//button[@id='AlterarPrioridadeTratamentoPedidoButton'])" xdt:Transform="SetAttributes"
+                      *ngIf="EstadosParaTornarUrgente.includes(item.estadoId | commonData:estadoPedido$:'id':'code') && (item.tipoPrioridadeTratamentoId | commonData:tiposPrioridadeTratamento$:'id':'code') != DimensionCodes.HabHerdeiros.TiposPrioridadeTratamento.urgente">
+              </button>
+              <ng-container xdt:Locator="XPath(.//ng-container[button[@id='AlterarPrioridadeTratamentoPedidoButton']])" xdt:Transform="SetElementTag(td)">
+              </ng-container>
+              <!--<td xdt:Transform="Insert" *hasEveryPermission="PermissionConstants.HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.alterarPrioridadePedidos" tableCellActions>
+        <ng-container *ngIf="details.bancoDoProcessoF6AplicaPrioridadeTratamentoERB">
+          <button mat-button btnIconClass="mdi mdi-exclamation-thick" btnIconPosition="left" [btnLabel]="'Tornar Urgente'" stopClickPropagation (click)="AlterarPrioridadeTratamentoPedido(item)">
+          </button>
+        </ng-container>
+      </td>-->
+
+
+              <button xdt:Locator="XPath(.//button[@id='CancelarPedidoButton'])" xdt:Transform="SetAttributes"
+                      *ngIf="item.podeSerCancelado">
+              </button>
+              <ng-container xdt:Locator="XPath(.//ng-container[button[@id='CancelarPedidoButton']])" xdt:Transform="SetElementTag(td)">
+              </ng-container>
+
+            </tr>
+
+          </tbody>
+        </table>
+
+      </card>
+
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</results-container>

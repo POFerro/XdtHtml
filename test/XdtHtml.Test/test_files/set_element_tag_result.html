@@ -1,0 +1,207 @@
+<results-container fxLayout="row wrap" [dataSourceContext]="detailDataSourceContext" xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform" fxFill>
+
+  <mat-sidenav-container id="DrawerContainer" fxFill class="projStyles-sidenav-pedidos" [ngClass]="{'open': sidenavDrawerOpened}" style="--sidenav-width: 370px;" [@.disabled]="sidenavDrawerAnimTempDisabled">
+
+
+    <mat-sidenav-content id="DrawerContainerContent" fxLayout="row wrap" stickyAncestorRefElm #contentScrollContainer>
+
+      <card id="ResumoProcessoFalecido" fxFlex="100%">
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.DrawerContainer.DrawerContainerContent.ResumoProcessoFalecido._Description' | translate }}</card-header-title>
+          </card-header-title-container>
+          <card-header-actions>
+          </card-header-actions>
+        </card-header>
+        <data-group id="FieldGroup1">
+          <data-field id="falecidoDoProcessoRefExternaCliente" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.IntervenientesProcesso._Fields.RefExternaCliente' | translate">{{ details.falecidoDoProcessoRefExternaCliente }}</data-field>
+          <data-field id="falecidoDoProcessoNome" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.IntervenientesProcesso._Fields.Nome' | translate">{{ details.falecidoDoProcessoNome }}</data-field>
+          <data-field id="falecidoDoProcessoNIF" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.IntervenientesProcesso._Fields.NIF' | translate">{{ details.falecidoDoProcessoNIF }}</data-field>
+          <data-field id="falecidoDoProcessoDataObito" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.IntervenientesProcesso._Fields.DataObito' | translate">{{ details.falecidoDoProcessoDataObito | date:'dateTime' }}</data-field>
+          <data-field id="idProcessoOrigem" fxFlex="25%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%" [dataFieldLabel]="'HabHerdeiros._Tables.Processos._Fields.IdProcessoOrigem' | translate" *ngIf="details.idProcessoOrigem"><guarded-link [permissionCodes]="PermissionConstants.HabHerdeiros.Processos.DetalhesProcesso.access" [rLink]="['../../',details.idProcessoOrigem]">{{ details.idProcessoOrigem }}</guarded-link></data-field>
+        </data-group>
+      </card>
+      <card id="ResumoProcessoCardPedidos" fxFlex="100%">
+        <card-header>
+          <card-header-title-container>
+            <card-header-title>{{ 'HabHerdeiros._Tables.Pedidos._Description' | translate }}</card-header-title>
+          </card-header-title-container>
+          <card-header-actions>
+            <button id="ToggleSidenavDrawerButton" mat-button stopClickPropagation [btnLabel]="'HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.DrawerContainer.DrawerContainerContent.ResumoProcessoCardPedidos.ToggleSidenavDrawerButton' | translate" btnIconClass="mdi mdi-format-list-numbered" (click)="toggleSidenavDrawer()" btnType="link" [disabled]="sidenavDrawerOpened">
+            </button>
+
+          </card-header-actions>
+        </card-header>
+        <results-container>
+          <table-content>
+            <table id="ResumoProcessoListaPedidos" [attr.aria-label]="'HabHerdeiros._Tables.Pedidos._Description' | translate" tableRowsExpandable [selectionModel]="selectedResumoProcessoListaPedidosSelectionModel" tableRowsZebra selectOnEditAndRead [onSelectAction]="'select'">
+              <thead>
+                <tr>
+                  <th id="idPedido" textAlign="left">{{ 'HabHerdeiros._Tables.Pedidos._Fields.IdPedido' | translate }}</th>
+                  <th id="codigoTipoPedido" textAlign="left">{{ 'HabHerdeiros._Tables.Pedidos._Fields.CodigoTipoPedido' | translate }}</th>
+                  <th id="tipoPrioridadeTratamentoId" textAlign="left">{{ 'HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.DrawerContainer.DrawerContainerContent.ResumoProcessoCardPedidos.ResumoProcessoListaPedidos.TipoPrioridadeTratamento' | translate }}</th>
+                  <th id="pedidosDoGrupoPedidosOrigemId" textAlign="left">{{ 'HabHerdeiros._Tables.GrupoPedidos._Fields.Origem' | translate }}</th>
+                  <th id="requerenteDoGrupoPedidosNome" textAlign="left">{{ 'HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.DrawerContainer.DrawerContainerContent.ResumoProcessoCardPedidos.ResumoProcessoListaPedidos.NomeRequerente' | translate }}</th>
+                  <th id="insDate" textAlign="left">{{ 'Global.System.InsDate' | translate }}</th>
+                  <th id="updDate" textAlign="left">{{ 'Global.System.UpdDate' | translate }}</th>
+                  <th id="estadoId" textAlign="left">{{ 'HabHerdeiros._Tables.Pedidos._Fields.Estado' | translate }}</th>
+                  <th tableCellActions></th>
+
+                  <th id="codigoTipoFila" textAlign="left">{{ 'HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.DrawerContainer.DrawerContainerContent.ResumoProcessoCardPedidos.ResumoProcessoListaPedidos.FilasTrabalho.CodigoTipoFilaTrabalho' | translate }}</th>
+
+                  <th id="estadoFila" textAlign="left">{{ 'HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.DrawerContainer.DrawerContainerContent.ResumoProcessoCardPedidos.ResumoProcessoListaPedidos.FilasTrabalho.EstadoFilaTrabalho' | translate }}</th>
+
+                  <th tableCellActions></th>
+                
+
+                  <th id="RetomarPedidoButtonContainer" tableCellActions *hasSomePermissions="PermissionConstants.HabHerdeiros.Processos.CriarProcesso.access"></th>
+                
+
+                  <ng-container *ngIf="details.bancoDoProcessoF6AplicaPrioridadeTratamentoERB">
+                    <th id="AlterarPrioridadeTratamentoPedidoButtonContainer" tableCellActions *hasSomePermissions="PermissionConstants.HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.alterarPrioridadeTratamentoPedidoButton"></th>
+                  </ng-container>
+                
+
+                  <th id="CancelarPedidoButtonContainer" tableCellActions *hasSomePermissions="PermissionConstants.HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.cancelarPedidoButton"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of details.resumoProcessoListaPedidos; let i0 = index">
+                  <tr [selectionItem]="item">
+                    <td headers="idPedido" textAlign="left">
+                      {{ item.idPedido }}
+                    </td>
+                    <td headers="codigoTipoPedido" textAlign="left">
+                      {{ item.codigoTipoPedido | commonData:tiposPedido$:'code':'desc' }}
+                    </td>
+                    <td headers="tipoPrioridadeTratamentoId" textAlign="left">
+                      {{ item.tipoPrioridadeTratamentoId | commonData:tiposPrioridadeTratamento$:'id':'desc' }}
+                    </td>
+                    <td headers="pedidosDoGrupoPedidosOrigemId" textAlign="left">
+                      {{ item.pedidosDoGrupoPedidosOrigemId | commonData:tiposOrigemProcesso$:'id':'desc' }}
+                    </td>
+                    <td headers="requerenteDoGrupoPedidosNome" textAlign="left">
+                      {{ item.requerenteDoGrupoPedidosNome }}
+                    </td>
+                    <td headers="insDate" textAlign="left">
+                      {{ item.insDate | date:'dateTime' }}
+                    </td>
+                    <td headers="updDate" textAlign="left">
+                      {{ item.updDate | date:'dateTime' }}
+                    </td>
+                    <td headers="estadoId" textAlign="left">
+                      <state-chip [stateId]="item.estadoId" [domainCode]="DomainCodes.HabHerdeiros.estadoPedido"></state-chip>
+
+                      <i *ngIf="item.tarefaScheduledEmErro" class="mdi mdi-clock-alert-outline" style="color: #f44336; font-size: 20px; cursor: pointer; vertical-align: middle; margin-left: 4px;" matTooltip="Ver tarefa agendada em erro" stopClickPropagation (click)="verTarefasEmErro(item)"></i>
+                    </td>
+
+                    <td textAlign="left">
+                      <ng-container *ngFor="let fila of item.filasTrabalhoPedido; let j = index">
+                        {{ fila.tipoFilaTrabalhoPedidoDescricao }} <span *ngIf="j != item.filasTrabalhoPedido.length -1 && item.filasTrabalhoPedido.length != 1"> ; </span>
+                      </ng-container>
+                    </td>
+
+                    <td textAlign="left">
+                      <ng-container *ngFor="let fila of item.filasTrabalhoPedido; let j = index">
+                        <state-chip [stateId]="fila.estadoId" [domainCode]="DomainCodes.HabHerdeiros.estadoFilaTrabalhoPedido"></state-chip>
+                      </ng-container>
+                    </td>
+
+                    <td tableCellActions>
+                      <td *hasSomePermissions="PermissionConstants.HabHerdeiros.Processos.CriarProcesso.access">
+                        <button id="RetomarPedidoButton" mat-button stopClickPropagation tableCellAction [btnLabel]="'HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.DrawerContainer.DrawerContainerContent.ResumoProcessoCardPedidos.ResumoProcessoListaPedidos.RetomarPedidoButton' | translate" btnIconClass="mdi mdi-note-plus-outline" [routerLink]="'['../../..', 'CriarProcesso', item.idProcesso, item.idGrupoPedidos]'" *ngIf="(item.estadoId | commonData:estadoPedido$:'id':'code') == DimensionCodes.HabHerdeiros.EstadoPedido.emCriacao">
+                        </button>
+                      </td>
+
+                      <td *hasSomePermissions="PermissionConstants.HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.alterarPrioridadeTratamentoPedidoButton">
+                        <button id="AlterarPrioridadeTratamentoPedidoButton" mat-button stopClickPropagation tableCellAction [btnLabel]="'HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.DrawerContainer.DrawerContainerContent.ResumoProcessoCardPedidos.ResumoProcessoListaPedidos.AlterarPrioridadeTratamentoPedidoButton' | translate" btnIconClass="mdi mdi-exclamation-thick" (click)="AlterarPrioridadeTratamentoPedido(item)" *ngIf="EstadosParaTornarUrgente.includes(item.estadoId | commonData:estadoPedido$:'id':'code') && (item.tipoPrioridadeTratamentoId | commonData:tiposPrioridadeTratamento$:'id':'code') != DimensionCodes.HabHerdeiros.TiposPrioridadeTratamento.urgente">
+                        </button>
+                      </td>
+
+                      <td *hasSomePermissions="PermissionConstants.HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.cancelarPedidoButton">
+                        <button id="CancelarPedidoButton" mat-button stopClickPropagation btnType="danger" tableCellAction [btnLabel]="'HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.DrawerContainer.DrawerContainerContent.ResumoProcessoCardPedidos.ResumoProcessoListaPedidos.CancelarPedidoButton' | translate" btnIconClass="mdi mdi-delete" (click)="CancelarPedido(item)" *ngIf="item.podeSerCancelado">
+                        </button>
+                      </td>
+
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </table-content>
+        </results-container>
+
+      </card>
+      <ng-container *ngIf="selectedResumoProcessoListaPedidosRecord()">
+
+        <sticky id="PedidoSelecionadoStickyContainer" hideBeforeScroll>
+          <data-group id="PedidoSelecionadoStickyContainerFieldGroup" fxFlex="100%" class="projStyles-sticky-panel projStyles-sticky-pedidos">
+            <data-field id="selectedResumoProcessoListaPedidosRecord.idPedido" fxFlex="20%" [dataFieldLabel]="'HabHerdeiros._Tables.Pedidos._Fields.IdPedido' | translate">{{ selectedResumoProcessoListaPedidosRecord().idPedido }}</data-field>
+            <data-field id="selectedResumoProcessoListaPedidosRecord.codigoTipoPedido" fxFlex="20%" [dataFieldLabel]="'HabHerdeiros._Tables.Pedidos._Fields.CodigoTipoPedido' | translate">{{ selectedResumoProcessoListaPedidosRecord().codigoTipoPedido | commonData:tiposPedido$:'code':'desc' }}</data-field>
+            <data-field id="selectedResumoProcessoListaPedidosRecord.insDate" fxFlex="20%" [dataFieldLabel]="'Global.System.InsDate' | translate">{{ selectedResumoProcessoListaPedidosRecord().insDate | date:'dateTime' }}</data-field>
+            <data-field id="selectedResumoProcessoListaPedidosRecord.updDate" fxFlex="20%" [dataFieldLabel]="'Global.System.UpdDate' | translate">{{ selectedResumoProcessoListaPedidosRecord().updDate | date:'dateTime' }}</data-field>
+            <data-field id="selectedResumoProcessoListaPedidosRecord.estadoId" fxFlex="20%" [dataFieldLabel]="'HabHerdeiros._Tables.Pedidos._Fields.Estado' | translate"><state-chip [stateId]="selectedResumoProcessoListaPedidosRecord().estadoId" [domainCode]="DomainCodes.HabHerdeiros.estadoPedido"></state-chip><i *ngIf="selectedResumoProcessoListaPedidosRecord()?.tarefaScheduledEmErro" class="mdi mdi-clock-alert-outline" style="color: #f44336; font-size: 20px; cursor: pointer; vertical-align: middle; margin-left: 4px;" matTooltip="Ver tarefa agendada em erro" (click)="verTarefasEmErro(selectedResumoProcessoListaPedidosRecord())"></i></data-field>
+
+            <data-field fxFlex="10%" dataFieldLabel="Etapas">
+              <button mat-button btnType="neutral" btnIconPosition="icon-solo" btnIconClass="mdi mdi-format-list-numbered" matTooltip="Ver etapas do pedido" [disabled]="sidenavDrawerOpened" (click)="toggleSidenavDrawer()"></button>
+            </data-field>
+          </data-group>
+        </sticky>
+      </ng-container>
+      <ng-container *ngIf="selectedResumoProcessoListaPedidosRecord()">
+
+        <layout-container id="DetalhesPedidoWrap">
+
+
+          <hab-herdeiros-detalhes-pedido id="DetalhesPedidoWrapPageBlockViewer" fxFlex="100%" [idProcesso]="selectedResumoProcessoListaPedidosRecord().idProcesso" [idPedido]="selectedResumoProcessoListaPedidosRecord().idPedido">
+          </hab-herdeiros-detalhes-pedido>
+
+        </layout-container>
+      </ng-container>
+
+    </mat-sidenav-content>
+
+    <mat-sidenav id="DrawerContainerSidenav" #sidenavDrawer mode="side" position="end" [(opened)]="sidenavDrawerOpened">
+
+
+      <div id="StyleEnvelope" class="projStyles-sidenav-content">
+
+        <ng-container *ngIf="selectedResumoProcessoListaPedidosRecord()">
+
+          <layout-container id="DrawerContainerSidenavContent">
+            <layout-container-header>
+              <heading>
+                <heading-title-container>
+                  <heading-title>
+                    <strong>{{ 'HabHerdeiros.Processos.DetalhesProcesso.TabResumoProcesso.DrawerContainer.DrawerContainerSidenav.StyleEnvelope.DrawerContainerSidenavContent._Description' | translate }}</strong>
+                  </heading-title>
+                </heading-title-container>
+
+                <heading-actions>
+                  <button mat-button btnType="neutral" btnIconClass="mdi mdi-close" btnIconPosition="icon-solo" btnTooltip="Fechar" (click)="toggleSidenavDrawer()"></button>
+                </heading-actions>
+              </heading>
+            </layout-container-header>
+
+            <results-container>
+              <mat-list id="PedidoListaEtapas">
+                <mat-list-item *ngFor="let item of selectedResumoProcessoListaPedidosRecord().pedidoListaEtapas; let i = index">
+
+                  <span matListItemTitle>{{ item.descricao }}</span>
+                  <span matListItemLine>{{ item.displayUserName }}</span>
+                  <span matListItemLine>{{ item.insDate | date:'dateTime' }}</span>
+
+                </mat-list-item>
+              </mat-list>
+            </results-container>
+
+
+          </layout-container>
+        </ng-container>
+
+      </div>
+
+    </mat-sidenav>
+
+  </mat-sidenav-container>
+</results-container>
